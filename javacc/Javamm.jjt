@@ -68,7 +68,7 @@ SimpleNode Start(): { } {
 }
 
 void ImportDeclaration(): { } {
-	<IMPORT>
+	<IMPORT> #Sum
 	<ID> [(<DOT> <ID> )* <OPAREN> Type() (<COL> Type())* <CPAREN>]
 	<SEMICOL>
 }
@@ -90,20 +90,14 @@ void MethodDeclaration(): { } {
 
 void MainDeclaration(): { } {
 	<STATIC> <VOID> <MAIN> <OPAREN> <STRING> <OSBRACKET> <CSBRACKET> <ID> <CPAREN> <OCURLY>
-		( 
-			LOOKAHEAD(2) 
-			VarDeclaration() 
-		)*
-		( Statement() )
+		( LOOKAHEAD(2) VarDeclaration() )*
+		( Statement() ) *
 	<CCURLY>
 } 
 
 void FunctionDeclaration(): { } {
 	Type() <ID> <OPAREN> [ Type() <ID> (<COL> Type() <ID> )* ] <CPAREN> <OCURLY>
-		( 
-			LOOKAHEAD(2) 
-			VarDeclaration() 
-		)*
+		( LOOKAHEAD(2) VarDeclaration() )*
 		( Statement() )*
 		<RETURN> Expression() <SEMICOL>
 	<CCURLY>
@@ -119,13 +113,27 @@ void Type(): { } {
 
 void Statement(): { } {
 	(<OCURLY> (Statement())* <CCURLY>)
-	| 
+	|
 	(<IF> <OPAREN> Expression() <CPAREN> Statement() <ELSE> Statement())
 	|
-	(<WHILE> <OPAREN> Expression() <CPAREN> Statement())
-	|
 	[LOOKAHEAD(2) <ID> StatementId()] (Expression() <SEMICOL>)
-} 
+	|
+	try {
+	    (<WHILE> <OPAREN> Expression() <CPAREN> Statement())
+	} catch(ParseException e) {
+	    System.out.println("HELLO");
+        System.out.println(e.toString());  // print the error message
+          Token t;
+          do {
+            t = getNextToken();
+          } while (t.kind != 32);
+            // The above loop consumes tokens all the way up to a token of
+            // "kind".  We use a do-while loop rather than a while because the
+            // current token is the one immediately before the erroneous token
+            // (in our case the token immediately before what should have been
+            // "if"/"while".
+	}
+}
 
 void StatementId(): { } {
 	<EQUALS>
@@ -134,46 +142,48 @@ void StatementId(): { } {
 }
 
 void Expression(): { } {
-	ExpressionTerminal() (ExpressionL())?
-} 
+	ExpressionTerminal() ( LOOKAHEAD(2) ExpressionL())?
+ }
 
-void ExpressionL(): { } {
-	(<AND> | <LTHAN> | <PLUS> | <MINUS> | <ASTERISK> | <FSLASH>) Expression()
-	|
-	(<OSBRACKET> Expression() <CSBRACKET>)
-	|
-	ExpressionDot()
-}
+ void ExpressionL(): { } {
+ 	(<AND> | <LTHAN> | <PLUS> | <MINUS> | <ASTERISK> | <FSLASH>) Expression()
+ 	|
+ 	(<OSBRACKET> Expression() <CSBRACKET>)
+ 	|
+ 	ExpressionDot()
+ }
 
-void ExpressionDot(): { } {
-	<DOT> ExpressionDotL()
-}
+ void ExpressionDot(): { } {
+ 	<DOT> ExpressionDotL()
+ }
 
-void ExpressionDotL(): { } {
-	<LEN>
-	|
-	(<ID> <OPAREN> Expression() (<COL> Expression())* <CPAREN>)
-}
+ void ExpressionDotL(): { } {
+ 	<LEN>
+ 	|
+ 	(<ID> <OPAREN> Expression() (<COL> Expression())* <CPAREN>)
+ }
 
-void ExpressionTerminal(): { } {
-	<NUM>
-	| 
-	<TRUE>
-	|
-	<FALSE>
-	|
-	<ID>
-	|
-	<THIS>
-	|
-	ExpressionNew()
-	| 
-	(<OPAREN> Expression() <CPAREN>)
-}
+ void ExpressionTerminal(): { } {
+ 	<NUM>
+ 	|
+ 	<TRUE>
+ 	|
+ 	<FALSE>
+ 	|
+ 	<ID>
+ 	|
+ 	<THIS>
+ 	|
+ 	<NOT> Expression()
+ 	|
+ 	ExpressionNew()
+ 	|
+ 	(<OPAREN> Expression() <CPAREN>)
+ }
 
-void ExpressionNew(): { } {
-	<NEW> ExpressionNewL()
-}
+ void ExpressionNew(): { } {
+ 	<NEW> ExpressionNewL()
+ }
 
 void ExpressionNewL(): { } {
 	(<INT> <OSBRACKET> Expression() <CSBRACKET>)
