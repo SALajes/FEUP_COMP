@@ -5,6 +5,8 @@ options {
 PARSER_BEGIN(Javamm)
 
 public class Javamm {
+    static int numErrors = 0;
+    static final int MAX_NUM_ERRORS = 5;
 	public static void main(String args[]) throws ParseException {
 		Javamm javamm = new Javamm(System.in);
 		SimpleNode root = javamm.Start();
@@ -118,21 +120,29 @@ void Statement(): { } {
 	|
 	[LOOKAHEAD(2) <ID> StatementId()] (Expression() <SEMICOL>)
 	|
+	<WHILE> <OPAREN>
 	try {
-	    (<WHILE> <OPAREN> Expression() <CPAREN> Statement())
+	    (Expression() <CPAREN>) // We only need to check for errors inside the while parenthesis
 	} catch(ParseException e) {
-	    System.out.println("HELLO");
         System.out.println(e.toString());  // print the error message
-          Token t;
-          do {
-            t = getNextToken();
-          } while (t.kind != 32);
-            // The above loop consumes tokens all the way up to a token of
-            // "kind".  We use a do-while loop rather than a while because the
-            // current token is the one immediately before the erroneous token
-            // (in our case the token immediately before what should have been
-            // "if"/"while".
+        Token t;
+        Javamm.numErrors++; // Increase the number of errors since execution
+
+        if (Javamm.numErrors > 5) { // Chose 5 but this value should be passed through command line maybe?
+        System.out.println("Too many errors. Aborting.");
+        System.exit(-1);
+        }
+
+        do {
+          t = getNextToken(); // Skip the tokens until the close of parenthesis
+        } while (t.kind != CPAREN);
+          // The above loop consumes tokens all the way up to a token of
+          // "kind".  We use a do-while loop rather than a while because the
+          // current token is the one immediately before the erroneous token
+          // (in our case the token immediately before what should have been
+          // "if"/"while".
 	}
+	Statement()
 }
 
 void StatementId(): { } {
