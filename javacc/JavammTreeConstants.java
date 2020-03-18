@@ -3,28 +3,26 @@ public interface JavammTreeConstants
 {
   public int JJTSTART = 0;
   public int JJTIMPORTDECLARATION = 1;
-  public int JJTSUM = 2;
-  public int JJTCLASSDECLARATION = 3;
-  public int JJTVARDECLARATION = 4;
-  public int JJTMETHODDECLARATION = 5;
-  public int JJTMAINDECLARATION = 6;
-  public int JJTFUNCTIONDECLARATION = 7;
-  public int JJTTYPE = 8;
-  public int JJTSTATEMENT = 9;
-  public int JJTSTATEMENTID = 10;
-  public int JJTEXPRESSION = 11;
-  public int JJTEXPRESSIONL = 12;
-  public int JJTEXPRESSIONDOT = 13;
-  public int JJTEXPRESSIONDOTL = 14;
-  public int JJTEXPRESSIONTERMINAL = 15;
-  public int JJTEXPRESSIONNEW = 16;
-  public int JJTEXPRESSIONNEWL = 17;
+  public int JJTCLASSDECLARATION = 2;
+  public int JJTVARDECLARATION = 3;
+  public int JJTMETHODDECLARATION = 4;
+  public int JJTMAINDECLARATION = 5;
+  public int JJTFUNCTIONDECLARATION = 6;
+  public int JJTTYPE = 7;
+  public int JJTSTATEMENT = 8;
+  public int JJTSTATEMENTID = 9;
+  public int JJTEXPRESSION = 10;
+  public int JJTEXPRESSIONL = 11;
+  public int JJTEXPRESSIONDOT = 12;
+  public int JJTEXPRESSIONDOTL = 13;
+  public int JJTEXPRESSIONTERMINAL = 14;
+  public int JJTEXPRESSIONNEW = 15;
+  public int JJTEXPRESSIONNEWL = 16;
 
 
   public String[] jjtNodeName = {
     "Start",
     "ImportDeclaration",
-    "Sum",
     "ClassDeclaration",
     "VarDeclaration",
     "MethodDeclaration",
@@ -42,4 +40,4 @@ public interface JavammTreeConstants
     "ExpressionNewL",
   };
 }
-/* JavaCC - OriginalChecksum=92ee0d98c4847bce04aae567b02356e0 (do not edit this line) */
+/* JavaCC - OriginalChecksum=7cf4764da8c5ca68dacbd3be219d9f1a (do not edit this line) */

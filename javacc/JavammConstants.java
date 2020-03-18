@@ -9,85 +9,85 @@ public interface JavammConstants {
   /** End of File. */
   int EOF = 0;
   /** RegularExpression Id. */
-  int IMPORT = 5;
+  int IMPORT = 7;
   /** RegularExpression Id. */
-  int CLASS = 6;
+  int CLASS = 8;
   /** RegularExpression Id. */
-  int EXTENDS = 7;
+  int EXTENDS = 9;
   /** RegularExpression Id. */
-  int PUBLIC = 8;
+  int PUBLIC = 10;
   /** RegularExpression Id. */
-  int STATIC = 9;
+  int STATIC = 11;
   /** RegularExpression Id. */
-  int VOID = 10;
+  int VOID = 12;
   /** RegularExpression Id. */
-  int NEW = 11;
+  int NEW = 13;
   /** RegularExpression Id. */
-  int LEN = 12;
+  int LEN = 14;
   /** RegularExpression Id. */
-  int MAIN = 13;
+  int MAIN = 15;
   /** RegularExpression Id. */
-  int STRING = 14;
+  int STRING = 16;
   /** RegularExpression Id. */
-  int INT = 15;
+  int INT = 17;
   /** RegularExpression Id. */
-  int BOOLEAN = 16;
+  int BOOLEAN = 18;
   /** RegularExpression Id. */
-  int IF = 17;
+  int IF = 19;
   /** RegularExpression Id. */
-  int THEN = 18;
+  int THEN = 20;
   /** RegularExpression Id. */
-  int ELSE = 19;
+  int ELSE = 21;
   /** RegularExpression Id. */
-  int WHILE = 20;
+  int WHILE = 22;
   /** RegularExpression Id. */
-  int TRUE = 21;
+  int TRUE = 23;
   /** RegularExpression Id. */
-  int FALSE = 22;
+  int FALSE = 24;
   /** RegularExpression Id. */
-  int THIS = 23;
+  int THIS = 25;
   /** RegularExpression Id. */
-  int LTHAN = 24;
+  int LTHAN = 26;
   /** RegularExpression Id. */
-  int GTHAN = 25;
+  int GTHAN = 27;
   /** RegularExpression Id. */
-  int PLUS = 26;
+  int PLUS = 28;
   /** RegularExpression Id. */
-  int MINUS = 27;
+  int MINUS = 29;
   /** RegularExpression Id. */
-  int ASTERISK = 28;
+  int ASTERISK = 30;
   /** RegularExpression Id. */
-  int FSLASH = 29;
+  int FSLASH = 31;
   /** RegularExpression Id. */
-  int EQUALS = 30;
+  int EQUALS = 32;
   /** RegularExpression Id. */
-  int AND = 31;
+  int AND = 33;
   /** RegularExpression Id. */
-  int SEMICOL = 32;
+  int SEMICOL = 34;
   /** RegularExpression Id. */
-  int COL = 33;
+  int COL = 35;
   /** RegularExpression Id. */
-  int DOT = 34;
+  int DOT = 36;
   /** RegularExpression Id. */
-  int NOT = 35;
+  int NOT = 37;
   /** RegularExpression Id. */
-  int OCURLY = 36;
+  int OCURLY = 38;
   /** RegularExpression Id. */
-  int CCURLY = 37;
+  int CCURLY = 39;
   /** RegularExpression Id. */
-  int OPAREN = 38;
+  int OPAREN = 40;
   /** RegularExpression Id. */
-  int CPAREN = 39;
+  int CPAREN = 41;
   /** RegularExpression Id. */
-  int OSBRACKET = 40;
+  int OSBRACKET = 42;
   /** RegularExpression Id. */
-  int CSBRACKET = 41;
+  int CSBRACKET = 43;
   /** RegularExpression Id. */
-  int RETURN = 42;
+  int RETURN = 44;
   /** RegularExpression Id. */
-  int NUM = 43;
+  int NUM = 45;
   /** RegularExpression Id. */
-  int ID = 44;
+  int ID = 46;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -99,6 +99,8 @@ public interface JavammConstants {
     "\"\\r\"",
     "\"\\t\"",
     "\"\\n\"",
+    "<token of kind 5>",
+    "<token of kind 6>",
     "\"import\"",
     "\"class\"",
     "\"extends\"",

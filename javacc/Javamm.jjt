@@ -18,6 +18,8 @@ PARSER_END(Javamm)
 
 SKIP: {
 	" " | "\r" | "\t" | "\n"
+	| < "//"(~["\n","\r"])*("\n" | "\r" | "\r\n")>
+	| < "/*"(~["*"])* "*" (~["/"] (~["*"])* "*")* "/">
 }
 
 TOKEN: {
@@ -70,8 +72,9 @@ SimpleNode Start(): { } {
 }
 
 void ImportDeclaration(): { } {
-	<IMPORT> #Sum
+	<IMPORT> [<STATIC>]
 	<ID> [(<DOT> <ID> )* <OPAREN> Type() (<COL> Type())* <CPAREN>]
+	[Type()]
 	<SEMICOL>
 }
 

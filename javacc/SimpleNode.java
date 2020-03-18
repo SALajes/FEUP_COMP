@@ -66,12 +66,6 @@ class SimpleNode implements Node {
   public void dump(String prefix) {
     System.out.println(toString(prefix));
 
-    switch (this.id) {
-      case JavammTreeConstants.JJTSUM:
-        System.out.println("LMAO +++++");
-        break;
-    }
-
     if (children != null) {
       for (int i = 0; i < children.length; ++i) {
         SimpleNode n = (SimpleNode)children[i];

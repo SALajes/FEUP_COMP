@@ -22,6 +22,8 @@ PARSER_END(Javamm)
 
 SKIP: {
 	" " | "\r" | "\t" | "\n"
+	| < "//"(~["\n","\r"])*("\n" | "\r" | "\r\n")>
+	| < "/*"(~["*"])* "*" (~["/"] (~["*"])* "*")* "/">
 }
 
 TOKEN: {
@@ -110,22 +112,10 @@ void ImportDeclaration(): {/*@bgen(jjtree) ImportDeclaration */
   jjtree.openNodeScope(jjtn000);
 /*@egen*/ } {/*@bgen(jjtree) ImportDeclaration */
         try {
-/*@egen*//*@bgen(jjtree) Sum */
-        {
-          SimpleNode jjtn001 = new SimpleNode(JJTSUM);
-          boolean jjtc001 = true;
-          jjtree.openNodeScope(jjtn001);
-        }
-        try {
 /*@egen*/
-	<IMPORT>/*@bgen(jjtree)*/
-        } finally {
-          if (jjtc001) {
-            jjtree.closeNodeScope(jjtn001, true);
-          }
-        }
-/*@egen*/     
+	<IMPORT> [<STATIC>]
 	<ID> [(<DOT> <ID> )* <OPAREN> Type() (<COL> Type())* <CPAREN>]
+	[Type()]
 	<SEMICOL>/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
