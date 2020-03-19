@@ -310,7 +310,9 @@ void Type(): {/*@bgen(jjtree) Type */
 	|
 	<BOOLEAN>
 	|
-	<ID>/*@bgen(jjtree)*/
+	<ID>
+	|
+	<VOID>/*@bgen(jjtree)*/
         } finally {
           if (jjtc000) {
             jjtree.closeNodeScope(jjtn000, true);
@@ -512,7 +514,7 @@ void Expression(): {/*@bgen(jjtree) Expression */
 /*@egen*/
  	<LEN>
  	|
- 	(<ID> <OPAREN> Expression() (<COL> Expression())* <CPAREN>)/*@bgen(jjtree)*/
+ 	(<ID> <OPAREN> [Expression() (<COL> Expression())*] <CPAREN>)/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);

@@ -114,6 +114,8 @@ void Type(): { } {
 	<BOOLEAN>
 	|
 	<ID>
+	|
+	<VOID>
 }
 
 void Statement(): { } {
@@ -173,7 +175,7 @@ void Expression(): { } {
  void ExpressionDotL(): { } {
  	<LEN>
  	|
- 	(<ID> <OPAREN> Expression() (<COL> Expression())* <CPAREN>)
+ 	(<ID> <OPAREN> [Expression() (<COL> Expression())*] <CPAREN>)
  }
 
  void ExpressionTerminal(): { } {
