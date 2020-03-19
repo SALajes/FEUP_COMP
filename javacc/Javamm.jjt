@@ -71,36 +71,37 @@ SimpleNode Start(): { } {
 	{ return jjtThis; }
 }
 
-void ImportDeclaration(): { } {
+void ImportDeclaration()#void : { } {
 	<IMPORT> [<STATIC>]
 	<ID> [(<DOT> <ID> )* <OPAREN> Type() (<COL> Type())* <CPAREN>]
 	[Type()]
 	<SEMICOL>
 }
 
-void ClassDeclaration(): { } {
+void ClassDeclaration()#void : { } {
 	<CLASS> <ID> [ <EXTENDS> <ID> ] <OCURLY>
 		( VarDeclaration() )*
 		( MethodDeclaration() )*
 	<CCURLY>
 }
 
-void VarDeclaration(): { } {
+void VarDeclaration() #void : { } {
 	Type() <ID> <SEMICOL>
 }
 
-void MethodDeclaration(): { } {
+void MethodDeclaration() #void : { } {
 	<PUBLIC> ( MainDeclaration() | FunctionDeclaration())
 }
 
-void MainDeclaration(): { } {
+void MainDeclaration() #void : { } {
 	<STATIC> <VOID> <MAIN> <OPAREN> <STRING> <OSBRACKET> <CSBRACKET> <ID> <CPAREN> <OCURLY>
 		( LOOKAHEAD(2) VarDeclaration() )*
 		( Statement() ) *
 	<CCURLY>
-} 
+}
 
-void FunctionDeclaration(): { } {
+void FunctionDeclaration() #void : { } {
+    #Term
 	Type() <ID> <OPAREN> [ Type() <ID> (<COL> Type() <ID> )* ] <CPAREN> <OCURLY>
 		( LOOKAHEAD(2) VarDeclaration() )*
 		( Statement() )*
@@ -108,7 +109,7 @@ void FunctionDeclaration(): { } {
 	<CCURLY>
 }
 
-void Type(): { } {
+void Type() #void : { } {
 	(<INT> [<OSBRACKET> <CSBRACKET>])
 	|
 	<BOOLEAN>
@@ -118,7 +119,7 @@ void Type(): { } {
 	<VOID>
 }
 
-void Statement(): { } {
+void Statement() #void : { } {
 	(<OCURLY> (Statement())* <CCURLY>)
 	|
 	(<IF> <OPAREN> Expression() <CPAREN> Statement() <ELSE> Statement())
@@ -150,17 +151,17 @@ void Statement(): { } {
 	Statement()
 }
 
-void StatementId(): { } {
+void StatementId() #void : { } {
 	<EQUALS>
 	|
 	(<OSBRACKET> Expression() <CSBRACKET> <EQUALS>)
 }
 
-void Expression(): { } {
+void Expression() #void : { } {
 	ExpressionTerminal() ( LOOKAHEAD(2) ExpressionL())?
  }
 
- void ExpressionL(): { } {
+ void ExpressionL() #void : { } {
  	(<AND> | <LTHAN> | <PLUS> | <MINUS> | <ASTERISK> | <FSLASH>) Expression()
  	|
  	(<OSBRACKET> Expression() <CSBRACKET>)
@@ -168,17 +169,17 @@ void Expression(): { } {
  	ExpressionDot()
  }
 
- void ExpressionDot(): { } {
+ void ExpressionDot() #void : { } {
  	<DOT> ExpressionDotL()
  }
 
- void ExpressionDotL(): { } {
+ void ExpressionDotL() #void : { } {
  	<LEN>
  	|
  	(<ID> <OPAREN> [Expression() (<COL> Expression())*] <CPAREN>)
  }
 
- void ExpressionTerminal(): { } {
+ void ExpressionTerminal() #void : { } {
  	<NUM>
  	|
  	<TRUE>
@@ -196,11 +197,11 @@ void Expression(): { } {
  	(<OPAREN> Expression() <CPAREN>)
  }
 
- void ExpressionNew(): { } {
+ void ExpressionNew() #void : { } {
  	<NEW> ExpressionNewL()
  }
 
-void ExpressionNewL(): { } {
+void ExpressionNewL() #void : { } {
 	(<INT> <OSBRACKET> Expression() <CSBRACKET>)
 	|
 	(<ID> <OPAREN> <CPAREN>)
