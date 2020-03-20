@@ -2,14 +2,42 @@
 public interface JavammTreeConstants
 {
   public int JJTSTART = 0;
-  public int JJTVOID = 1;
-  public int JJTTERM = 2;
+  public int JJTIMPORTDECLARATION = 1;
+  public int JJTCLASSDECLARATION = 2;
+  public int JJTVARDECLARATION = 3;
+  public int JJTMETHODDECLARATION = 4;
+  public int JJTMAINDECLARATION = 5;
+  public int JJTFUNCTIONDECLARATION = 6;
+  public int JJTTYPE = 7;
+  public int JJTSTATEMENT = 8;
+  public int JJTSTATEMENTID = 9;
+  public int JJTEXPRESSION = 10;
+  public int JJTEXPRESSIONL = 11;
+  public int JJTEXPRESSIONDOT = 12;
+  public int JJTEXPRESSIONDOTL = 13;
+  public int JJTEXPRESSIONTERMINAL = 14;
+  public int JJTEXPRESSIONNEW = 15;
+  public int JJTEXPRESSIONNEWL = 16;
 
 
   public String[] jjtNodeName = {
     "Start",
-    "void",
-    "Term",
+    "ImportDeclaration",
+    "ClassDeclaration",
+    "VarDeclaration",
+    "MethodDeclaration",
+    "MainDeclaration",
+    "FunctionDeclaration",
+    "Type",
+    "Statement",
+    "StatementId",
+    "Expression",
+    "ExpressionL",
+    "ExpressionDot",
+    "ExpressionDotL",
+    "ExpressionTerminal",
+    "ExpressionNew",
+    "ExpressionNewL",
   };
 }
-/* JavaCC - OriginalChecksum=e5b60f17ca61549e90d5919c6b1c4bc5 (do not edit this line) */
+/* JavaCC - OriginalChecksum=7cf4764da8c5ca68dacbd3be219d9f1a (do not edit this line) */

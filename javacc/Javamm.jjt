@@ -4,13 +4,21 @@ options {
 
 PARSER_BEGIN(Javamm)
 
+import java.io.FileInputStream;
+
 public class Javamm {
     static int numErrors = 0;
     static final int MAX_NUM_ERRORS = 5;
 	public static void main(String args[]) throws ParseException {
-		Javamm javamm = new Javamm(System.in);
-		SimpleNode root = javamm.Start();
-		root.dump("");
+	    Javamm javamm;
+		try{
+		    javamm = new Javamm(new java.io.FileInputStream(args[0]));
+		    SimpleNode root = javamm.Start();
+            root.dump("");
+		}catch(Exception e){
+		    System.out.println("File not found");
+		    System.exit(-1);
+		}
 	}
 }
 
@@ -71,37 +79,36 @@ SimpleNode Start(): { } {
 	{ return jjtThis; }
 }
 
-void ImportDeclaration()#void : { } {
+void ImportDeclaration() : { } {
 	<IMPORT> [<STATIC>]
 	<ID> [(<DOT> <ID> )* <OPAREN> Type() (<COL> Type())* <CPAREN>]
 	[Type()]
 	<SEMICOL>
 }
 
-void ClassDeclaration()#void : { } {
+void ClassDeclaration() : { } {
 	<CLASS> <ID> [ <EXTENDS> <ID> ] <OCURLY>
 		( VarDeclaration() )*
 		( MethodDeclaration() )*
 	<CCURLY>
 }
 
-void VarDeclaration() #void : { } {
+void VarDeclaration()  : { } {
 	Type() <ID> <SEMICOL>
 }
 
-void MethodDeclaration() #void : { } {
+void MethodDeclaration()  : { } {
 	<PUBLIC> ( MainDeclaration() | FunctionDeclaration())
 }
 
-void MainDeclaration() #void : { } {
+void MainDeclaration()  : { } {
 	<STATIC> <VOID> <MAIN> <OPAREN> <STRING> <OSBRACKET> <CSBRACKET> <ID> <CPAREN> <OCURLY>
 		( LOOKAHEAD(2) VarDeclaration() )*
 		( Statement() ) *
 	<CCURLY>
 }
 
-void FunctionDeclaration() #void : { } {
-    #Term
+void FunctionDeclaration()  : { } {
 	Type() <ID> <OPAREN> [ Type() <ID> (<COL> Type() <ID> )* ] <CPAREN> <OCURLY>
 		( LOOKAHEAD(2) VarDeclaration() )*
 		( Statement() )*
@@ -109,7 +116,7 @@ void FunctionDeclaration() #void : { } {
 	<CCURLY>
 }
 
-void Type() #void : { } {
+void Type()  : { } {
 	(<INT> [<OSBRACKET> <CSBRACKET>])
 	|
 	<BOOLEAN>
@@ -119,7 +126,7 @@ void Type() #void : { } {
 	<VOID>
 }
 
-void Statement() #void : { } {
+void Statement()  : { } {
 	(<OCURLY> (Statement())* <CCURLY>)
 	|
 	(<IF> <OPAREN> Expression() <CPAREN> Statement() <ELSE> Statement())
@@ -141,7 +148,7 @@ void Statement() #void : { } {
 
         do {
           t = getNextToken(); // Skip the tokens until the close of parenthesis
-        } while (t.kind != CPAREN);
+        } while (t.kind != CPAREN); //{, }, ;, )
           // The above loop consumes tokens all the way up to a token of
           // "kind".  We use a do-while loop rather than a while because the
           // current token is the one immediately before the erroneous token
@@ -151,17 +158,17 @@ void Statement() #void : { } {
 	Statement()
 }
 
-void StatementId() #void : { } {
+void StatementId()  : { } {
 	<EQUALS>
 	|
 	(<OSBRACKET> Expression() <CSBRACKET> <EQUALS>)
 }
 
-void Expression() #void : { } {
+void Expression()  : { } {
 	ExpressionTerminal() ( LOOKAHEAD(2) ExpressionL())?
  }
 
- void ExpressionL() #void : { } {
+ void ExpressionL()  : { } {
  	(<AND> | <LTHAN> | <PLUS> | <MINUS> | <ASTERISK> | <FSLASH>) Expression()
  	|
  	(<OSBRACKET> Expression() <CSBRACKET>)
@@ -169,17 +176,17 @@ void Expression() #void : { } {
  	ExpressionDot()
  }
 
- void ExpressionDot() #void : { } {
+ void ExpressionDot()  : { } {
  	<DOT> ExpressionDotL()
  }
 
- void ExpressionDotL() #void : { } {
+ void ExpressionDotL()  : { } {
  	<LEN>
  	|
  	(<ID> <OPAREN> [Expression() (<COL> Expression())*] <CPAREN>)
  }
 
- void ExpressionTerminal() #void : { } {
+ void ExpressionTerminal()  : { } {
  	<NUM>
  	|
  	<TRUE>
@@ -197,11 +204,11 @@ void Expression() #void : { } {
  	(<OPAREN> Expression() <CPAREN>)
  }
 
- void ExpressionNew() #void : { } {
+ void ExpressionNew()  : { } {
  	<NEW> ExpressionNewL()
  }
 
-void ExpressionNewL() #void : { } {
+void ExpressionNewL()  : { } {
 	(<INT> <OSBRACKET> Expression() <CSBRACKET>)
 	|
 	(<ID> <OPAREN> <CPAREN>)
