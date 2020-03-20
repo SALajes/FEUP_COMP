@@ -1,24 +1,28 @@
 options {
 	LOOKAHEAD = 1;
+	STATIC = false;
+	MULTI = true;
 }
 
 PARSER_BEGIN(Javamm)
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 public class Javamm {
-    static int numErrors = 0;
+    static int numErrors;
     static final int MAX_NUM_ERRORS = 5;
 	public static void main(String args[]) throws ParseException {
 	    Javamm javamm;
 		try{
+		    numErrors = 0;
 		    javamm = new Javamm(new java.io.FileInputStream(args[0]));
 		    SimpleNode root = javamm.Start();
             root.dump("");
-		}catch(Exception e){
+		} catch(FileNotFoundException e){
 		    System.out.println("File not found");
 		    System.exit(-1);
-		}
+		}catch(ParseException e) { throw e; }
 	}
 }
 
@@ -141,19 +145,14 @@ void Statement()  : { } {
         Token t;
         Javamm.numErrors++; // Increase the number of errors since execution
 
-        if (Javamm.numErrors > 5) { // Chose 5 but this value should be passed through command line maybe?
-        System.out.println("Too many errors. Aborting.");
-        System.exit(-1);
+        if (Javamm.numErrors > Javamm.MAX_NUM_ERRORS) { // Chose 5 but this value should be passed through command line maybe?
+            System.out.println("Too many errors. Aborting.");
+            throw e;
         }
 
         do {
           t = getNextToken(); // Skip the tokens until the close of parenthesis
-        } while (t.kind != CPAREN); //{, }, ;, )
-          // The above loop consumes tokens all the way up to a token of
-          // "kind".  We use a do-while loop rather than a while because the
-          // current token is the one immediately before the erroneous token
-          // (in our case the token immediately before what should have been
-          // "if"/"while".
+        } while (!(t.kind == CPAREN || t.kind == OCURLY || t.kind == CCURLY || t.kind == SEMICOL));
 	}
 	Statement()
 }

@@ -41,14 +41,16 @@ sourceSets {
          srcDir 'src'
       }
    }
-    test {
+	
+   test {
       java {
          srcDir 'test'
       }
-        resources {
-		srcDir 'test'
-	  }
+      resources {
+        srcDir 'test'
+      }
    }
+    
 }
 
 

@@ -3,6 +3,18 @@
 /generated/
 *.jar
 .idea/
+
+.classpath
+.project
+.settings
+
+bin
+.idea
+/gradle/
+gradlew
+gradlew.bat
+comp2020-3c.iml
+
 # Ignore Gradle GUI config
 gradle-app.setting
 
