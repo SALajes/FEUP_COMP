@@ -61,6 +61,7 @@ TOKEN: {
 | < ASTERISK: "*" >
 | < FSLASH: "/" >
 | < EQUALS: "=" >
+| < DEQUALS: "==" >
 | < AND: "&&" >
 | < SEMICOL: ";" >
 | < COL: "," >
@@ -85,7 +86,7 @@ SimpleNode Start(): { } {
 
 void ImportDeclaration() : { } {
 	<IMPORT> [<STATIC>]
-	<ID> [(<DOT> <ID> )* <OPAREN> Type() (<COL> Type())* <CPAREN>]
+	<ID> [(<DOT> <ID> )* <OPAREN> [Type() (<COL> Type())*] <CPAREN>]
 	[Type()]
 	<SEMICOL>
 }
@@ -98,7 +99,7 @@ void ClassDeclaration() : { } {
 }
 
 void VarDeclaration()  : { } {
-	Type() <ID> <SEMICOL>
+	Type() <ID> [ <EQUALS> <OCURLY> (<NUM>|<ID>) (<COL> (<NUM>|<ID>))* <CCURLY> ]<SEMICOL> //curly solve
 }
 
 void MethodDeclaration()  : { } {
@@ -133,13 +134,13 @@ void Type()  : { } {
 void Statement()  : { } {
 	(<OCURLY> (Statement())* <CCURLY>)
 	|
-	(<IF> <OPAREN> Expression() <CPAREN> Statement() <ELSE> Statement())
+	(<IF> <OPAREN> Expression()  (ExpressionsConnector())* <CPAREN> Statement() [<ELSE> Statement()])//before forced an else
 	|
-	[LOOKAHEAD(2) <ID> StatementId()] (Expression() <SEMICOL>)
+	[LOOKAHEAD(2) <ID> StatementId()] Expression()  (ExpressionsConnector())* <SEMICOL>
 	|
 	<WHILE> <OPAREN>
 	try {
-	    (Expression() <CPAREN>) // We only need to check for errors inside the while parenthesis
+	    (Expression()  (ExpressionsConnector())* <CPAREN>) // We only need to check for errors inside the while parenthesis
 	} catch(ParseException e) {
         System.out.println(e.toString());  // print the error message
         Token t;
@@ -164,11 +165,11 @@ void StatementId()  : { } {
 }
 
 void Expression()  : { } {
-	ExpressionTerminal() ( LOOKAHEAD(2) ExpressionL())?
+	[<MINUS>] ExpressionTerminal() ( LOOKAHEAD(2) ExpressionL())?
  }
 
  void ExpressionL()  : { } {
- 	(<AND> | <LTHAN> | <PLUS> | <MINUS> | <ASTERISK> | <FSLASH>) Expression()
+ 	ExpressionsConnector()
  	|
  	(<OSBRACKET> Expression() <CSBRACKET>)
  	|
@@ -182,7 +183,7 @@ void Expression()  : { } {
  void ExpressionDotL()  : { } {
  	<LEN>
  	|
- 	(<ID> <OPAREN> [Expression() (<COL> Expression())*] <CPAREN>)
+ 	(<ID> [<OPAREN> [(Expression() (ExpressionsConnector())*) (<COL> (Expression() (ExpressionsConnector())*))*] <CPAREN>])
  }
 
  void ExpressionTerminal()  : { } {
@@ -192,7 +193,7 @@ void Expression()  : { } {
  	|
  	<FALSE>
  	|
- 	<ID>
+ 	<ID> [ <OPAREN> [Type() (<COL> Type())*] <CPAREN>] // a = Cenas(a,b); solve
  	|
  	<THIS>
  	|
@@ -211,4 +212,8 @@ void ExpressionNewL()  : { } {
 	(<INT> <OSBRACKET> Expression() <CSBRACKET>)
 	|
 	(<ID> <OPAREN> <CPAREN>)
+}
+
+void ExpressionsConnector() : { } {
+ [(<DEQUALS> | <AND> | <LTHAN> | <GTHAN> | <PLUS> | <MINUS> | <ASTERISK> | <FSLASH>)] Expression() //== solve, not the best bc i cant have ex: a = b == c
 }
