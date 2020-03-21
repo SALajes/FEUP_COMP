@@ -11,7 +11,7 @@ import java.io.FileNotFoundException;
 
 public class Javamm {
     static int numErrors;
-    static final int MAX_NUM_ERRORS = 5;
+    static final int MAX_NUM_ERRORS = 456485846;
 	public static void main(String args[]) throws ParseException {
 	    Javamm javamm;
 		try{
@@ -201,7 +201,7 @@ void Expression()  : { } {
  	|
  	ExpressionNew()
  	|
- 	(<OPAREN> Expression() <CPAREN>)
+ 	(<OPAREN> Expression() (ExpressionsConnector())* <CPAREN>)
  }
 
  void ExpressionNew()  : { } {
