@@ -11,9 +11,14 @@ public class Main {
 
     public static void main(String[] args) throws RuntimeException {
         try{
+            Javamm.numErrors = 0;
             Javamm javamm = new Javamm(new java.io.FileInputStream(args[0]));
             javamm.Start().dump("");
 
+            if (javamm.numErrors > 0) {
+                System.out.println("Errors ocurred");
+                throw new RuntimeException();
+            }
         } catch(FileNotFoundException e){
             System.out.println("File not found");
             System.exit(-1);
