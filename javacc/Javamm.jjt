@@ -87,36 +87,36 @@ SimpleNode Start(): { } {
 	{ return jjtThis; }
 }
 
-void ImportDeclaration() : { } {
+void ImportDeclaration() #void: { } {
 	<IMPORT> [<STATIC>]
 	<ID> [(<DOT> <ID> )* <OPAREN> [Type() (<COL> Type())*] <CPAREN>]
 	[Type()]
 	<SEMICOL>
 }
 
-void ClassDeclaration() : { } {
+void ClassDeclaration() #void : { } {
 	<CLASS> <ID> [ <EXTENDS> <ID> ] <OCURLY>
 		( VarDeclaration() )*
 		( MethodDeclaration() )*
 	<CCURLY>
 }
 
-void VarDeclaration()  : { } {
+void VarDeclaration() #void : { } {
 	Type() <ID> [ <EQUALS> <OCURLY> (<NUM>|<ID>) (<COL> (<NUM>|<ID>))* <CCURLY> ]<SEMICOL> //curly solve
 }
 
-void MethodDeclaration()  : { } {
+void MethodDeclaration() #void : { } {
 	<PUBLIC> ( MainDeclaration() | FunctionDeclaration())
 }
 
-void MainDeclaration()  : { } {
+void MainDeclaration() #void : { } {
 	<STATIC> <VOID> <MAIN> <OPAREN> <STRING> <OSBRACKET> <CSBRACKET> <ID> <CPAREN> <OCURLY>
 		( LOOKAHEAD(2) VarDeclaration() )*
 		( Statement() ) *
 	<CCURLY>
 }
 
-void FunctionDeclaration()  : { } {
+void FunctionDeclaration() #void : { } {
 	Type() <ID> <OPAREN> [ Type() <ID> (<COL> Type() <ID> )* ] <CPAREN> <OCURLY>
 		( LOOKAHEAD(2) VarDeclaration() )*
 		( Statement() )*
@@ -124,7 +124,7 @@ void FunctionDeclaration()  : { } {
 	<CCURLY>
 }
 
-void Type()  : { } {
+void Type() #void : { } {
 	(<INT> [<OSBRACKET> <CSBRACKET>])
 	|
 	<BOOLEAN>
@@ -134,10 +134,10 @@ void Type()  : { } {
 	<VOID>
 }
 
-void Statement()  : { } {
+void Statement() #void : { } {
 	(<OCURLY> (Statement())* <CCURLY>)
 	|
-	(<IF> <OPAREN> Expression()  (ExpressionsConnector())* <CPAREN> Statement() [<ELSE> Statement()])//before forced an else
+	(<IF> <OPAREN> Expression()  (ExpressionsConnector())* <CPAREN> Statement() [<ELSE> Statement()]) #If//before forced an else
 	|
 	[LOOKAHEAD(2) <ID> StatementId()] Expression()  (ExpressionsConnector())* <SEMICOL>
 	|
@@ -157,21 +157,21 @@ void Statement()  : { } {
         do {
           t = getNextToken(); // Skip the tokens until the close of parenthesis
         } while (!(t.kind == CPAREN || t.kind == OCURLY || t.kind == CCURLY || t.kind == SEMICOL));
-	}
+	}  #While
 	Statement()
 }
 
-void StatementId()  : { } {
+void StatementId() #void : { } {
 	<EQUALS>
 	|
 	(<OSBRACKET> Expression() <CSBRACKET> <EQUALS>)
 }
 
-void Expression()  : { } {
+void Expression() #void : { } {
 	[<MINUS>] ExpressionTerminal() ( LOOKAHEAD(2) ExpressionL())?
  }
 
- void ExpressionL()  : { } {
+ void ExpressionL() #void : { } {
  	ExpressionsConnector()
  	|
  	(<OSBRACKET> Expression() <CSBRACKET>)
@@ -179,17 +179,17 @@ void Expression()  : { } {
  	ExpressionDot()
  }
 
- void ExpressionDot()  : { } {
+ void ExpressionDot() #void : { } {
  	<DOT> ExpressionDotL()
  }
 
- void ExpressionDotL()  : { } {
+ void ExpressionDotL() #void : { } {
  	<LEN>
  	|
  	(<ID> [<OPAREN> [(Expression() (ExpressionsConnector())*) (<COL> (Expression() (ExpressionsConnector())*))*] <CPAREN>])
  }
 
- void ExpressionTerminal()  : { } {
+ void ExpressionTerminal() #void : { } {
  	<NUM> #Integer
  	|
  	<TRUE> #True
@@ -207,16 +207,16 @@ void Expression()  : { } {
  	(<OPAREN> Expression() (ExpressionsConnector())* <CPAREN>)
  }
 
- void ExpressionNew()  : { } {
+ void ExpressionNew() #void : { } {
  	<NEW> ExpressionNewL() #New
  }
 
-void ExpressionNewL()  : { } {
+void ExpressionNewL() #void : { } {
 	(<INT> <OSBRACKET> Expression() <CSBRACKET>)
 	|
 	(<ID> <OPAREN> <CPAREN>)
 }
 
-void ExpressionsConnector() : { } {
+void ExpressionsConnector() #void : { } {
  [(<DEQUALS> | <AND> | <LTHAN> | <GTHAN> | <PLUS> | <MINUS> | <ASTERISK> | <FSLASH>)] Expression() #Connector//== solve, not the best bc i cant have ex: a = b == c
 }
