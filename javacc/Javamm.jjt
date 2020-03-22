@@ -197,8 +197,8 @@ void Expression() #void : { } {
  	(<ID> [<OPAREN> [(Expression() (ExpressionsConnector())*) (<COL> (Expression() (ExpressionsConnector())*))*] <CPAREN>])
  }
 
- void ExpressionTerminal() #void : { } {
- 	<NUM> #Integer
+ void ExpressionTerminal() #void : { Token id;} {
+ 	id=<NUM> {jjtThis.ident=id.image;} #Int
  	|
  	<TRUE> #True
  	|
@@ -208,7 +208,7 @@ void Expression() #void : { } {
  	|
  	<THIS> #This
  	|
- 	<NOT> Expression() #Negation
+ 	<NOT> Expression() #Not
  	|
  	ExpressionNew()
  	|
@@ -216,7 +216,7 @@ void Expression() #void : { } {
  }
 
  void ExpressionNew() #void : { } {
- 	<NEW> ExpressionNewL() #New
+ 	<NEW> ExpressionNewL()
  }
 
 void ExpressionNewL() #void : { } {
@@ -226,5 +226,5 @@ void ExpressionNewL() #void : { } {
 }
 
 void ExpressionsConnector() #void : { } {
-    [(<DEQUALS> | <AND> | <LTHAN> | <GTHAN> | <PLUS> | <MINUS> | <ASTERISK> | <FSLASH>)] Expression() #Connector//== solve, not the best bc i cant have ex: a = b == c
+    [(<DEQUALS> | <AND> | <LTHAN> | <GTHAN> | <PLUS> | <MINUS> | <ASTERISK> | <FSLASH>)] Expression() //== solve, not the best bc i cant have ex: a = b == c
 }
