@@ -81,7 +81,7 @@ TOKEN: {
 | < ID: (["A"-"Z", "a"-"z", "_", "$"](["0"-"9", "A"-"Z", "a"-"z", "_", "$"])*) >
 }
 
-SimpleNode Start(): { } { 
+SimpleNode Start() : { } {
 	( ImportDeclaration() )*
 	ClassDeclaration() <EOF> 
 	{ return jjtThis; }
@@ -94,34 +94,42 @@ void ImportDeclaration() #void: { } {
 	<SEMICOL>
 }
 
-void ClassDeclaration() #void : { } {
-	<CLASS> <ID> [ <EXTENDS> <ID> ] <OCURLY>
+void ClassDeclaration() #Class : { Token id; } {
+	<CLASS> id=<ID> {jjtThis.ident=id.image;} [ <EXTENDS> id=<ID> {jjtThis.ident=id.image;}] <OCURLY>
 		( VarDeclaration() )*
 		( MethodDeclaration() )*
 	<CCURLY>
 }
 
-void VarDeclaration() #void : { } {
-	Type() <ID> [ <EQUALS> <OCURLY> (<NUM>|<ID>) (<COL> (<NUM>|<ID>))* <CCURLY> ]<SEMICOL> //curly solve
+void VarDeclaration() #Var : { Token id; } {
+	Type() id=<ID> {jjtThis.ident=id.image;} [ <EQUALS> <OCURLY> (<NUM>|<ID>) (<COL> (<NUM>|<ID>))* <CCURLY> ]<SEMICOL> //curly solve
 }
 
 void MethodDeclaration() #void : { } {
 	<PUBLIC> ( MainDeclaration() | FunctionDeclaration())
 }
 
-void MainDeclaration() #void : { } {
-	<STATIC> <VOID> <MAIN> <OPAREN> <STRING> <OSBRACKET> <CSBRACKET> <ID> <CPAREN> <OCURLY>
+void MainDeclaration() #Main : { Token id; } {
+	<STATIC> <VOID> <MAIN> <OPAREN> <STRING> <OSBRACKET> <CSBRACKET> id=<ID> {jjtThis.ident=id.image;} <CPAREN> <OCURLY>
 		( LOOKAHEAD(2) VarDeclaration() )*
 		( Statement() ) *
 	<CCURLY>
 }
 
-void FunctionDeclaration() #void : { } {
-	Type() <ID> <OPAREN> [ Type() <ID> (<COL> Type() <ID> )* ] <CPAREN> <OCURLY>
+void FunctionDeclaration() #Method : { Token id; } {
+	Type() id=<ID> {jjtThis.ident=id.image;} <OPAREN> ArgList() <CPAREN> <OCURLY>
 		( LOOKAHEAD(2) VarDeclaration() )*
 		( Statement() )*
 		<RETURN> Expression() <SEMICOL>
 	<CCURLY>
+}
+
+void Arg() #Arg : { Token id; } {
+    Type() id=<ID> {jjtThis.ident=id.image;}
+}
+
+void ArgList() #MethodArgs : { } {
+    [ Arg() (<COL> Arg())* ]
 }
 
 void Type() #void : { } {
@@ -218,5 +226,5 @@ void ExpressionNewL() #void : { } {
 }
 
 void ExpressionsConnector() #void : { } {
- [(<DEQUALS> | <AND> | <LTHAN> | <GTHAN> | <PLUS> | <MINUS> | <ASTERISK> | <FSLASH>)] Expression() #Connector//== solve, not the best bc i cant have ex: a = b == c
+    [(<DEQUALS> | <AND> | <LTHAN> | <GTHAN> | <PLUS> | <MINUS> | <ASTERISK> | <FSLASH>)] Expression() #Connector//== solve, not the best bc i cant have ex: a = b == c
 }

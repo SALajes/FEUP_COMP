@@ -9,6 +9,8 @@ class SimpleNode implements Node {
   protected Object value;
   protected Javamm parser;
 
+  protected String ident;
+
   public SimpleNode(int i) {
     id = i;
   }
@@ -58,7 +60,12 @@ class SimpleNode implements Node {
   public String toString() {
     return JavammTreeConstants.jjtNodeName[id];
   }
-  public String toString(String prefix) { return prefix + toString(); }
+  public String toString(String prefix) {
+    if(this.ident == null)
+      return prefix + toString();
+    else
+      return prefix + toString() + " " + this.ident;
+  }
 
   /* Override this method if you want to customize how the node dumps
      out its children. */
