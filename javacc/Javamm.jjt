@@ -87,18 +87,28 @@ SimpleNode Start() : { } {
 	{ return jjtThis; }
 }
 
-void ImportDeclaration() #void: { } {
-	<IMPORT> [<STATIC>]
-	<ID> [(<DOT> <ID> )* <OPAREN> [Type() (<COL> Type())*] <CPAREN>]
+void ImportDeclaration() #Import : { Token id; } {
+	<IMPORT>  [<STATIC> ]
+	id=<ID> {jjtThis.ident=id.image;} [ ImportDeclarationDot() ]
 	[Type()]
 	<SEMICOL>
 }
 
+void ImportDeclarationDot() #void : { Token id; } {
+    (<DOT> id=<ID> {jjtThis.ident = id.image;}  ImportDeclarationDot()) #Import
+    |
+    <OPAREN> [ Type() (<COL> Type())* ] <CPAREN>
+}
+
 void ClassDeclaration() #Class : { Token id; } {
-	<CLASS> id=<ID> {jjtThis.ident=id.image;} [ <EXTENDS> id=<ID> {jjtThis.ident=id.image;}] <OCURLY>
+	<CLASS> id=<ID> {jjtThis.ident=id.image;} ClassDeclarationExtends() <OCURLY>
 		( VarDeclaration() )*
 		( MethodDeclaration() )*
 	<CCURLY>
+}
+
+void ClassDeclarationExtends() #Extends : { Token id; } {
+    ( <EXTENDS> id=<ID> {jjtThis.ident=id.image;} )?
 }
 
 void VarDeclaration() #Var : { Token id; } {
