@@ -13,17 +13,19 @@ public class Main {
         try{
             Javamm.numErrors = 0;
             Javamm javamm = new Javamm(new java.io.FileInputStream(args[0]));
-            javamm.Start().dump("");
+            SimpleNode root = javamm.Start();
 
-            if (javamm.numErrors > 0) {
-                System.out.println("Errors ocurred");
+            if (Javamm.numErrors > 0) {
+                System.out.println("Errors ocurred (" + Javamm.numErrors + ")");
                 throw new RuntimeException();
             }
+
+            root.dump("");
+
         } catch(FileNotFoundException e){
             System.out.println("File not found");
             System.exit(-1);
         }catch(ParseException e) {
-            e.printStackTrace();
             throw new RuntimeException();
         }
     }

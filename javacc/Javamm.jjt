@@ -17,11 +17,14 @@ public class Javamm {
 		    Javamm.numErrors = 0;
 		    Javamm javamm = new Javamm(new java.io.FileInputStream(args[0]));
 		    SimpleNode root = javamm.Start();
-            root.dump("");
-            if (javamm.numErrors > 0) {
+
+		    if (Javamm.numErrors > 0) {
                 System.out.println("Errors ocurred");
                 throw new RuntimeException();
             }
+
+            root.dump("");
+
 		} catch(FileNotFoundException e){
 		    System.out.println("File not found");
 		    System.exit(-1);
@@ -161,6 +164,7 @@ void Statement() #void : { } {
 	|
 	<WHILE> <OPAREN>
 	try {
+	    //		while (i +) {
 	    (Expression()  (ExpressionsConnector())* <CPAREN>) // We only need to check for errors inside the while parenthesis
 	} catch(ParseException e) {
         System.out.println(e.toString());  // print the error message
@@ -168,13 +172,22 @@ void Statement() #void : { } {
         Javamm.numErrors++; // Increase the number of errors since execution
 
         if (Javamm.numErrors > Javamm.MAX_NUM_ERRORS) { // Chose 5 but this value should be passed through command line maybe?
-            System.out.println("Too many errors. Aborting.");
+            System.out.println("Too many errors. Aborting. (" + Javamm.numErrors + ")");
             throw e;
         }
 
-        do {
-          t = getNextToken(); // Skip the tokens until the close of parenthesis
-        } while (!(t.kind == CPAREN || t.kind == OCURLY || t.kind == CCURLY || t.kind == SEMICOL));
+        while(true) {
+          t = getToken(1); // Skip the tokens until the close of parenthesis
+          if(t.kind == CPAREN || t.kind == CCURLY){
+            t = getNextToken();
+            t=getToken(1);
+            if(t.kind != CPAREN)
+                break;
+          }
+          else if(t.kind == OCURLY)
+            break;
+          else t = getNextToken();
+        }
 	}  #While
 	Statement()
 }
