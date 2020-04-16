@@ -1,4 +1,3 @@
-package javacc;
 
 import java.util.Hashtable;
 

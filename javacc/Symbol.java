@@ -1,4 +1,3 @@
-package javacc;
 
 public class Symbol {
     String type;
