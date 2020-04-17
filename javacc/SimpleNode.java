@@ -12,7 +12,10 @@ class SimpleNode implements Node {
 
   private SymbolTable symbol_table = new SymbolTable();
 
-  protected String ident;
+  protected String identity;
+  protected String extend;
+  protected String type;
+  protected String returns;
 
 
   public SimpleNode(int i) {
@@ -65,10 +68,10 @@ class SimpleNode implements Node {
     return JavammTreeConstants.jjtNodeName[id];
   }
   public String toString(String prefix) {
-    if(this.ident == null)
+    if(this.identity == null)
       return prefix + toString();
     else
-      return prefix + toString() + " " + this.ident;
+      return prefix + toString() + " " + this.identity;
   }
 
   /* Override this method if you want to customize how the node dumps
