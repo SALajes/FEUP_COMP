@@ -10,37 +10,20 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 public class Javamm {
-    static int numErrors = 0;
+    private int numErrors = 0;
+    public int getNumErrors(){
+        return numErrors;
+    }
     static final int MAX_NUM_ERRORS = 16;
-	public static void main(String args[]) throws RuntimeException {
-		try{
-		    Javamm.numErrors = 0;
-		    Javamm javamm = new Javamm(new java.io.FileInputStream(args[0]));
-		    SimpleNode root = javamm.Start();
+	
 
-		    if (Javamm.numErrors > 0) {
-                System.out.println("Errors ocurred");
-                throw new RuntimeException();
-            }
-
-            root.dump("");
-		    //build symbol table
-		    //check semantics
-		    //display symbol table
-
-		} catch(FileNotFoundException e){
-		    System.out.println("File not found");
-		    System.exit(-1);
-		}catch(ParseException e) { throw new RuntimeException(); }
-	}
-
-	public static void whileErrorRecovery(ParseException e){
+	public void whileErrorRecovery(ParseException e){
 	        System.out.println(e.toString());  // print the error message
             Token t;
-            Javamm.numErrors++; // Increase the number of errors since execution
+            this.numErrors++; // Increase the number of errors since execution
 
-            if (Javamm.numErrors > Javamm.MAX_NUM_ERRORS) {
-                System.out.println("Too many errors. Aborting. (" + Javamm.numErrors + ")");
+            if (this.numErrors > Javamm.MAX_NUM_ERRORS) {
+                System.out.println("Too many errors. Aborting. (" + this.numErrors + ")");
                 throw e;
             }
 
@@ -132,7 +115,7 @@ void ImportDeclarationDot() #void : { Token id; } {
 
 void ClassDeclaration() #Class : { Token class_id, extend_class; } {
 	<CLASS> class_id=<ID> { jjtThis.identity=class_id.image; }
-	  ( <EXTENDS> extend_class=<ID> { jjtThis.extend=extend_class.image; } #Extends )? <OCURLY>
+	  ( <EXTENDS> extend_class=<ID> { jjtThis.extend=extend_class.image; } #Extends2 )? <OCURLY>
 		( VarDeclaration() )*
 		( MethodDeclaration() )*
 	<CCURLY>
@@ -198,20 +181,18 @@ void Statement() #void : {} {
 	)
 }
 
-void IfStatement() #IF : {} {
-    <IF> <OPAREN> Expression() #CONDITION <CPAREN>
-            Statement() #THEN
-    [<ELSE>
-        Statement() #ELSE
-    ]
+void IfStatement() #If : {} {
+    <IF> <OPAREN> Expression() <CPAREN>
+    Statement() //Then 
+    <ELSE>  Statement() //else //tdrc
 }
 
-void WhileStatement() #WHILE : {} {
+void WhileStatement() #While : {} {
     <WHILE> <OPAREN>
     	try {
     	    (Expression())* <CPAREN> // We only need to check for errors inside the while parenthesis
     	} catch(ParseException e) {
-            Javamm.whileErrorRecovery(e);
+            this.whileErrorRecovery(e);
     	}
         Statement()
 }
@@ -249,7 +230,7 @@ void MultiplicationDivision() : { Token operator; } {
 }
 
 void ExpressionIntermediateDivision() : {} {
-    <NOT> Expression() #Not
+    <NOT> ExpressionIntermediateDivision() #Not //tdrc
     |
     ExpressionTerminal() [<DOT> ExpressionDot()]
 }
@@ -273,7 +254,7 @@ void ExpressionTerminal() #void : { Token id;} {
 void ExpressionDot() #void : { } {
     <LEN>
     |
-    (ExpressionTerminal() <DOT>)* <ID> <OPAREN> [Expression() (<COL> Expression())*] <CPAREN>
+    (LOOKAHEAD(2) ExpressionTerminal() <DOT>)* <ID> <OPAREN> [Expression() (<COL> Expression())*] <CPAREN> //tdrc
 }
 
 
