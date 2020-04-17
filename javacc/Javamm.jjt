@@ -132,7 +132,7 @@ void ImportDeclarationDot() #void : { Token id; } {
 
 void ClassDeclaration() #Class : { Token class_id, extend_class; } {
 	<CLASS> class_id=<ID> { jjtThis.identity=class_id.image; }
-	  ( <EXTENDS> extend_class=<ID> { jjtThis.extend=extend_class.image; } )? <OCURLY>
+	  ( <EXTENDS> extend_class=<ID> { jjtThis.extend=extend_class.image; } #Extends )? <OCURLY>
 		( VarDeclaration() )*
 		( MethodDeclaration() )*
 	<CCURLY>
@@ -180,8 +180,6 @@ String Type() #void : { String return_value; Token id; } {
 	<BOOLEAN> { return_value = "boolean"; }
 	|
 	id=<ID> { return_value = id.image; }
-	|
-	<VOID> { return_value = "void"; }
 
 	{ return return_value; }
 }
@@ -194,11 +192,9 @@ void Statement() #void : {} {
     WhileStatement()
 	|
 	( LOOKAHEAD(2)
-    VariableInit()
-    |
-    ArrayInit()
-	|
-	Expression()
+        id=<ID> { jjtThis.identity=id; } (VariableInit() | ArrayInit())
+        |
+        Expression()
 	)
 }
 
@@ -221,13 +217,11 @@ void WhileStatement() #WHILE : {} {
 }
 
 void VariableInit() : { Token id; } {
-    id=<ID> { jjtThis.identity=id; }
-        <EQUALS> Expression() <SEMICOL>
+    <EQUALS> Expression() <SEMICOL>
 }
 
 void ArrayInit() : { Token id; } {
-    id=<ID> { jjtThis.identity=id; }
-        <OSBRACKET> Expression() <CSBRACKET> <EQUALS> Expression() <SEMICOL>
+    <OSBRACKET> Expression() <CSBRACKET> <EQUALS> Expression() <SEMICOL>
 }
 
 void Expression() #void : { } {
@@ -267,7 +261,7 @@ void ExpressionTerminal() #void : { Token id;} {
     |
     id=<FALSE> {jjtThis.identity=id.image;} #False
     |
-    <THIS> #This //faz sentido guardar isto num token?
+    <THIS> #This
     |
     id=<ID> {jjtThis.identity=id.image;} #ID
     |
