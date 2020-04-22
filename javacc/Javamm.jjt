@@ -15,9 +15,8 @@ public class Javamm {
         return numErrors;
     }
     static final int MAX_NUM_ERRORS = 16;
-	
 
-	public void whileErrorRecovery(ParseException e){
+	public void whileErrorRecovery(ParseException e) throws ParseException{
 	        System.out.println(e.toString());  // print the error message
             Token t;
             this.numErrors++; // Increase the number of errors since execution
@@ -107,7 +106,7 @@ void ImportDeclaration() #Import : { Token id; } {
 	<SEMICOL>
 }
 
-void ImportDeclarationDot() #void : { Token id; } {
+void ImportDeclarationDot() : { Token id; } {
     (<DOT> id=<ID> { jjtThis.identity = id.image; }  ImportDeclarationDot())
     |
     <OPAREN> [ Type() (<COL> Type())* ] <CPAREN>
@@ -115,10 +114,15 @@ void ImportDeclarationDot() #void : { Token id; } {
 
 void ClassDeclaration() #Class : { Token class_id, extend_class; } {
 	<CLASS> class_id=<ID> { jjtThis.identity=class_id.image; }
-	  ( <EXTENDS> extend_class=<ID> { jjtThis.extend=extend_class.image; } #Extends2 )? <OCURLY>
+	  ( <EXTENDS> extend_class=<ID> { jjtThis.extend=extend_class.image; } #Extends )? <OCURLY>
 		( VarDeclaration() )*
 		( MethodDeclaration() )*
 	<CCURLY>
+}
+
+void VarDeclaration() #Var : { String type; Token id; } {
+	type=Type() id=<ID> { jjtThis.type=type; jjtThis.identity=id.image; }
+	    [ <EQUALS> <OCURLY> (<NUM>|<ID>) (<COL> (<NUM>|<ID>))* <CCURLY> ]<SEMICOL> //curly solve
 }
 
 void MethodDeclaration() #void : { } {
@@ -133,15 +137,9 @@ void MainDeclaration() #Main : { Token id; } {
 	<CCURLY>
 }
 
-void VarDeclaration() #Var : { String type; Token id; } {
-	type=Type() id=<ID> { jjThis.type=type; jjtThis.identity=id.image; }
-	    [ <EQUALS> <OCURLY> (<NUM>|<ID>) (<COL> (<NUM>|<ID>))* <CCURLY> ]<SEMICOL> //curly solve
-}
-
 void FunctionDeclaration() #Method : { String type; Token id; } {
 	type=Type() id=<ID> { jjtThis.identity=id.image; jjtThis.type=type; } <OPAREN>
 	    FunctionArguments() <CPAREN> <OCURLY>
-
 		( LOOKAHEAD(2) VarDeclaration() )*
 		( Statement() )*
 		<RETURN> Expression() <SEMICOL>
@@ -156,7 +154,7 @@ void FunctionArguments() #Arguments : { } {
     [ Argument() (<COL> Argument())* ]
 }
 
-String Type() #void : { String return_value; Token id; } {
+String Type() : { String return_value; Token id; } {
 	<INT> { return_value = "int"; }
 	[<OSBRACKET> <CSBRACKET> { return_value = "int[]"; }]
 	|
@@ -167,7 +165,7 @@ String Type() #void : { String return_value; Token id; } {
 	{ return return_value; }
 }
 
-void Statement() #void : {} {
+void Statement() #void: {} {
 	(<OCURLY> (Statement())* <CCURLY>)
 	|
 	IfStatement()
@@ -175,16 +173,16 @@ void Statement() #void : {} {
     WhileStatement()
 	|
 	( LOOKAHEAD(2)
-        id=<ID> { jjtThis.identity=id; } (VariableInit() | ArrayInit())
+        VariableInit()
         |
-        Expression()
+        Expression() <SEMICOL>
 	)
 }
 
 void IfStatement() #If : {} {
     <IF> <OPAREN> Expression() <CPAREN>
     Statement() //Then 
-    <ELSE>  Statement() //else //tdrc
+    <ELSE>  Statement() //else
 }
 
 void WhileStatement() #While : {} {
@@ -198,17 +196,18 @@ void WhileStatement() #While : {} {
 }
 
 void VariableInit() : { Token id; } {
-    <EQUALS> Expression() <SEMICOL>
+    id=<ID> { jjtThis.identity=id.image; }
+
+    (<EQUALS> Expression() <SEMICOL> #VarInit
+    |
+    <OSBRACKET> Expression() #Index <CSBRACKET> <EQUALS> Expression() <SEMICOL> #ArrayInit )
+    <SEMICOL>
 }
 
-void ArrayInit() : { Token id; } {
-    <OSBRACKET> Expression() <CSBRACKET> <EQUALS> Expression() <SEMICOL>
-}
-
-void Expression() #void : { } {
+void Expression() : { } {
     //We will now dispose operators from lowest to highest precedence:
     // &&, <, + -, * /, new, !, (), ., []
-    LessThan() (<AND> LessThan())*
+    LessThan() (<AND> LessThan() #And )*
  }
 
 void LessThan() : {} {
@@ -230,17 +229,17 @@ void MultiplicationDivision() : { Token operator; } {
 }
 
 void ExpressionIntermediateDivision() : {} {
-    <NOT> ExpressionIntermediateDivision() #Not //tdrc
+    <NOT> ExpressionIntermediateDivision() #Not
     |
     ExpressionTerminal() [<DOT> ExpressionDot()]
 }
 
-void ExpressionTerminal() #void : { Token id;} {
-    id=<NUM> {jjtThis.identity=Integer.parseInt(id.image);} #Integer
+void ExpressionTerminal() #Terminal : { Token id;} {
+    id=<NUM> {jjtThis.identity=id.image; jjtThis.type="int"; } #Integer
     |
-    id=<TRUE> {jjtThis.identity=id.image;} #True
+    id=<TRUE> {jjtThis.identity=id.image; jjtThis.type="boolean";} #True
     |
-    id=<FALSE> {jjtThis.identity=id.image;} #False
+    id=<FALSE> {jjtThis.identity=id.image; jjtThis.type="boolean"; } #False
     |
     <THIS> #This
     |
@@ -251,17 +250,18 @@ void ExpressionTerminal() #void : { Token id;} {
     ExpressionNew()
 }
 
-void ExpressionDot() #void : { } {
-    <LEN>
+void ExpressionDot() : { Token id; } {
+    <LEN> #Length
     |
-    (LOOKAHEAD(2) ExpressionTerminal() <DOT>)* <ID> <OPAREN> [Expression() (<COL> Expression())*] <CPAREN> //tdrc
+    (LOOKAHEAD(2) ExpressionTerminal() <DOT>)* id=<ID> <OPAREN> [Expression() (<COL> Expression())*] <CPAREN>
+        { jjtThis.identity=id.image; }
 }
 
 
-void ExpressionNew() #void : { Token return_value; } {
+void ExpressionNew() : { Token return_value; } {
     <NEW>
     (
-        <INT> <OSBRACKET> Expression() <CSBRACKET> { jjThis.returns="int[]"; }
+        <INT> <OSBRACKET> Expression() <CSBRACKET> { jjtThis.returns="int[]"; }
         |
         return_value=<ID> { jjtThis.returns=return_value.image; }  <OPAREN> <CPAREN>
     )

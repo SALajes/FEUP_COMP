@@ -32,7 +32,6 @@ public class Main {
     // From Javamm.jjt
     // public static void main(String args[]) throws RuntimeException {
 	// 	try{
-	// 	    Javamm.numErrors = 0;
 	// 	    Javamm javamm = new Javamm(new java.io.FileInputStream(args[0]));
 	// 	    SimpleNode root = javamm.Start();
 
