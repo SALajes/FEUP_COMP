@@ -10,35 +10,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 public class Javamm {
+    static final int MAX_NUM_ERRORS = 16;
+
     private int numErrors = 0;
+
     public int getNumErrors(){
         return numErrors;
     }
-    static final int MAX_NUM_ERRORS = 16;
-
-	public void whileErrorRecovery(ParseException e) throws ParseException{
-	        System.out.println(e.toString());  // print the error message
-            Token t;
-            this.numErrors++; // Increase the number of errors since execution
-
-            if (this.numErrors > Javamm.MAX_NUM_ERRORS) {
-                System.out.println("Too many errors. Aborting. (" + this.numErrors + ")");
-                throw e;
-            }
-
-            while(true) {
-              t = getToken(1); // Skip the tokens until the close of parenthesis
-              if(t.kind == CPAREN || t.kind == CCURLY){
-                t = getNextToken();
-                t=getToken(1);
-                if(t.kind != CPAREN)
-                    break;
-              }
-              else if(t.kind == OCURLY)
-                break;
-              else t = getNextToken();
-            }
-	}
 }
 
 PARSER_END(Javamm)
@@ -102,14 +80,14 @@ SimpleNode Start() : { } {
 void ImportDeclaration() #Import : { Token id; } {
 	<IMPORT>  [<STATIC> ]
 	id=<ID> { jjtThis.identity=id.image; } [ ImportDeclarationDot() ]
-	[Type()]
+	[ <VOID> | Type() ]
 	<SEMICOL>
 }
 
 void ImportDeclarationDot() : { String type; Token id; } {
     (<DOT> id=<ID> { jjtThis.identity = id.image; }  ImportDeclarationDot())
     |
-    <OPAREN> [ type=Type() (<COL> Type())* { jjtThis.type = type; } ] <CPAREN>
+    <OPAREN> [ <VOID> | ( type=Type() (<COL> Type())* ) { jjtThis.type = type; } ] <CPAREN>
 }
 
 void ClassDeclaration() #Class : { Token class_id, extend_class; } {
@@ -128,7 +106,6 @@ void VarDeclaration() #Var : { String type; Token id; } {
 void MethodDeclaration() #void : { } {
 	<PUBLIC> ( MainDeclaration() | FunctionDeclaration())
 }
-
 
 void MainDeclaration() #Main : { Token id; } {
 	<STATIC> <VOID> <MAIN> <OPAREN> <STRING> <OSBRACKET> <CSBRACKET> id=<ID> { jjtThis.identity=id.image; } <CPAREN> <OCURLY>
@@ -154,9 +131,10 @@ void FunctionArguments() #Arguments : { } {
     [ Argument() (<COL> Argument())* ]
 }
 
-String Type() : { Token id; } {
-	<INT> { return "int"; }
-	[<OSBRACKET> <CSBRACKET> { return "int[]"; } ]
+String Type() : { String return_value; Token id; } {
+	<INT> { return_value = "int"; }
+	[<OSBRACKET> <CSBRACKET> { return_value = "int[]"; } ]
+	{return return_value;}
 	|
 	<BOOLEAN> { return "boolean"; }
 	|
@@ -188,7 +166,27 @@ void WhileStatement() #While : {} {
     	try {
     	    (Expression())* <CPAREN> // We only need to check for errors inside the while parenthesis
     	} catch(ParseException e) {
-            this.whileErrorRecovery(e);
+            System.out.println(e.toString());  // print the error message
+            Token t;
+            this.numErrors++; // Increase the number of errors since execution
+
+            if (this.numErrors > Javamm.MAX_NUM_ERRORS) {
+                System.out.println("Too many errors. Aborting. (" + this.numErrors + ")");
+                throw e;
+            }
+
+            while(true) {
+              t = getToken(1); // Skip the tokens until the close of parenthesis
+              if(t.kind == CPAREN || t.kind == CCURLY){
+                t = getNextToken();
+                t=getToken(1);
+                if(t.kind != CPAREN)
+                    break;
+              }
+              else if(t.kind == OCURLY)
+                break;
+              else t = getNextToken();
+            }
     	}
         Statement()
 }
@@ -196,9 +194,11 @@ void WhileStatement() #While : {} {
 void VariableInit() : { Token id; } {
     id=<ID> { jjtThis.identity=id.image; }
 
-    (<EQUALS> Expression() <SEMICOL> #VarInit
-    |
-    <OSBRACKET> Expression() #Index <CSBRACKET> <EQUALS> Expression() <SEMICOL> #ArrayInit )
+    (
+        <EQUALS> Expression() #VarInit
+        |
+        <OSBRACKET> Expression() #Index <CSBRACKET> <EQUALS> Expression() #ArrayInit
+    )
     <SEMICOL>
 }
 
@@ -241,7 +241,7 @@ void ExpressionTerminal() #Terminal : { Token id;} {
     |
     <THIS> #This
     |
-    id=<ID> {jjtThis.identity=id.image;} #ID
+    id=<ID> {jjtThis.identity=id.image;} #ID [ <OSBRACKET> Expression() <CSBRACKET> ]
     |
     <OPAREN> Expression() <CPAREN>
     |
@@ -254,7 +254,6 @@ void ExpressionDot() : { Token id; } {
     (LOOKAHEAD(2) ExpressionTerminal() <DOT>)* id=<ID> <OPAREN> [Expression() (<COL> Expression())*] <CPAREN>
         { jjtThis.identity=id.image; }
 }
-
 
 void ExpressionNew() : { Token return_value; } {
     <NEW>
