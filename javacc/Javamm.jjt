@@ -106,10 +106,10 @@ void ImportDeclaration() #Import : { Token id; } {
 	<SEMICOL>
 }
 
-void ImportDeclarationDot() : { Token id; } {
+void ImportDeclarationDot() : { String type; Token id; } {
     (<DOT> id=<ID> { jjtThis.identity = id.image; }  ImportDeclarationDot())
     |
-    <OPAREN> [ Type() (<COL> Type())* ] <CPAREN>
+    <OPAREN> [ type=Type() (<COL> Type())* { jjtThis.type = type; } ] <CPAREN>
 }
 
 void ClassDeclaration() #Class : { Token class_id, extend_class; } {
@@ -154,15 +154,13 @@ void FunctionArguments() #Arguments : { } {
     [ Argument() (<COL> Argument())* ]
 }
 
-String Type() : { String return_value; Token id; } {
-	<INT> { return_value = "int"; }
-	[<OSBRACKET> <CSBRACKET> { return_value = "int[]"; }]
+String Type() : { Token id; } {
+	<INT> { return "int"; }
+	[<OSBRACKET> <CSBRACKET> { return "int[]"; } ]
 	|
-	<BOOLEAN> { return_value = "boolean"; }
+	<BOOLEAN> { return "boolean"; }
 	|
-	id=<ID> { return_value = id.image; }
-
-	{ return return_value; }
+	id=<ID> { return id.image; }
 }
 
 void Statement() #void: {} {
