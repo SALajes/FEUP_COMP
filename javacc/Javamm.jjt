@@ -122,7 +122,7 @@ void MethodDeclaration() #Method : { String type; Token id; } {
 	<CCURLY>
 }
 
-void MethodArguments() : { } {
+void MethodArguments() #void : { } {
     [ Argument() (<COL> Argument())* ]
 }
 
@@ -192,7 +192,6 @@ void WhileStatement() #While : {} {
 
 void VariableInit() : { Token id; } {
     id=<ID>
-
     (
         (<EQUALS> Expression()  { jjtThis.identity=id.image; } #VarInit )
         |
@@ -205,7 +204,7 @@ void Expression() : { } {
     //We will now dispose operators from lowest to highest precedence:
     // &&, <, + -, * /, new, !, (), ., []
     LessThan() (<AND> LessThan() #And(2) )*
- }
+}
 
 void LessThan() : {} {
     AdditionSubtraction() (<LTHAN> AdditionSubtraction() #LessThan(2))*
@@ -254,7 +253,6 @@ void ExpressionDot() : { Token id; } {
     |
     (LOOKAHEAD(2) ExpressionTerminal() <DOT>)* id=<ID> <OPAREN> [Expression() (<COL> Expression())*] <CPAREN>)
     { jjtThis.identity=id.image; }
-
 }
 
 void ExpressionNew() : { Token return_value; } {
