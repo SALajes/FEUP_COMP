@@ -195,44 +195,44 @@ void VariableInit() : { Token id; } {
     (
         (<EQUALS> Expression()  { jjtThis.identity=id.image; } #VarInit )
         |
-        (<OSBRACKET> Expression() #Index <CSBRACKET> <EQUALS> Expression()  { jjtThis.identity=id.image; } #ArrayInit)
+        (<OSBRACKET> (Expression() #Index) <CSBRACKET> <EQUALS> Expression()  { jjtThis.identity=id.image; } #ArrayInit)
     )
     <SEMICOL>
 }
 
-void Expression() : { } {
+void Expression() #void : { } {
     //We will now dispose operators from lowest to highest precedence:
     // &&, <, + -, * /, new, !, (), ., []
-    LessThan() (<AND> LessThan() #And )*
+    LessThan() (<AND> LessThan() #And(2) )*
  }
 
-void LessThan() : {} {
-    AdditionSubtraction() (<LTHAN> AdditionSubtraction() #LessThan)*
+void LessThan() #void : {} {
+    AdditionSubtraction() (<LTHAN> AdditionSubtraction() #LessThan(2))*
 }
 
-void AdditionSubtraction() : {Token operator;} {
+void AdditionSubtraction() #void : {Token operator;} {
     MultiplicationDivision()
     (
         (operator=<PLUS> | operator=<MINUS>) MultiplicationDivision() { jjtThis.setOperator(operator.image); }
-        #AdditionSubtraction
+        #AdditionSubtraction(2)
     )*
 }
 
-void MultiplicationDivision() : { Token operator; } {
+void MultiplicationDivision() #void : { Token operator; } {
     ExpressionIntermediateDivision()
     (
         (operator=<ASTERISK> | operator=<FSLASH> ) ExpressionTerminal() { jjtThis.setOperator(operator.image); }
-        #MultiplicationDivision
+        #MultiplicationDivision(2)
     )*
 }
 
-void ExpressionIntermediateDivision() : {} {
+void ExpressionIntermediateDivision() #void : {} {
     <NOT> ExpressionIntermediateDivision() #Not
     |
     ExpressionTerminal() [<DOT> ExpressionDot()]
 }
 
-void ExpressionTerminal() : { Token id;} {
+void ExpressionTerminal() #Term : { Token id;} {
     id=<NUM> {jjtThis.identity=id.image; jjtThis.type="int"; } #Integer
     |
     <TRUE> {jjtThis.identity="true"; jjtThis.type="boolean";} #True
@@ -241,7 +241,7 @@ void ExpressionTerminal() : { Token id;} {
     |
     <THIS> #This
     |
-    id=<ID> {jjtThis.identity=id.image;} #ID [ <OSBRACKET> Expression() #Index <CSBRACKET> ]
+    id=<ID> {jjtThis.identity=id.image;} #ID [ <OSBRACKET> (Expression() #Index) <CSBRACKET> ]
     |
     <OPAREN> Expression() <CPAREN>
     |
@@ -255,10 +255,10 @@ void ExpressionDot() : { Token id; } {
     { jjtThis.identity=id.image; }
 }
 
-void ExpressionNew() : { Token return_value; } {
+void ExpressionNew()  : { Token return_value; } {
     <NEW>
     (
-        <INT> <OSBRACKET> Expression() #Index <CSBRACKET> { jjtThis.setReturnType("int[]"); }
+        <INT> <OSBRACKET> (Expression() #Index) <CSBRACKET> { jjtThis.setReturnType("int[]"); }
         |
         return_value=<ID> { jjtThis.setReturnType(return_value.image); }  <OPAREN> <CPAREN>
     )
