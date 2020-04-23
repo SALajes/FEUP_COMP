@@ -15,7 +15,7 @@ class SimpleNode implements Node {
   protected String identity;
   protected String extend;
   protected String type;
-  protected String returns;
+  protected String return_type;
 
   public SimpleNode(int i) {
     id = i;
@@ -67,10 +67,7 @@ class SimpleNode implements Node {
     return JavammTreeConstants.jjtNodeName[id];
   }
   public String toString(String prefix) {
-    if(this.identity == null)
       return prefix + toString();
-    else
-      return prefix + toString() + " " + this.identity;
   }
 
   /* Override this method if you want to customize how the node dumps
@@ -98,7 +95,12 @@ class SimpleNode implements Node {
     return symbol_table;
   }
 
-
+  public String getReturnType(){
+    return this.return_type;
+  }
+  public void setReturnType(String return_type){
+    this.return_type = return_type;
+  }
 }
 
 /* JavaCC - OriginalChecksum=64dd3e3b2acf6bee9393de7b2d2f7b42 (do not edit this line) */
