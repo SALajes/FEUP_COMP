@@ -11,5 +11,10 @@ class ASTLessThan extends SimpleNode {
     super(p, id);
   }
 
+  @Override
+  public String toString(){
+    return "<";
+  }
+
 }
 /* JavaCC - OriginalChecksum=a49d16480236596266a2592809b263e3 (do not edit this line) */

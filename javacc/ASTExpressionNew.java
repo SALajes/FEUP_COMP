@@ -11,5 +11,10 @@ class ASTExpressionNew extends SimpleNode {
     super(p, id);
   }
 
+  @Override
+  public String toString(){
+    return "new " + this.getReturnType();
+  }
+
 }
 /* JavaCC - OriginalChecksum=a9713694f6cac9b23d6882fd83238429 (do not edit this line) */

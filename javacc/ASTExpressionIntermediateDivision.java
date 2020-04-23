@@ -12,5 +12,6 @@ class ASTExpressionIntermediateDivision extends SimpleNode {
     super(p, id);
   }
 
+
 }
 /* JavaCC - OriginalChecksum=89822b523ca749c0f3dc49e8d793626d (do not edit this line) */

@@ -12,5 +12,9 @@ class ASTNot extends SimpleNode {
     super(p, id);
   }
 
+  @Override
+  public String toString(){
+    return "!";
+  }
 }
 /* JavaCC - OriginalChecksum=b66090c93e68e0e5e6bff2561dcc7c8c (do not edit this line) */
