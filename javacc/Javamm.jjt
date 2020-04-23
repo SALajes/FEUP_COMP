@@ -162,41 +162,41 @@ void IfStatement() #If : {} {
 
 void WhileStatement() #While : {} {
     <WHILE> <OPAREN>
-    	try {
-    	    (Expression())* <CPAREN> // We only need to check for errors inside the while parenthesis
-    	} catch(ParseException e) {
-            System.out.println(e.toString());  // print the error message
-            Token t;
-            this.numErrors++; // Increase the number of errors since execution
+    try {
+        (Expression())* <CPAREN> // We only need to check for errors inside the while parenthesis
+    } catch(ParseException e) {
+        System.out.println(e.toString());  // print the error message
+        Token t;
+        this.numErrors++; // Increase the number of errors since execution
 
-            if (this.numErrors > Javamm.MAX_NUM_ERRORS) {
-                System.out.println("Too many errors. Aborting. (" + this.numErrors + ")");
-                throw e;
-            }
+        if (this.numErrors > Javamm.MAX_NUM_ERRORS) {
+            System.out.println("Too many errors. Aborting. (" + this.numErrors + ")");
+            throw e;
+        }
 
-            while(true) {
-              t = getToken(1); // Skip the tokens until the close of parenthesis
-              if(t.kind == CPAREN || t.kind == CCURLY){
-                t = getNextToken();
-                t=getToken(1);
-                if(t.kind != CPAREN)
-                    break;
-              }
-              else if(t.kind == OCURLY)
+        while(true) {
+          t = getToken(1); // Skip the tokens until the close of parenthesis
+          if(t.kind == CPAREN || t.kind == CCURLY){
+            t = getNextToken();
+            t=getToken(1);
+            if(t.kind != CPAREN)
                 break;
-              else t = getNextToken();
-            }
-    	}
-        Statement()
+          }
+          else if(t.kind == OCURLY)
+            break;
+          else t = getNextToken();
+        }
+    }
+    Statement()
 }
 
 void VariableInit() : { Token id; } {
-    id=<ID> { jjtThis.identity=id.image; }
+    id=<ID>
 
     (
-        <EQUALS> Expression() #VarInit
+        (<EQUALS> Expression()  { jjtThis.identity=id.image; } #VarInit )
         |
-        <OSBRACKET> Expression() #Index <CSBRACKET> <EQUALS> Expression() #ArrayInit
+        (<OSBRACKET> Expression() #Index <CSBRACKET> <EQUALS> Expression()  { jjtThis.identity=id.image; } #ArrayInit)
     )
     <SEMICOL>
 }
@@ -204,24 +204,26 @@ void VariableInit() : { Token id; } {
 void Expression() : { } {
     //We will now dispose operators from lowest to highest precedence:
     // &&, <, + -, * /, new, !, (), ., []
-    LessThan() (<AND> LessThan() #And )*
+    LessThan() (<AND> LessThan() #And(2) )*
  }
 
 void LessThan() : {} {
-    AdditionSubtraction() (<LTHAN> AdditionSubtraction())*
+    AdditionSubtraction() (<LTHAN> AdditionSubtraction() #LessThan(2))*
 }
 
 void AdditionSubtraction() : {Token operator;} {
     MultiplicationDivision()
     (
-        (operator=<PLUS> | operator=<MINUS>) MultiplicationDivision() { jjtThis.identity=operator.image; }
+        (operator=<PLUS> | operator=<MINUS>) MultiplicationDivision() { jjtThis.setOperator(operator.image); }
+        #AdditionSubtraction(2)
     )*
 }
 
 void MultiplicationDivision() : { Token operator; } {
     ExpressionIntermediateDivision()
     (
-        (operator=<ASTERISK> | operator=<FSLASH> ) ExpressionTerminal() { jjtThis.identity=operator.image; }
+        (operator=<ASTERISK> | operator=<FSLASH> ) ExpressionTerminal() { jjtThis.setOperator(operator.image); }
+        #MultiplicationDivision(2)
     )*
 }
 
@@ -234,13 +236,13 @@ void ExpressionIntermediateDivision() : {} {
 void ExpressionTerminal() #Terminal : { Token id;} {
     id=<NUM> {jjtThis.identity=id.image; jjtThis.type="int"; } #Integer
     |
-    id=<TRUE> {jjtThis.identity=id.image; jjtThis.type="boolean";} #True
+    <TRUE> {jjtThis.identity="true"; jjtThis.type="boolean";} #True
     |
-    id=<FALSE> {jjtThis.identity=id.image; jjtThis.type="boolean"; } #False
+    <FALSE> {jjtThis.identity="false"; jjtThis.type="boolean"; } #False
     |
     <THIS> #This
     |
-    id=<ID> {jjtThis.identity=id.image;} #ID [ <OSBRACKET> Expression() <CSBRACKET> ]
+    id=<ID> {jjtThis.identity=id.image;} #ID [ <OSBRACKET> Expression() #Index <CSBRACKET> ]
     |
     <OPAREN> Expression() <CPAREN>
     |
@@ -248,17 +250,18 @@ void ExpressionTerminal() #Terminal : { Token id;} {
 }
 
 void ExpressionDot() : { Token id; } {
-    <LEN> #Length
+    (id=<LEN>
     |
-    (LOOKAHEAD(2) ExpressionTerminal() <DOT>)* id=<ID> <OPAREN> [Expression() (<COL> Expression())*] <CPAREN>
-        { jjtThis.identity=id.image; }
+    (LOOKAHEAD(2) ExpressionTerminal() <DOT>)* id=<ID> <OPAREN> [Expression() (<COL> Expression())*] <CPAREN>)
+    { jjtThis.identity=id.image; }
+
 }
 
 void ExpressionNew() : { Token return_value; } {
     <NEW>
     (
-        <INT> <OSBRACKET> Expression() <CSBRACKET> { jjtThis.returns="int[]"; }
+        <INT> <OSBRACKET> Expression() <CSBRACKET> { jjtThis.setReturnType("int[]"); }
         |
-        return_value=<ID> { jjtThis.returns=return_value.image; }  <OPAREN> <CPAREN>
+        return_value=<ID> { jjtThis.setReturnType(return_value.image); }  <OPAREN> <CPAREN>
     )
 }
