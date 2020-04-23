@@ -12,5 +12,10 @@ class ASTVarInit extends SimpleNode {
     super(p, id);
   }
 
+  @Override
+  public String toString(){
+    return this.identity + " = ";
+  }
+
 }
 /* JavaCC - OriginalChecksum=fbaeb98e7c33909d7cc13b721b1a7b21 (do not edit this line) */

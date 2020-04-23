@@ -12,5 +12,6 @@ class ASTVariableInit extends SimpleNode {
     super(p, id);
   }
 
+
 }
 /* JavaCC - OriginalChecksum=214a877005ca30c0c4f59a6543dd794e (do not edit this line) */

@@ -11,5 +11,10 @@ class ASTInteger extends SimpleNode {
     super(p, id);
   }
 
+  @Override
+  public String toString(){
+    return this.identity;
+  }
+
 }
 /* JavaCC - OriginalChecksum=b270f48c5b9de9cbf70f76636e591e23 (do not edit this line) */
