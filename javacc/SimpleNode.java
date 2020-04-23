@@ -66,11 +66,9 @@ class SimpleNode implements Node {
   public String toString() {
     return JavammTreeConstants.jjtNodeName[id];
   }
+
   public String toString(String prefix) {
-    if(this.identity == null)
       return prefix + toString();
-    else
-      return prefix + toString() + " " + this.identity;
   }
 
   /* Override this method if you want to customize how the node dumps

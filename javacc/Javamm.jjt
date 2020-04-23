@@ -77,61 +77,60 @@ SimpleNode Start() : { } {
 	{ return jjtThis; }
 }
 
-void ImportDeclaration() #Import : { Token id; } {
-	<IMPORT>  [<STATIC> ]
-	id=<ID> { jjtThis.identity=id.image; } [ ImportDeclarationDot() ]
-	[ <VOID> | Type() ]
+void ImportDeclaration() #Import : { String type; Token t; } {
+	<IMPORT>  [ <STATIC> { jjtThis.setStatic(true); } ]
+	t=<ID> { jjtThis.setClassName(t.image); }
+	[ <DOT> t=<ID> {jjtThis.setMethodName(t.image); } ]
+	[ <OPAREN> ParamList() <CPAREN> ]
+	[ <VOID> | type=Type() {jjtThis.setReturnType(type); } ]
 	<SEMICOL>
 }
 
-void ImportDeclarationDot() : { String type; Token id; } {
-    (<DOT> id=<ID> { jjtThis.identity = id.image; }  ImportDeclarationDot())
-    |
-    <OPAREN> [ <VOID> | ( type=Type() (<COL> Type())* ) { jjtThis.type = type; } ] <CPAREN>
+void ParamList() #void : { } {
+    [ <VOID> | Type() (<COL> Type())* ]
 }
 
 void ClassDeclaration() #Class : { Token class_id, extend_class; } {
-	<CLASS> class_id=<ID> { jjtThis.identity=class_id.image; }
-	  ( <EXTENDS> extend_class=<ID> { jjtThis.extend=extend_class.image; } #Extends )? <OCURLY>
+	<CLASS> class_id=<ID> { jjtThis.setClassName(class_id.image); }
+	  ( <EXTENDS> extend_class=<ID> { jjtThis.setExt(extend_class.image); } )? <OCURLY>
 		( VarDeclaration() )*
-		( MethodDeclaration() )*
+		( MethodsDeclaration() )*
 	<CCURLY>
 }
 
-void VarDeclaration() #Var : { String type; Token id; } {
-	type=Type() id=<ID> { jjtThis.type=type; jjtThis.identity=id.image; }
-	    [ <EQUALS> <OCURLY> (<NUM>|<ID>) (<COL> (<NUM>|<ID>))* <CCURLY> ]<SEMICOL> //curly solve
+void VarDeclaration() : { String type; Token id; } {
+	type=Type() id=<ID> { jjtThis.setType(type); jjtThis.setVarName(id.image); } <SEMICOL>
 }
 
-void MethodDeclaration() #void : { } {
-	<PUBLIC> ( MainDeclaration() | FunctionDeclaration())
+void MethodsDeclaration() #void : { } {
+	<PUBLIC> ( MainDeclaration() | MethodDeclaration())
 }
 
 void MainDeclaration() #Main : { Token id; } {
-	<STATIC> <VOID> <MAIN> <OPAREN> <STRING> <OSBRACKET> <CSBRACKET> id=<ID> { jjtThis.identity=id.image; } <CPAREN> <OCURLY>
+	<STATIC> <VOID> <MAIN> <OPAREN> <STRING> <OSBRACKET> <CSBRACKET> id=<ID> { jjtThis.setArgs(id.image); } <CPAREN> <OCURLY>
 		( LOOKAHEAD(2) VarDeclaration() )*
 		( Statement() ) *
 	<CCURLY>
 }
 
-void FunctionDeclaration() #Method : { String type; Token id; } {
-	type=Type() id=<ID> { jjtThis.identity=id.image; jjtThis.type=type; } <OPAREN>
-	    FunctionArguments() <CPAREN> <OCURLY>
+void MethodDeclaration() #Method : { String type; Token id; } {
+	type=Type() id=<ID> { jjtThis.setMethodName(id.image); jjtThis.setReturnType(type); } <OPAREN>
+	    MethodArguments() <CPAREN> <OCURLY>
 		( LOOKAHEAD(2) VarDeclaration() )*
 		( Statement() )*
 		<RETURN> Expression() <SEMICOL>
 	<CCURLY>
 }
 
-void Argument() : { String type; Token id; } {
-    type=Type() id=<ID> { jjtThis.type=type; jjtThis.identity=id.image; }
-}
-
-void FunctionArguments() #Arguments : { } {
+void MethodArguments() : { } {
     [ Argument() (<COL> Argument())* ]
 }
 
-String Type() : { String return_value; Token id; } {
+void Argument() #Arg : { String type; Token id; } {
+    type=Type() id=<ID> { jjtThis.type=type; jjtThis.identity=id.image; }
+}
+
+String Type() #void : { String return_value; Token id; } {
 	<INT> { return_value = "int"; }
 	[<OSBRACKET> <CSBRACKET> { return_value = "int[]"; } ]
 	{return return_value;}
