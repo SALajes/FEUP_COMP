@@ -14,7 +14,7 @@ class ASTArrayInit extends SimpleNode {
 
   @Override
   public String toString(){
-    return "Array " + this.identity;
+    return "Array " + this.identity + " = ";
   }
 }
 /* JavaCC - OriginalChecksum=ae6d23a8fc26b05b61ab851153c86c0c (do not edit this line) */

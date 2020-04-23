@@ -27,6 +27,5 @@ class ASTAdditionSubtraction extends SimpleNode {
   public String toString(){
     return this.operator;
   }
-
 }
 /* JavaCC - OriginalChecksum=b661bd7b050d3e1baf919c7573f0190a (do not edit this line) */

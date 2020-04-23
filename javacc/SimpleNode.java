@@ -96,12 +96,18 @@ class SimpleNode implements Node {
     return symbol_table;
   }
 
+  public String getType(){
+    return this.type;
+  }
+
   public String getReturnType(){
     return this.return_type;
   }
   public void setReturnType(String return_type){
     this.return_type = return_type;
   }
+
+
 }
 
 /* JavaCC - OriginalChecksum=64dd3e3b2acf6bee9393de7b2d2f7b42 (do not edit this line) */

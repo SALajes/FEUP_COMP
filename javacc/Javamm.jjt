@@ -203,18 +203,18 @@ void VariableInit() : { Token id; } {
 void Expression() : { } {
     //We will now dispose operators from lowest to highest precedence:
     // &&, <, + -, * /, new, !, (), ., []
-    LessThan() (<AND> LessThan() #And(2) )*
-}
+    LessThan() (<AND> LessThan() #And )*
+ }
 
 void LessThan() : {} {
-    AdditionSubtraction() (<LTHAN> AdditionSubtraction() #LessThan(2))*
+    AdditionSubtraction() (<LTHAN> AdditionSubtraction() #LessThan)*
 }
 
 void AdditionSubtraction() : {Token operator;} {
     MultiplicationDivision()
     (
         (operator=<PLUS> | operator=<MINUS>) MultiplicationDivision() { jjtThis.setOperator(operator.image); }
-        #AdditionSubtraction(2)
+        #AdditionSubtraction
     )*
 }
 
@@ -222,7 +222,7 @@ void MultiplicationDivision() : { Token operator; } {
     ExpressionIntermediateDivision()
     (
         (operator=<ASTERISK> | operator=<FSLASH> ) ExpressionTerminal() { jjtThis.setOperator(operator.image); }
-        #MultiplicationDivision(2)
+        #MultiplicationDivision
     )*
 }
 
@@ -232,7 +232,7 @@ void ExpressionIntermediateDivision() : {} {
     ExpressionTerminal() [<DOT> ExpressionDot()]
 }
 
-void ExpressionTerminal() #Terminal : { Token id;} {
+void ExpressionTerminal() : { Token id;} {
     id=<NUM> {jjtThis.identity=id.image; jjtThis.type="int"; } #Integer
     |
     <TRUE> {jjtThis.identity="true"; jjtThis.type="boolean";} #True
@@ -258,7 +258,7 @@ void ExpressionDot() : { Token id; } {
 void ExpressionNew() : { Token return_value; } {
     <NEW>
     (
-        <INT> <OSBRACKET> Expression() <CSBRACKET> { jjtThis.setReturnType("int[]"); }
+        <INT> <OSBRACKET> Expression() #Index <CSBRACKET> { jjtThis.setReturnType("int[]"); }
         |
         return_value=<ID> { jjtThis.setReturnType(return_value.image); }  <OPAREN> <CPAREN>
     )
