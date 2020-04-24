@@ -10,6 +10,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 public class Javamm {
+    public String scope = "global";
+
+    public SymbolTable symbol_table = new SymbolTable();
+
     static final int MAX_NUM_ERRORS = 16;
 
     private int numErrors = 0;
@@ -99,7 +103,9 @@ void ClassDeclaration() #Class : { Token class_id, extend_class; } {
 }
 
 void VarDeclaration() : { String type; Token id; } {
-	type=Type() id=<ID> { jjtThis.setType(type); jjtThis.setVarName(id.image); } <SEMICOL>
+	type=Type() id=<ID>
+	{ jjtThis.setType(type); jjtThis.setVarName(id.image); this.symbol_table.addVariable(this.scope, type, id.image); }
+	<SEMICOL>
 }
 
 void MethodsDeclaration() #void : { } {
@@ -107,14 +113,19 @@ void MethodsDeclaration() #void : { } {
 }
 
 void MainDeclaration() #Main : { Token id; } {
-	<STATIC> <VOID> <MAIN> <OPAREN> <STRING> <OSBRACKET> <CSBRACKET> id=<ID> { jjtThis.setArgs(id.image); } <CPAREN> <OCURLY>
+	<STATIC> <VOID> <MAIN> { this.scope="main"; this.symbol_table.addMethod("main", "void"); }
+	<OPAREN> <STRING> <OSBRACKET> <CSBRACKET> id=<ID> { jjtThis.setArgs(id.image); } <CPAREN> <OCURLY>
 		( LOOKAHEAD(2) VarDeclaration() )*
 		( Statement() ) *
 	<CCURLY>
 }
 
 void MethodDeclaration() #Method : { String type; Token id; } {
-	type=Type() id=<ID> { jjtThis.setMethodName(id.image); jjtThis.setReturnType(type); } <OPAREN>
+	type=Type() id=<ID>
+        { jjtThis.setMethodName(id.image); jjtThis.setReturnType(type); this.scope=id.image;
+          this.symbol_table.addMethod(id.image, type);
+        }
+	<OPAREN>
 	    MethodArguments() <CPAREN> <OCURLY>
 		( LOOKAHEAD(2) VarDeclaration() )*
 		( Statement() )*
@@ -127,7 +138,8 @@ void MethodArguments() #void : { } {
 }
 
 void Argument() #Arg : { String type; Token id; } {
-    type=Type() id=<ID> { jjtThis.type=type; jjtThis.identity=id.image; }
+    type=Type() id=<ID>
+    { jjtThis.type=type; jjtThis.identity=id.image; this.symbol_table.addArgument(this.scope, type, id.image); }
 }
 
 String Type() #void : { String return_value; Token id; } {

@@ -21,6 +21,10 @@ public class Main {
 
             root.dump("");
 
+            javamm.symbol_table.dump();
+
+            //check semantics
+
         } catch(FileNotFoundException e){
             System.out.println("File not found");
             System.exit(-1);
@@ -28,28 +32,6 @@ public class Main {
             throw new RuntimeException();
         }
     }
-
-    // From Javamm.jjt
-    // public static void main(String args[]) throws RuntimeException {
-	// 	try{
-	// 	    Javamm javamm = new Javamm(new java.io.FileInputStream(args[0]));
-	// 	    SimpleNode root = javamm.Start();
-
-	// 	    if (Javamm.numErrors > 0) {
-    //             System.out.println("Errors ocurred");
-    //             throw new RuntimeException();
-    //         }
-
-    //         root.dump("");
-	// 	    //build symbol table
-	// 	    //check semantics
-	// 	    //display symbol table
-
-	// 	} catch(FileNotFoundException e){
-	// 	    System.out.println("File not found");
-	// 	    System.exit(-1);
-	// 	}catch(ParseException e) { throw new RuntimeException(); }
-	// }
 
     public static int eval(SimpleNode node) {
         return 0;

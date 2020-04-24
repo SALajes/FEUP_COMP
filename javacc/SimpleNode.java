@@ -10,8 +10,6 @@ class SimpleNode implements Node {
   protected Object value;
   protected Javamm parser;
 
-  private SymbolTable symbol_table = new SymbolTable();
-
   protected String identity;
   protected String extend;
   protected String type;
@@ -92,10 +90,6 @@ class SimpleNode implements Node {
   }
 
   //------ IMPLEMENTED CODE -----
-  public SymbolTable getSymbolTable(){
-    return symbol_table;
-  }
-
   public String getType(){
     return this.type;
   }

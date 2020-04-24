@@ -1,16 +1,28 @@
 
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
 
 public class SymbolTable {
     private Hashtable<String, Symbol> global_variables = new Hashtable<>();
-    private Hashtable<String, Function> functions = new Hashtable<>();
+    private Hashtable<String, Method> methods = new Hashtable<>();
 
-    public boolean addGlobalVariable(String identifier, Symbol variable){
-        if(globalVariableExists(identifier)) {
-            global_variables.put(identifier, variable);
-            return true;
+    public void addVariable(String scope, String type, String id){
+        System.out.println("OMG NEW VAR: " + scope + " " + type + " " + id);
+        if(scope == "global")
+            addGlobalVariable(type, id);
+        else if(methodExists(scope))
+            methods.get(scope).addLocalVariable(id, new Symbol(type, id));
+    }
+
+    public void addGlobalVariable(String type, String id){
+        global_variables.put(id, new Symbol(type, id));
+    }
+
+    public void addArgument(String scope, String type, String id){
+        if(methodExists(scope)) {
+            methods.get(scope).addParameterVariable(type, id);
         }
-        return false;
     }
 
     private boolean globalVariableExists(String identifier) {
@@ -23,21 +35,40 @@ public class SymbolTable {
         return null;
     }
 
-    public boolean addFunction(String identifier, Function function){
-        if(functionExists(identifier)) {
-            functions.put(identifier, function);
+    public boolean addMethod(String identifier, String type){
+        System.out.println("OMG NEW METHOD: " + identifier + " " + type);
+        if(methodExists(identifier)) {
+            methods.put(identifier, new Method(identifier, type));
             return true;
         }
         return false;
     }
 
-    private boolean functionExists(String identifier) {
-        return functions.containsKey(identifier);
+    private boolean methodExists(String identifier) {
+        return methods.containsKey(identifier);
     }
 
-    public Function getParameterVariable(String identifier){
-        if(functionExists(identifier))
-            return functions.get(identifier);
+    public Method getParameterVariable(String identifier){
+        if(methodExists(identifier))
+            return methods.get(identifier);
         return null;
+    }
+
+    public void dump(){
+        Iterator it = global_variables.entrySet().iterator();
+        System.out.println("------- GLOBAL -------");
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            Symbol symbol = (Symbol) pair.getValue();
+            System.out.println(symbol.dump());
+        }
+
+        System.out.println("------- METHODS -------");
+        it = methods.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            Method method = (Method) pair.getValue();
+            method.dump();
+        }
     }
 }
