@@ -16,7 +16,7 @@ public class Method {
     }
 
     public boolean addParameterVariable(String type, String identifier){
-        if(parameterVariableExists(identifier)) {
+        if(!parameterVariableExists(identifier)) {
             parameter_variables.put(identifier, new Symbol(type, identifier));
             return true;
         }
@@ -34,10 +34,9 @@ public class Method {
     }
 
     public void addLocalVariable(String identifier, Symbol variable){
-        if(localVariableExists(identifier)) {
+        if(!localVariableExists(identifier)) {
             local_variables.put(identifier, variable);
         }
-        System.out.println("LOCAL SIZE " + name + " " + local_variables.size());
     }
 
     private boolean localVariableExists(String identifier) {

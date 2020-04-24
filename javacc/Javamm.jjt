@@ -114,7 +114,8 @@ void MethodsDeclaration() #void : { } {
 
 void MainDeclaration() #Main : { Token id; } {
 	<STATIC> <VOID> <MAIN> { this.scope="main"; this.symbol_table.addMethod("main", "void"); }
-	<OPAREN> <STRING> <OSBRACKET> <CSBRACKET> id=<ID> { jjtThis.setArgs(id.image); } <CPAREN> <OCURLY>
+	<OPAREN> <STRING> <OSBRACKET> <CSBRACKET> id=<ID> <CPAREN> <OCURLY>
+	{ jjtThis.setArgs(id.image); this.symbol_table.addArgument(this.scope, "String[]", id.image);}
 		( LOOKAHEAD(2) VarDeclaration() )*
 		( Statement() ) *
 	<CCURLY>
@@ -125,8 +126,7 @@ void MethodDeclaration() #Method : { String type; Token id; } {
         { jjtThis.setMethodName(id.image); jjtThis.setReturnType(type); this.scope=id.image;
           this.symbol_table.addMethod(id.image, type);
         }
-	<OPAREN>
-	    MethodArguments() <CPAREN> <OCURLY>
+	<OPAREN> MethodArguments() <CPAREN> <OCURLY>
 		( LOOKAHEAD(2) VarDeclaration() )*
 		( Statement() )*
 		<RETURN> Expression() <SEMICOL>

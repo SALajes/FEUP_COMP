@@ -8,7 +8,6 @@ public class SymbolTable {
     private Hashtable<String, Method> methods = new Hashtable<>();
 
     public void addVariable(String scope, String type, String id){
-        System.out.println("OMG NEW VAR: " + scope + " " + type + " " + id);
         if(scope == "global")
             addGlobalVariable(type, id);
         else if(methodExists(scope))
@@ -35,13 +34,10 @@ public class SymbolTable {
         return null;
     }
 
-    public boolean addMethod(String identifier, String type){
-        System.out.println("OMG NEW METHOD: " + identifier + " " + type);
-        if(methodExists(identifier)) {
+    public void addMethod(String identifier, String type){
+        if(!methodExists(identifier)) {
             methods.put(identifier, new Method(identifier, type));
-            return true;
         }
-        return false;
     }
 
     private boolean methodExists(String identifier) {
