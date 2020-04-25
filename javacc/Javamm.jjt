@@ -270,7 +270,7 @@ void ExpressionTerminal() #void : { Token id;} {
 void ExpressionDot() : { Token id; } {
     (id=<LEN>
     |
-    (LOOKAHEAD(2) ExpressionTerminal() <DOT>)* id=<ID> <OPAREN> [Expression() (<COL> Expression())*] <CPAREN>)
+    id=<ID> <OPAREN> [Expression() (<COL> Expression())*] <CPAREN>)
     { jjtThis.identity=id.image; }
 }
 

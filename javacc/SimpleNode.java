@@ -15,6 +15,8 @@ class SimpleNode implements Node {
   protected String type;
   protected String return_type;
 
+  protected boolean binary_operator = false;
+
   protected String scope;
 
   private static SymbolTable symbol_table;
@@ -96,6 +98,10 @@ class SimpleNode implements Node {
   //------ IMPLEMENTED CODE -----
   public String getIdentity(){
     return this.identity;
+  }
+
+  public boolean isBinaryOperator(){
+    return this.binary_operator;
   }
 
   public String getScope(){
