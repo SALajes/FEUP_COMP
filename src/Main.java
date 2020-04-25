@@ -24,6 +24,8 @@ public class Main {
             javamm.symbol_table.dump();
 
             //check semantics
+            final SymbolTable symbol_table = javamm.getSymbolTable();
+            root.checkSemantics(symbol_table);
 
         } catch(FileNotFoundException e){
             System.out.println("File not found");

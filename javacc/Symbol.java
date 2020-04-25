@@ -12,6 +12,10 @@ public class Symbol {
         return type;
     }
 
+    public boolean checkType(String type) {
+        return this.type == type;
+    }
+
     public String getId() {
         return id;
     }

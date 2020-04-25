@@ -27,5 +27,24 @@ class ASTAdditionSubtraction extends SimpleNode {
   public String toString(){
     return this.operator;
   }
+
+  @Override
+  protected void checkNodeSemantics(SymbolTable symbol_table) {
+    if(this.jjtGetNumChildren() == 2) {
+      SimpleNode left_child = (SimpleNode) this.jjtGetChild(0);
+      SimpleNode right_child = (SimpleNode) this.jjtGetChild(1);
+
+      System.out.println("LUV IZ ADDITION: " + left_child.toString() + operator + right_child.toString());
+
+      if(!(left_child.getType() == "int" || symbol_table.checkVariable(this.getScope(), left_child.getIdentity(), "int"))){
+        System.out.println("LEFT TAj MA(HA)LI");
+      }
+      if(!(right_child.getType() == "int" || symbol_table.checkVariable(this.getScope(), right_child.getIdentity(), "int"))){
+        System.out.println("RIGHT TAj MA(HA)LI");
+      }
+    }
+    System.out.println("TAj MA(HA)LI");
+    //print error
+  }
 }
 /* JavaCC - OriginalChecksum=b661bd7b050d3e1baf919c7573f0190a (do not edit this line) */

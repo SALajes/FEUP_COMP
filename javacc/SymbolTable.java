@@ -50,6 +50,29 @@ public class SymbolTable {
         return null;
     }
 
+    public boolean checkVariable(String scope, String identity, String type){
+        if(scope == "global")
+            return checkGlobalVariable(identity, type);
+        else if(methodExists(scope)) {
+            switch(methods.get(scope).checkVariable(identity, type)){
+                case 0:
+                    return true;
+                case 1:
+                    return false;
+                case 2:
+                    return checkGlobalVariable(identity, type);
+            }
+        }
+        return false;
+    }
+
+    private boolean checkGlobalVariable(String identity, String type) {
+        if(global_variables.containsKey(identity)){
+            return global_variables.get(identity).checkType(type);
+        }
+        return false;
+    }
+
     public void dump(){
         Iterator it = global_variables.entrySet().iterator();
         System.out.println("------- GLOBAL -------");

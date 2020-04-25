@@ -2,8 +2,6 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTClass extends SimpleNode {
-  private String className;
-  private String ext;
 
   public ASTClass(int id) {
     super(id);
@@ -14,18 +12,18 @@ class ASTClass extends SimpleNode {
   }
 
   public void setClassName(String className) {
-    this.className = className;
+    this.identity = className;
   }
 
   public void setExt(String ext) {
-    this.ext = ext;
+    this.extend = ext;
   }
 
   public String toString() {
-    String ret = "Class " + className;
+    String ret = "Class " + this.identity;
 
-    if(ext != null)
-      ret += " extends " + ext;
+    if(this.extend != null)
+      ret += " extends " + this.extend;
 
     return ret;
   }

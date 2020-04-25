@@ -15,6 +15,10 @@ class SimpleNode implements Node {
   protected String type;
   protected String return_type;
 
+  protected String scope;
+
+  private static SymbolTable symbol_table;
+
   public SimpleNode(int i) {
     id = i;
   }
@@ -90,6 +94,18 @@ class SimpleNode implements Node {
   }
 
   //------ IMPLEMENTED CODE -----
+  public String getIdentity(){
+    return this.identity;
+  }
+
+  public String getScope(){
+    return this.scope;
+  }
+
+  public void setScope(String scope){
+    this.scope = scope;
+  }
+
   public String getType(){
     return this.type;
   }
@@ -101,7 +117,20 @@ class SimpleNode implements Node {
     this.return_type = return_type;
   }
 
+  public void checkSemantics(SymbolTable symbol_table){
+    if(scope == null)
+      scope = ((SimpleNode) this.parent).scope;
 
+    this.checkNodeSemantics(symbol_table);
+
+    if(this.children != null) {
+      for(Node node : this.children) {
+        ((SimpleNode) node).checkSemantics(symbol_table);
+      }
+    }
+  }
+
+  protected void checkNodeSemantics(SymbolTable symbol_table) {}
 }
 
 /* JavaCC - OriginalChecksum=64dd3e3b2acf6bee9393de7b2d2f7b42 (do not edit this line) */

@@ -49,6 +49,18 @@ public class Method {
         return null;
     }
 
+    public int checkVariable(String identity, String type){
+        if(local_variables.containsKey(identity))
+            if(local_variables.get(identity).checkType(type))
+                return 0;
+            else return 1;
+        else if(parameter_variables.containsKey(identity))
+            if(parameter_variables.get(identity).checkType(type))
+                return 0;
+            else return 1;
+        else return 2;
+    }
+
     public void dump(){
         System.out.println("------- " + name + " returns " + type + " -------");
         System.out.println("------- parameters -------");
