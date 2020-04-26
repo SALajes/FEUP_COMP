@@ -73,6 +73,10 @@ public class SymbolTable {
         return false;
     }
 
+    public Hashtable<String, Symbol> getGlobal_variables() {
+        return global_variables;
+    }
+
     public void dump(){
         Iterator it = global_variables.entrySet().iterator();
         System.out.println("------- GLOBAL -------");

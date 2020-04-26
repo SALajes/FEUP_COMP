@@ -2,9 +2,6 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTMethod extends SimpleNode {
-  private String methodName;
-  private String returnType;
-
   public ASTMethod(int id) {
     super(id);
   }
@@ -14,15 +11,15 @@ class ASTMethod extends SimpleNode {
   }
 
   public void setMethodName(String methodName) {
-    this.methodName = methodName;
+    this.identity = methodName;
   }
 
   public void setReturnType(String returnType) {
-    this.returnType = returnType;
+    this.return_type = returnType;
   }
 
   public String toString() {
-    return "Method " + methodName + " " + returnType;
+    return "Method " + identity + " " + return_type;
   }
 }
 /* JavaCC - OriginalChecksum=959391f8f71ac4092a93282428213e76 (do not edit this line) */

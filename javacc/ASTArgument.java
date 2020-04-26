@@ -14,7 +14,7 @@ class ASTArgument extends SimpleNode {
 
   @Override
   public String toString(){
-    return this.type + " " + this.identity;
+    return "Arg: " + this.type + " " + this.identity;
   }
 }
 /* JavaCC - OriginalChecksum=95a59bce5d1db2950b7d5dcc42146311 (do not edit this line) */

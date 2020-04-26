@@ -25,7 +25,10 @@ public class Main {
 
             //check semantics
             final SymbolTable symbol_table = javamm.getSymbolTable();
-            root.checkSemantics(symbol_table);
+//            root.checkSemantics(symbol_table);
+
+            CodeGenerator codeGenerator = new CodeGenerator(root, symbol_table);
+            codeGenerator.generateCode();
 
         } catch(FileNotFoundException e){
             System.out.println("File not found");

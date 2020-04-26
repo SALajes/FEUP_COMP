@@ -6,10 +6,14 @@ class ASTMain extends SimpleNode {
 
   public ASTMain(int id) {
     super(id);
+    this.identity = "static main";
+    this.return_type = "";
   }
 
   public ASTMain(Javamm p, int id) {
     super(p, id);
+    this.identity = "static main";
+    this.return_type = "";
   }
 
   public void setArgs(String args) {

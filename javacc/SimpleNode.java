@@ -100,6 +100,10 @@ class SimpleNode implements Node {
     return this.identity;
   }
 
+  public String getExtend() {
+    return extend;
+  }
+
   public boolean isBinaryOperator(){
     return this.binary_operator;
   }
@@ -119,6 +123,7 @@ class SimpleNode implements Node {
   public String getReturnType(){
     return this.return_type;
   }
+
   public void setReturnType(String return_type){
     this.return_type = return_type;
   }
