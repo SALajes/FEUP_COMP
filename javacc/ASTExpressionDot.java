@@ -14,7 +14,7 @@ class ASTExpressionDot extends SimpleNode {
 
   @Override
   public String toString(){
-    return "." + this.identity;
+    return this.identity;
   }
 }
 /* JavaCC - OriginalChecksum=2e40fd5ec8de7211dc2f7f34a8344149 (do not edit this line) */

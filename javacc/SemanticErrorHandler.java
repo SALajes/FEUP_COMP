@@ -1,5 +1,3 @@
-package javacc;
-
 import javax.script.ScriptEngineManager;
 
 public class SemanticErrorHandler {

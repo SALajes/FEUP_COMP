@@ -5,14 +5,16 @@ import java.util.Map;
 
 public class Method {
     private String name;
-    private String type;
+    private String return_type;
+
+    private int overloads = 0;
 
     private Hashtable<String, Symbol> parameter_variables = new Hashtable<>();
     private Hashtable<String, Symbol> local_variables = new Hashtable<>();
 
     public Method(String name, String type) {
         this.name = name;
-        this.type = type;
+        this.return_type = type;
     }
 
     public boolean addParameterVariable(String type, String identifier){
@@ -49,6 +51,14 @@ public class Method {
         return null;
     }
 
+    public boolean checkReturnType(String return_type){
+        return this.return_type == return_type;
+    }
+
+    public String getReturnType(){
+        return this.return_type;
+    }
+
     public int checkVariable(String identity, String type){
         if(local_variables.containsKey(identity))
             if(local_variables.get(identity).checkType(type))
@@ -61,8 +71,16 @@ public class Method {
         else return 2;
     }
 
+    public int getOverloads() {
+        return overloads;
+    }
+
+    public void incrementOverloads() {
+        this.overloads++;
+    }
+
     public void dump(){
-        System.out.println("------- " + name + " returns " + type + " -------");
+        System.out.println("------- " + name + " returns " + return_type + " -------");
         System.out.println("------- parameters -------");
         Iterator it = parameter_variables.entrySet().iterator();
         while (it.hasNext()) {
