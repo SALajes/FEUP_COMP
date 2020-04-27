@@ -5,7 +5,6 @@ class ASTImport extends SimpleNode {
   private boolean isStatic = false;
   private String className;
   private String methodName;
-  public String returnType;
 
   public ASTImport(int id) {
     super(id);
@@ -27,10 +26,6 @@ class ASTImport extends SimpleNode {
     this.methodName = methodName;
   }
 
-  public void setReturnType(String returnType) {
-    this.returnType = returnType;
-  }
-
   public String toString() {
     String pstatic = "";
     if(isStatic)
@@ -41,10 +36,10 @@ class ASTImport extends SimpleNode {
     else
       methodName += " ";
 
-    if(returnType == null)
-        returnType = "void";
+    if(this.return_type == null)
+      this.return_type = "void";
 
-    return "Import " + pstatic + className + " " + methodName + returnType;
+    return "Import " + pstatic + className + " " + methodName + this.return_type;
   }
 }
 /* JavaCC - OriginalChecksum=cb28638552a82c93cdcbeca9d244874a (do not edit this line) */

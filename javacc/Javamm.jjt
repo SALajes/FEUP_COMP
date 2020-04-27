@@ -8,9 +8,12 @@ PARSER_BEGIN(Javamm)
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 public class Javamm {
     public String scope = "global";
+
+    public ArrayList<String> parameters;
 
     public SymbolTable symbol_table = new SymbolTable();
 
@@ -24,6 +27,10 @@ public class Javamm {
 
     public SymbolTable getSymbolTable(){
         return symbol_table;
+    }
+
+    public void reinitiateParameters(){
+        this.parameters = new ArrayList<String>();
     }
 }
 
@@ -82,27 +89,28 @@ TOKEN: {
 SimpleNode Start() : { } {
     { jjtThis.setScope( "global"); }
 	( ImportDeclaration() )*
+	{ jjtThis.setScope( "global"); }
 	ClassDeclaration() <EOF> 
 	{ return jjtThis; }
 }
 
-void ImportDeclaration() #Import : { String type; Token t; } {
+void ImportDeclaration() #Import : { String type, method; Token t1, t2; } {
 	<IMPORT>
     [ <STATIC> { jjtThis.setStatic(true); } ]
-	t=<ID> { jjtThis.setClassName(t.image); }
-	[ <DOT> t=<ID> {jjtThis.setMethodName(t.image); } ]
+	t1=<ID> { jjtThis.setClassName(t1.image); this.reinitiateParameters(); method=""; }
+	[ <DOT> t2=<ID> { jjtThis.setMethodName(t2.image); method=t2.image; } ]
 	[ <OPAREN> ParamList() <CPAREN> ]
-	[ <VOID> | type=Type() {jjtThis.setReturnType(type); } ]
+	[ <VOID> { jjtThis.setReturnType("void"); } | type=Type() {jjtThis.setReturnType(type); } ]
+	{ this.symbol_table.addImportMethod(t1.image, method, jjtThis.getReturnType(), parameters); }
 	<SEMICOL>
-
 }
 
-void ParamList() #void : { } {
-    [ <VOID> | Type() (<COL> Type())* ]
+void ParamList() #void : { String type; } {
+    [ <VOID> {this.parameters.add("void");} | type=Type() {this.parameters.add(type);} [<COL> ParamList()] ]
 }
 
 void ClassDeclaration() #Class : { Token class_id, extend_class; } {
-	<CLASS> class_id=<ID> { jjtThis.setClassName(class_id.image); }
+	<CLASS> class_id=<ID> { jjtThis.setClassName(class_id.image); this.symbol_table.class_name=class_id.image; }
 	  ( <EXTENDS> extend_class=<ID> { jjtThis.setExt(extend_class.image); } )? <OCURLY>
 		( VarDeclaration() )*
 		( MethodsDeclaration() )*
@@ -248,7 +256,7 @@ void MultiplicationDivision() #void : { Token operator; } {
 void ExpressionIntermediateDivision() #void : {} {
     <NOT> ExpressionIntermediateDivision() #Not
     |
-    ExpressionTerminal() [<DOT> ExpressionDot()]
+    ExpressionTerminal() [<DOT> ExpressionDot() #Dot(2)]
 }
 
 void ExpressionTerminal() #void : { Token id;} {
@@ -260,7 +268,7 @@ void ExpressionTerminal() #void : { Token id;} {
     |
     <THIS> #This
     |
-    id=<ID> {jjtThis.identity=id.image;} #ID [ <OSBRACKET> (Expression() #Index) <CSBRACKET> ]
+    id=<ID> {jjtThis.identity=id.image;} #ID [ <OSBRACKET> (Expression() #Index) <CSBRACKET> #ArrayAccess(2)]
     |
     <OPAREN> Expression() <CPAREN>
     |

@@ -109,7 +109,10 @@ class SimpleNode implements Node {
   }
 
   public String getScope(){
-    return this.scope;
+    if(scope == null)
+      scope = ((SimpleNode) this.parent).getScope();
+
+    return scope;
   }
 
   public void setScope(String scope){
@@ -121,6 +124,10 @@ class SimpleNode implements Node {
   }
 
   public String getReturnType(){
+    return this.return_type;
+  }
+
+  public String getReturnType(SymbolTable symbol_table){
     return this.return_type;
   }
 

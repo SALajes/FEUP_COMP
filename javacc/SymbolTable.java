@@ -1,4 +1,4 @@
-
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
@@ -6,6 +6,37 @@ import java.util.Map;
 public class SymbolTable {
     private Hashtable<String, Symbol> global_variables = new Hashtable<>();
     private Hashtable<String, Method> methods = new Hashtable<>();
+    private Hashtable<String, ImportMethod> imports = new Hashtable<>();
+
+    public String class_name;
+
+    public void addImportMethod(String class_name, String method, String return_type, ArrayList<String> parameters){
+        String key = class_name+"."+method;
+        if(imports.containsKey(key)){
+            imports.get(key).incrementOverloads();
+            key = key + imports.get(key).getOverloads();
+            imports.put(key, new ImportMethod(class_name, method, return_type, parameters));
+        }
+        else imports.put(key, new ImportMethod(class_name, method, return_type, parameters));
+    }
+
+    public boolean checkImportMethod(String class_name, String method){
+        return this.imports.containsKey(class_name+"."+method);
+    }
+
+    public String getImportReturnType(String class_name, String method){
+        if(checkImportMethod(class_name, method)){
+            return this.imports.get(class_name+"."+method).getReturnType();
+        }
+        return "";
+    }
+
+    public String getMethodReturnType(String method){
+        if(methodExists(method)){
+            return this.methods.get(method).getReturnType();
+        }
+        return "";
+    }
 
     public void addVariable(String scope, String type, String id){
         if(scope == "global")
@@ -40,7 +71,7 @@ public class SymbolTable {
         }
     }
 
-    private boolean methodExists(String identifier) {
+    public boolean methodExists(String identifier) {
         return methods.containsKey(identifier);
     }
 
@@ -52,6 +83,13 @@ public class SymbolTable {
         if(methodExists(identifier))
             return methods.get(identifier);
         return null;
+    }
+
+    public boolean checkMethod(String identity, String return_type){
+        if(methodExists(identity)){
+            return methods.get(identity).checkReturnType(return_type);
+        }
+        else return false;
     }
 
     public boolean checkVariable(String scope, String identity, String type){
@@ -82,7 +120,15 @@ public class SymbolTable {
     }
 
     public void dump(){
-        Iterator it = global_variables.entrySet().iterator();
+        Iterator it = imports.entrySet().iterator();
+        System.out.println("------- Imports -------");
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            ImportMethod imp = (ImportMethod) pair.getValue();
+            System.out.println(imp.dump());
+        }
+
+        it = global_variables.entrySet().iterator();
         System.out.println("------- GLOBAL -------");
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry)it.next();
