@@ -24,7 +24,7 @@ public class Main {
             javamm.symbol_table.dump();
 
             //check semantics
-            final SymbolTable symbol_table = javamm.getSymbolTable();
+            SymbolTable symbol_table = javamm.getSymbolTable();
 //            root.checkSemantics(symbol_table);
 
             CodeGenerator codeGenerator = new CodeGenerator(root, symbol_table);

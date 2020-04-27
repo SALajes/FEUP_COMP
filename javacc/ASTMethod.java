@@ -10,14 +10,6 @@ class ASTMethod extends SimpleNode {
     super(p, id);
   }
 
-  public void setMethodName(String methodName) {
-    this.identity = methodName;
-  }
-
-  public void setReturnType(String returnType) {
-    this.return_type = returnType;
-  }
-
   public String toString() {
     return "Method " + identity + " " + return_type;
   }

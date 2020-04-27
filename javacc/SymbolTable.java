@@ -44,6 +44,10 @@ public class SymbolTable {
         return methods.containsKey(identifier);
     }
 
+    public Method getMethod(String id) {
+        return methods.get(id);
+    }
+
     public Method getParameterVariable(String identifier){
         if(methodExists(identifier))
             return methods.get(identifier);

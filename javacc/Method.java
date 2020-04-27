@@ -61,6 +61,22 @@ public class Method {
         else return 2;
     }
 
+    public int getNumLocalVars() {
+        return this.local_variables.size();
+    }
+
+    public int getNumParameters() {
+        return this.parameter_variables.size();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
     public void dump(){
         System.out.println("------- " + name + " returns " + type + " -------");
         System.out.println("------- parameters -------");

@@ -5,7 +5,7 @@ import java.io.PrintWriter;
 import java.util.Hashtable;
 
 class CodeGenerator {
-    private final SymbolTable symbolTable;
+    private SymbolTable symbolTable;
 
     private SimpleNode root;
     private SimpleNode classNode;
@@ -33,6 +33,15 @@ class CodeGenerator {
         printWriter.close();
     }
 
+    private void genMethodBody(SimpleNode node) {
+        this.printWriter.printf("\t.limit stack 23\n");     // TODO: Como se calcula?
+
+        Method method = this.symbolTable.getMethod(node.getIdentity());
+        this.printWriter.printf("\t.limit locals %d\n", method.getNumLocalVars() + method.getNumParameters());
+
+        this.printWriter.printf("\t%s\n", convertReturnType(node.getReturnType()));
+    }
+
     private String genArgs(SimpleNode node) {
         if(node instanceof ASTMain)
             return convertType("String[]");
@@ -52,8 +61,11 @@ class CodeGenerator {
 
     private void writeMethod(SimpleNode node) {
         String args = genArgs(node);
-        this.printWriter.printf(".method public %s(%s) %s\n", node.getIdentity(), args, convertType(node.getReturnType()));
-        // Method Body
+
+        this.printWriter.printf(".method public %s(%s) %s\n", node.getIdentity() == "main" ? "static main" : node.getIdentity(), args, convertType(node.getReturnType()));
+
+        genMethodBody(node);
+
         this.printWriter.printf(".end method\n\n");
     }
 
@@ -63,29 +75,6 @@ class CodeGenerator {
 
             if(node instanceof ASTMethod || node instanceof ASTMain)
                 writeMethod(node);
-        }
-    }
-
-    private String convertType(String type) {
-        switch (type) {
-            case "int":
-                return "I";
-
-            case "int[]":
-                return "[I";
-
-            case "boolean":
-                return "Z";
-
-            case "void":
-            case "":
-                return "V";
-
-            case "String[]":
-                return "[Ljava/lang/String;";
-
-            default:
-                return "L" + type +";";
         }
     }
 
@@ -149,5 +138,45 @@ class CodeGenerator {
         } while (!(this.root.jjtGetChild(i) instanceof ASTClass));
 
         return i;
+    }
+
+    // -- Convert types and return --
+    private String convertType(String type) {
+        switch (type) {
+            case "int":
+                return "I";
+
+            case "int[]":
+                return "[I";
+
+            case "boolean":
+                return "Z";
+
+            case "void":
+            case "":
+                return "V";
+
+            case "String[]":
+                return "[Ljava/lang/String;";
+
+            default:
+                return "L" + type +";";
+        }
+    }
+
+    private String convertReturnType(String returnType) {
+        switch (returnType) {
+            case "int":
+            case "boolean":
+                return "ireturn";
+
+            case "int[]":
+                return "areturn";
+
+            case "void":
+            case "":
+            default:
+                return "return";
+        }
     }
 }
