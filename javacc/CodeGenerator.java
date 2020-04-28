@@ -2,7 +2,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Hashtable;
 
 class CodeGenerator {
     private SymbolTable symbolTable;
@@ -70,26 +69,30 @@ class CodeGenerator {
     private void writeClass() {
         this.printWriter.printf(".class public %s\n", this.classNode.getIdentity());
         if(this.classNode.getExtend() != null)
-            this.printWriter.printf(".super %s\n", this.classNode.getExtend());
-
-        this.printWriter.print(".super java/lang/Object\n\n");
+            this.printWriter.printf(".super %s\n\n", this.classNode.getExtend());
+        else
+            this.printWriter.print(".super java/lang/Object\n\n");
     }
 
     private void writeGlobalVars() {
-        Hashtable<String, Symbol> vars = this.symbolTable.getGlobal_variables();
+        // TODO: Verificar se o nome das variaveis não é um nome reservado em Jasmin
+        for (int i = 0; i < this.classNode.jjtGetNumChildren(); i++) {
+            SimpleNode node = (SimpleNode) this.classNode.jjtGetChild(i);
+            if(node instanceof ASTMethod || node instanceof ASTMain)
+                break;
 
-        for (String key : vars.keySet()) {
-            this.printWriter.printf(".fileld %s %s\n", key, convertType(vars.get(key).getType()));
+            this.printWriter.printf(".fileld %s %s\n", node.getIdentity(), convertType(node.getType()));
         }
-
-        if(!vars.isEmpty())
-            this.printWriter.printf("\n");
+        this.printWriter.printf("\n");
     }
 
     private void writeInitializer() {
         this.printWriter.print(".method public <init> ()V\n");
         this.printWriter.print("\taload_0\n");
-        this.printWriter.print("\tinvokenonvirtual java/lang/Object/<ini>()V\n");
+        if(this.classNode.getExtend() != null)
+            this.printWriter.printf("\tinvokespecial " + this.classNode.getExtend()+"\n");
+        else
+            this.printWriter.print("\tinvokenonvirtual java/lang/Object/<ini>()V\n");
         this.printWriter.print("\treturn\n");
         this.printWriter.print(".end method\n\n");
     }
@@ -172,8 +175,7 @@ class CodeGenerator {
                 break;
 
             default:
-                this.printWriter.printf("\tId: %d\n", node.getId());
-                this.printWriter.printf("\t;Expression\n");
+                this.printWriter.printf("\t;Expression Id: %d\n", node.getId());
                 writeExpression(node);
                 break;
         }
@@ -227,47 +229,48 @@ class CodeGenerator {
                 break;
 
             case JavammTreeConstants.JJTNOT:
-                this.printWriter.printf("\tNot\n");
+                this.printWriter.printf("\t;Not\n");
                 break;
 
             case JavammTreeConstants.JJTDOT:
-                this.printWriter.printf("\tDot\n");
+                this.printWriter.printf("\t;Dot\n");
+                writeDot(node);
                 break;
 
             case JavammTreeConstants.JJTINTEGER:
-                this.printWriter.printf("\tInteger\n");
+                this.printWriter.printf("\t;Integer\n");
                 break;
 
             case JavammTreeConstants.JJTTRUE:
-                this.printWriter.printf("\tTrue\n");
+                this.printWriter.printf("\t;True\n");
                 break;
 
             case JavammTreeConstants.JJTFALSE:
-                this.printWriter.printf("\tFalse\n");
+                this.printWriter.printf("\t;False\n");
                 break;
 
             case JavammTreeConstants.JJTTHIS:
-                this.printWriter.printf("\tThis\n");
+                this.printWriter.printf("\t;This\n");
                 break;
 
             case JavammTreeConstants.JJTID:
-                this.printWriter.printf("\tID\n");
+                this.printWriter.printf("\t;ID\n");
                 break;
 
             case JavammTreeConstants.JJTARRAYACCESS:
-                this.printWriter.printf("\tArray Access\n");
+                this.printWriter.printf("\t;Array Access\n");
                 break;
 
             case JavammTreeConstants.JJTEXPRESSIONDOT:
-                this.printWriter.printf("\tExpression Dot\n");
+                this.printWriter.printf("\t;Expression Dot\n");
                 break;
 
             case JavammTreeConstants.JJTEXPRESSIONNEW:
-                this.printWriter.printf("\tExpression New\n");
+                this.printWriter.printf("\t;Expression New\n");
                 break;
 
             default:
-                this.printWriter.printf("EXPRESSION DEFAULT: %d\n", node.getId());
+                this.printWriter.printf(";EXPRESSION DEFAULT: %d\n", node.getId());
                 break;
         }
     }
@@ -298,6 +301,17 @@ class CodeGenerator {
                 this.printWriter.printf("\tidiv\n");
                 break;
         }
+    }
+
+    private void writeDot(SimpleNode node){
+        /*for (int i = 0; i < node.jjtGetNumChildren(); i++) {
+            this.printWriter.printf("\tId: %d\n", node.jjtGetChild(i).getId());
+            for (int j = 0; j < node.jjtGetChild(i).jjtGetNumChildren(); j++) {
+                this.printWriter.printf("\t\t Id: %d\n", node.jjtGetChild(i).jjtGetChild(j).getId());
+            }
+        }*/
+        if(node.jjtGetChild(0) instanceof ASTThis)
+            this.printWriter.printf("\taload_0\n");
     }
 
     // -- Convert types and return --

@@ -1,12 +1,12 @@
 .class public TicTacToe
 .super java/lang/Object
 
+.fileld row0 [I
+.fileld row1 [I
+.fileld row2 [I
+.fileld whoseturn I
 .fileld movesmade I
 .fileld pieces [I
-.fileld row2 [I
-.fileld row1 [I
-.fileld row0 [I
-.fileld whoseturn I
 
 .method public <init> ()V
 	aload_0
@@ -34,9 +34,8 @@
 
 	;Variable Init Statement
 
-	Id: 21
-	;Expression
-	True
+	;Expression Id: 21
+	;True
 
 	ireturn
 .end method
@@ -45,9 +44,8 @@
 	.limit stack 99
 	.limit locals 0
 
-	Id: 24
-	;Expression
-	ID
+	;Expression Id: 24
+	;ID
 
 	areturn
 .end method
@@ -56,9 +54,8 @@
 	.limit stack 99
 	.limit locals 0
 
-	Id: 24
-	;Expression
-	ID
+	;Expression Id: 24
+	;ID
 
 	areturn
 .end method
@@ -67,9 +64,8 @@
 	.limit stack 99
 	.limit locals 0
 
-	Id: 24
-	;Expression
-	ID
+	;Expression Id: 24
+	;ID
 
 	areturn
 .end method
@@ -80,9 +76,8 @@
 
 	;If Statement
 
-	Id: 24
-	;Expression
-	ID
+	;Expression Id: 24
+	;ID
 
 	ireturn
 .end method
@@ -93,9 +88,8 @@
 
 	;If Statement
 
-	Id: 24
-	;Expression
-	ID
+	;Expression Id: 24
+	;ID
 
 	ireturn
 .end method
@@ -106,9 +100,8 @@
 
 	;If Statement
 
-	Id: 24
-	;Expression
-	ID
+	;Expression Id: 24
+	;ID
 
 	ireturn
 .end method
@@ -119,9 +112,8 @@
 
 	;Variable Init Statement
 
-	Id: 21
-	;Expression
-	True
+	;Expression Id: 21
+	;True
 
 	ireturn
 .end method
@@ -130,10 +122,9 @@
 	.limit stack 99
 	.limit locals 0
 
-	Id: 16
-	;Expression
-	ID
-	Integer
+	;Expression Id: 16
+	;ID
+	;Integer
 	iadd
 
 	ireturn
@@ -151,9 +142,8 @@
 
 	;If Statement
 
-	Id: 24
-	;Expression
-	ID
+	;Expression Id: 24
+	;ID
 
 	ireturn
 .end method
@@ -164,21 +154,18 @@
 
 	;Variable Init Statement
 
-	Id: 19
-	;Expression
-	Dot
+	;Expression Id: 19
+	;Dot
 
 	;While Statement
 
-	Id: 19
-	;Expression
-	Dot
+	;Expression Id: 19
+	;Dot
 
 	;Variable Init Statement
 
-	Id: 19
-	;Expression
-	Dot
+	;Expression Id: 19
+	;Dot
 
 	return
 .end method

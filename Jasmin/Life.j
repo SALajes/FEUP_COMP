@@ -2,12 +2,12 @@
 .super java/lang/Object
 
 .fileld UNDERPOP_LIM I
-.fileld yMax I
+.fileld OVERPOP_LIM I
 .fileld REPRODUCE_NUM I
-.fileld field [I
 .fileld LOOPS_PER_MS I
 .fileld xMax I
-.fileld OVERPOP_LIM I
+.fileld yMax I
+.fileld field [I
 
 .method public <init> ()V
 	aload_0
@@ -21,9 +21,8 @@
 
 	;Variable Init Statement
 
-	Id: 19
-	;Expression
-	Dot
+	;Expression Id: 19
+	;Dot
 
 	;While Statement
 
@@ -52,9 +51,8 @@
 
 	;Variable Init Statement
 
-	Id: 21
-	;Expression
-	True
+	;Expression Id: 21
+	;True
 
 	ireturn
 .end method
@@ -267,9 +265,8 @@
 
 	;Variable Init Statement
 
-	Id: 24
-	;Expression
-	ID
+	;Expression Id: 24
+	;ID
 
 	areturn
 .end method
@@ -286,9 +283,8 @@
 
 	;Variable Init Statement
 
-	Id: 21
-	;Expression
-	True
+	;Expression Id: 21
+	;True
 
 	ireturn
 .end method
@@ -303,17 +299,14 @@
 
 	;While Statement
 
-	Id: 19
-	;Expression
-	Dot
+	;Expression Id: 19
+	;Dot
 
-	Id: 19
-	;Expression
-	Dot
+	;Expression Id: 19
+	;Dot
 
-	Id: 21
-	;Expression
-	True
+	;Expression Id: 21
+	;True
 
 	ireturn
 .end method
@@ -322,13 +315,12 @@
 	.limit stack 99
 	.limit locals 2
 
-	Id: 16
-	;Expression
-	ID
-	ID
-	Integer
+	;Expression Id: 16
+	;ID
+	;ID
+	;Integer
 	iadd
-	ID
+	;ID
 	imul
 	iadd
 
@@ -351,9 +343,8 @@
 
 	;Variable Init Statement
 
-	Id: 24
-	;Expression
-	ID
+	;Expression Id: 24
+	;ID
 
 	areturn
 .end method
@@ -390,9 +381,8 @@
 
 	;Variable Init Statement
 
-	Id: 24
-	;Expression
-	ID
+	;Expression Id: 24
+	;ID
 
 	areturn
 .end method
@@ -409,9 +399,8 @@
 
 	;While Statement
 
-	Id: 24
-	;Expression
-	ID
+	;Expression Id: 24
+	;ID
 
 	ireturn
 .end method
@@ -426,9 +415,8 @@
 
 	;While Statement
 
-	Id: 21
-	;Expression
-	True
+	;Expression Id: 21
+	;True
 
 	ireturn
 .end method
@@ -437,9 +425,8 @@
 	.limit stack 99
 	.limit locals 2
 
-	Id: 14
-	;Expression
-EXPRESSION DEFAULT: 14
+	;Expression Id: 14
+;EXPRESSION DEFAULT: 14
 
 	ireturn
 .end method
@@ -448,9 +435,8 @@ EXPRESSION DEFAULT: 14
 	.limit stack 99
 	.limit locals 2
 
-	Id: 18
-	;Expression
-	Not
+	;Expression Id: 18
+	;Not
 
 	ireturn
 .end method
@@ -459,8 +445,7 @@ EXPRESSION DEFAULT: 14
 	.limit stack 99
 	.limit locals 2
 
-	Id: 15
-	;Expression
+	;Expression Id: 15
 	;Less Than
 
 	ireturn
@@ -470,9 +455,8 @@ EXPRESSION DEFAULT: 14
 	.limit stack 99
 	.limit locals 2
 
-	Id: 18
-	;Expression
-	Not
+	;Expression Id: 18
+	;Not
 
 	ireturn
 .end method
@@ -481,9 +465,8 @@ EXPRESSION DEFAULT: 14
 	.limit stack 99
 	.limit locals 2
 
-	Id: 18
-	;Expression
-	Not
+	;Expression Id: 18
+	;Not
 
 	ireturn
 .end method
@@ -492,9 +475,8 @@ EXPRESSION DEFAULT: 14
 	.limit stack 99
 	.limit locals 2
 
-	Id: 18
-	;Expression
-	Not
+	;Expression Id: 18
+	;Not
 
 	ireturn
 .end method

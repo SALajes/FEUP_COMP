@@ -1,10 +1,10 @@
 .class public Lazysort
 .super Quicksort
-.super java/lang/Object
+
 
 .method public <init> ()V
 	aload_0
-	invokenonvirtual java/lang/Object/<ini>()V
+	invokespecial Quicksort
 	return
 .end method
 
@@ -20,9 +20,8 @@
 
 	;Variable Init Statement
 
-	Id: 19
-	;Expression
-	Dot
+	;Expression Id: 19
+	;Dot
 
 	;Variable Init Statement
 
@@ -37,9 +36,8 @@
 
 	;If Statement
 
-	Id: 24
-	;Expression
-	ID
+	;Expression Id: 24
+	;ID
 
 	ireturn
 .end method
@@ -56,9 +54,8 @@
 
 	;While Statement
 
-	Id: 21
-	;Expression
-	True
+	;Expression Id: 21
+	;True
 
 	ireturn
 .end method

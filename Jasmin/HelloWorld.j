@@ -1,6 +1,7 @@
 .class public HelloWorld
 .super java/lang/Object
 
+
 .method public <init> ()V
 	aload_0
 	invokenonvirtual java/lang/Object/<ini>()V
@@ -11,9 +12,8 @@
 	.limit stack 99
 	.limit locals 1
 
-	Id: 19
-	;Expression
-	Dot
+	;Expression Id: 19
+	;Dot
 
 	return
 .end method

@@ -2,9 +2,6 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTVarDeclaration extends SimpleNode {
-  private String type;
-  private String varName;
-
   public ASTVarDeclaration(int id) {
     super(id);
   }
@@ -13,24 +10,8 @@ class ASTVarDeclaration extends SimpleNode {
     super(p, id);
   }
 
-  public void setType(String type) {
-    this.type = type;
-  }
-
-  public String getType() {
-    return type;
-  }
-
-  public String getVarName() {
-    return varName;
-  }
-
-  public void setVarName(String varName) {
-    this.varName = varName;
-  }
-
   public String toString() {
-    return type + " " + varName;
+    return this.type + " " + this.identity;
   }
 }
 /* JavaCC - OriginalChecksum=8f72e5c259da2033e8a451a9ce073fa3 (do not edit this line) */

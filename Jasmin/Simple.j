@@ -1,6 +1,7 @@
 .class public Simple
 .super java/lang/Object
 
+
 .method public <init> ()V
 	aload_0
 	invokenonvirtual java/lang/Object/<ini>()V
@@ -13,9 +14,8 @@
 
 	;Variable Init Statement
 
-	Id: 24
-	;Expression
-	ID
+	;Expression Id: 24
+	;ID
 
 	ireturn
 .end method
@@ -32,9 +32,8 @@
 
 	;Variable Init Statement
 
-	Id: 19
-	;Expression
-	Dot
+	;Expression Id: 19
+	;Dot
 
 	return
 .end method
@@ -59,9 +58,8 @@
 
 	;Variable Init Statement
 
-	Id: 20
-	;Expression
-	Integer
+	;Expression Id: 20
+	;Integer
 
 	ireturn
 .end method

@@ -119,7 +119,7 @@ void ClassDeclaration() #Class : { Token class_id, extend_class; } {
 
 void VarDeclaration() : { String type; Token id; } {
 	type=Type() id=<ID>
-	{ jjtThis.setType(type); jjtThis.setVarName(id.image); this.symbol_table.addVariable(this.scope, type, id.image); }
+	{ jjtThis.type=type; jjtThis.identity=id.image ; this.symbol_table.addVariable(this.scope, type, id.image); }
 	<SEMICOL>
 }
 

@@ -1,6 +1,7 @@
 .class public Quicksort
 .super java/lang/Object
 
+
 .method public <init> ()V
 	aload_0
 	invokenonvirtual java/lang/Object/<ini>()V
@@ -19,13 +20,11 @@
 
 	;Variable Init Statement
 
-	Id: 19
-	;Expression
-	Dot
+	;Expression Id: 19
+	;Dot
 
-	Id: 19
-	;Expression
-	Dot
+	;Expression Id: 19
+	;Dot
 
 	return
 .end method
@@ -38,9 +37,8 @@
 
 	;While Statement
 
-	Id: 21
-	;Expression
-	True
+	;Expression Id: 21
+	;True
 
 	ireturn
 .end method
@@ -49,9 +47,9 @@
 	.limit stack 99
 	.limit locals 4
 
-	Id: 19
-	;Expression
-	Dot
+	;Expression Id: 19
+	;Dot
+	aload_0
 
 	ireturn
 .end method
@@ -62,9 +60,8 @@
 
 	;If Statement
 
-	Id: 21
-	;Expression
-	True
+	;Expression Id: 21
+	;True
 
 	ireturn
 .end method
@@ -87,9 +84,8 @@
 
 	;Variable Init Statement
 
-	Id: 24
-	;Expression
-	ID
+	;Expression Id: 24
+	;ID
 
 	ireturn
 .end method
