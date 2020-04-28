@@ -30,19 +30,25 @@ class ASTDot extends SimpleNode {
     return this.return_type;
   }
 
-  public void setReturnType(SymbolTable symbol_table){
+  private void setReturnType(SymbolTable symbol_table){
     if(this.jjtGetNumChildren() == 2) {
       SimpleNode left_child = (SimpleNode) this.jjtGetChild(0);
       SimpleNode right_child = (SimpleNode) this.jjtGetChild(1);
 
       if(right_child.getIdentity() == "length"){
-        if(!(symbol_table.checkVariable(this.getScope(), left_child.getIdentity(), "int[]") ||
-                symbol_table.checkMethod(left_child.getIdentity(), "int[]"))){
+        if(symbol_table.checkVariable(this.getScope(), left_child.getIdentity(), "int[]") ||
+                symbol_table.checkMethod(left_child.getIdentity(), "int[]")){
           this.return_type="int";
         }
       }
-      else if(left_child.getIdentity()=="this" || symbol_table.checkVariable(this.getScope(), left_child.getIdentity(), symbol_table.class_name)){
+      else if((left_child.getIdentity()=="new" && symbol_table.isClass(left_child.getReturnType())) ||
+              left_child.getIdentity()=="this" || symbol_table.isClass(left_child.getIdentity()) ||
+              symbol_table.checkVariable(this.getScope(), left_child.getIdentity(), symbol_table.class_name)){
+
         this.return_type = symbol_table.getMethodReturnType(right_child.getIdentity());
+        if(this.return_type=="" && symbol_table.extendsClass()){
+          this.return_type = symbol_table.getReturnMethodInExtendClass(right_child.getIdentity());
+        }
       }
       else {
         this.return_type = symbol_table.getImportReturnType(left_child.getIdentity(), right_child.getIdentity());
@@ -56,7 +62,7 @@ class ASTDot extends SimpleNode {
   //this.method ou (import) class.method
   @Override
   public void checkNodeSemantics(SymbolTable symbol_table){
-    if(getReturnType() == "") {
+    if(getReturnType(symbol_table) == "") {
       SimpleNode left_child = (SimpleNode) this.jjtGetChild(0);
       SimpleNode right_child = (SimpleNode) this.jjtGetChild(1);
 

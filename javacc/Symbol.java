@@ -13,7 +13,7 @@ public class Symbol {
     }
 
     public boolean checkType(String type) {
-        return this.type == type;
+        return this.type.equals(type);
     }
 
     public String getId() {

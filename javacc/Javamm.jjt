@@ -111,7 +111,7 @@ void ParamList() #void : { String type; } {
 
 void ClassDeclaration() #Class : { Token class_id, extend_class; } {
 	<CLASS> class_id=<ID> { jjtThis.setClassName(class_id.image); this.symbol_table.class_name=class_id.image; }
-	  ( <EXTENDS> extend_class=<ID> { jjtThis.setExt(extend_class.image); } )? <OCURLY>
+	  ( <EXTENDS> extend_class=<ID> { jjtThis.setExt(extend_class.image); this.symbol_table.extend_class=extend_class.image; } )? <OCURLY>
 		( VarDeclaration() )*
 		( MethodsDeclaration() )*
 	<CCURLY>

@@ -32,21 +32,7 @@ class ASTMultiplicationDivision extends SimpleNode {
 
   @Override
   protected void checkNodeSemantics(SymbolTable symbol_table) {
-    if(this.jjtGetNumChildren() == 2) {
-      SimpleNode left_child = (SimpleNode) this.jjtGetChild(0);
-      SimpleNode right_child = (SimpleNode) this.jjtGetChild(1);
-
-      if(!left_child.isBinaryOperator()){
-        if(!(left_child.getType() == "int" || symbol_table.checkVariable(this.getScope(), left_child.getIdentity(), "int"))){
-          SemanticErrorHandler.getInstance().printError(this.getScope(), "Left child of operator " + operator + " has to be an integer or a integer variable");
-        }
-      }
-      if(!right_child.isBinaryOperator()){
-        if(!(right_child.getType() == "int" || symbol_table.checkVariable(this.getScope(), right_child.getIdentity(), "int"))){
-          SemanticErrorHandler.getInstance().printError(this.getScope(), "Right child of operator " + operator + " has to be an integer or a integer variable");
-        }
-      }
-    }
+    ArithmeticSemantic.checkNodeSemantics(symbol_table, this, operator);
   }
 }
 /* JavaCC - OriginalChecksum=fe073846e3de52a6d7fa39761df70aab (do not edit this line) */

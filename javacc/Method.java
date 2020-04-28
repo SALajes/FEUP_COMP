@@ -52,7 +52,7 @@ public class Method {
     }
 
     public boolean checkReturnType(String return_type){
-        return this.return_type == return_type;
+        return this.return_type.equals(return_type);
     }
 
     public String getReturnType(){

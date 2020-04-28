@@ -23,23 +23,35 @@ class ASTAnd extends SimpleNode {
   }
 
   @Override
-  protected void checkNodeSemantics(SymbolTable symbol_table) {
-   /* if(this.jjtGetNumChildren() == 2) {
+  public void checkNodeSemantics(SymbolTable symbol_table) {
+    if(this.jjtGetNumChildren() == 2) {
       SimpleNode left_child = (SimpleNode) this.jjtGetChild(0);
       SimpleNode right_child = (SimpleNode) this.jjtGetChild(1);
 
-      if(!left_child.isBinaryOperator()){
-        if(!(left_child.getType() == "boolean" || symbol_table.checkVariable(this.getScope(), left_child.getIdentity(), "boolean"))){
-          SemanticErrorHandler.getInstance().printError(this.getScope(), "Left child of operator " + operator + " has to be an boolean or a boolean variable");
-        }
-      }
-      if(!right_child.isBinaryOperator()){
-        if(!(right_child.getType() == "boolean" || symbol_table.checkVariable(this.getScope(), right_child.getIdentity(), "boolean"))){
-          SemanticErrorHandler.getInstance().printError(this.getScope(), "Right child of operator " + operator + " has to be an boolean or a boolean variable");
-        }
-      }
-    }*/
+      String code_fragment = left_child.toString() + operator + right_child.toString();
+
+      checkChildConditions(left_child, "left", symbol_table, code_fragment);
+      checkChildConditions(right_child, "right", symbol_table, code_fragment);
+    }
   }
 
+  private void checkChildConditions(SimpleNode node, String child, SymbolTable symbol_table, String code_fragment){
+    if(!node.isBinaryOperator()){
+      if(!((node.getIdentity()=="." && node.getReturnType(symbol_table) == "boolean") ||
+              node.getReturnType() == "boolean" ||
+              node.getType() == "boolean" ||
+              symbol_table.checkVariable(scope, node.getIdentity(), "boolean"))){
+        printSemanticError(child, scope, operator, code_fragment);
+      }
+    }
+    else if(node.getReturnType() != "boolean")
+      printSemanticError(child, scope, operator, code_fragment);
+  }
+
+  private void printSemanticError(String node, String scope, String operator, String code_fragment) {
+    SemanticErrorHandler.getInstance().printError(scope,
+            node + " child of operator " + operator + " has to be an boolean or return an boolean",
+            code_fragment);
+  }
 }
 /* JavaCC - OriginalChecksum=237089df49022529c77790c4eb238346 (do not edit this line) */
