@@ -79,6 +79,14 @@ public class Method {
         this.overloads++;
     }
 
+    public int getNumLocalVars() {
+        return this.local_variables.size();
+    }
+
+    public int getNumParameters() {
+        return this.parameter_variables.size();
+    }
+
     public void dump(){
         System.out.println("------- " + name + " returns " + return_type + " -------");
         System.out.println("------- parameters -------");

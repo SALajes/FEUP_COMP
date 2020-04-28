@@ -37,6 +37,7 @@ class SimpleNode implements Node {
   }
 
   public void jjtSetParent(Node n) { parent = n; }
+
   public Node jjtGetParent() { return parent; }
 
   public void jjtAddChild(Node n, int i) {
@@ -149,6 +150,10 @@ class SimpleNode implements Node {
   }
 
   protected void checkNodeSemantics(SymbolTable symbol_table) {}
+
+  public String getOperator() {
+    return "";
+  }
 }
 
 /* JavaCC - OriginalChecksum=64dd3e3b2acf6bee9393de7b2d2f7b42 (do not edit this line) */

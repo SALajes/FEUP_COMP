@@ -17,7 +17,8 @@ class ASTAdditionSubtraction extends SimpleNode {
     this.binary_operator=true;
   }
 
-  public String getOperator(){
+  @Override
+  public String getOperator() {
     return this.operator;
   }
 

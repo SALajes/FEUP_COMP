@@ -8,8 +8,23 @@
 .end method
 
 .method public static main([Ljava/lang/String;) V
-	.limit stack 23
+	.limit stack 99
 	.limit locals 5
+
+	;Variable Init Statement
+
+	;Variable Init Statement
+
+	;Variable Init Statement
+
+	;If Statement
+
+	;While Statement
+
+	;Variable Init Statement
+
+	;While Statement
+
 	return
 .end method
 

@@ -41,7 +41,7 @@ class TicTacToe {
   }
 
   public boolean MoveRow(int[] row, int column) {
-    boolean moved;
+    int moved;
 
     if(column < 0){
         moved = false;

@@ -8,8 +8,13 @@
 .end method
 
 .method public static main([Ljava/lang/String;) V
-	.limit stack 23
+	.limit stack 99
 	.limit locals 1
+
+	Id: 19
+	;Expression
+	Dot
+
 	return
 .end method
 
