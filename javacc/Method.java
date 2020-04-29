@@ -60,6 +60,14 @@ public class Method {
         return this.return_type;
     }
 
+    public String getVariableType(String identity){
+        if(local_variables.containsKey(identity))
+            return local_variables.get(identity).getType();
+        else if(parameter_variables.containsKey(identity))
+            return parameter_variables.get(identity).getType();
+        else return "";
+    }
+
     public boolean checkVariable(String identiy) {
         return local_variables.containsKey(identiy) || parameter_variables.containsKey(identiy);
     }

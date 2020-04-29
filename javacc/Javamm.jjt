@@ -222,7 +222,7 @@ void VariableInit() #Assignement : { Token id; } {
     (
         (<EQUALS> Expression()  { jjtThis.identity=id.image; } #VarInit )
         |
-        (<OSBRACKET> (Expression() #Index) <CSBRACKET> <EQUALS> Expression()  { jjtThis.identity=id.image; } #ArrayInit)
+        ((<OSBRACKET> (Expression() #Index) <CSBRACKET> { jjtThis.identity=id.image; } #ArrayInit)<EQUALS> Expression())
     )
     <SEMICOL>
 }

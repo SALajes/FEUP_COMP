@@ -9,5 +9,17 @@ public class ASTAssignement extends SimpleNode {
     super(p, id);
   }
 
+  @Override
+  protected void checkNodeSemantics(SymbolTable symbol_table) {
+    SimpleNode left_child = (SimpleNode) this.jjtGetChild(0); //var init - nome da variavel no identity
+    SimpleNode right_child = (SimpleNode) this.jjtGetChild(1); //expressão ou whatever
+
+    if(left_child.getType()!=right_child.getType()){
+      SemanticErrorHandler.getInstance().printError(this.getScope(),
+              this + " assign operation with different types ",
+              left_child.identity + right_child.identity);
+    }
+  }
+
 }
 /* JavaCC - OriginalChecksum=236b2102da430414dc6ba7c699d0cbfb (do not edit this line) */

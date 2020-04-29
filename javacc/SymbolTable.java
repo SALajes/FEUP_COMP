@@ -33,6 +33,10 @@ public class SymbolTable {
         return this.imports.containsKey(class_name+"."+method);
     }
 
+    public boolean checkImportClass(String class_name){
+        return this.imports.containsKey(class_name);
+    }
+
     public String getImportReturnType(String class_name, String method){
         if(checkImportMethod(class_name, method)){
             return this.imports.get(class_name+"."+method).getReturnType();
@@ -130,6 +134,27 @@ public class SymbolTable {
 
     public Hashtable<String, Symbol> getGlobal_variables() {
         return global_variables;
+    }
+
+    public String getGlobalVarType(String identity){
+        if(global_variables.containsKey(identity)){
+            return global_variables.get(identity).getType();
+        }
+        return "";
+    }
+
+    public String getVariableType(String scope , String variable_name){
+        if(scope == "global")
+            return getGlobalVarType(variable_name);
+        else if(methodExists(scope)) {
+            String temp = methods.get(scope).getVariableType(variable_name);
+
+            if (temp.equals(""))
+                return getGlobalVarType(variable_name);
+            return temp;
+
+        }
+        return "";
     }
 
     public void dump(){
