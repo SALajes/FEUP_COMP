@@ -150,7 +150,11 @@ class CodeGenerator {
         }*/
 
         for (int i = 0; i < node.jjtGetNumChildren(); i++) {
-            if(node.jjtGetChild(i) instanceof ASTVarDeclaration || node.jjtGetChild(i) instanceof ASTArgument)
+            if(node.jjtGetChild(i) instanceof ASTArgument)
+                continue;
+
+            if(node.jjtGetChild(i) instanceof ASTVarDeclaration)
+                // writeVarDeclaration(node.jjtGetChild(i);
                 continue;
 
             if(node.jjtGetChild(i) != null)
@@ -158,6 +162,14 @@ class CodeGenerator {
         }
 
         this.printWriter.printf("\t%s\n", convertReturnType(node.getReturnType()));
+    }
+
+    private void writeVarDeclaration(SimpleNode node) {
+        switch (node.getType()) {
+            case "int":
+            case "int[]":
+            case "boolean":
+        }
     }
 
     private void writeStatement(SimpleNode node) {
