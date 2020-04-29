@@ -19,14 +19,14 @@ public class SymbolTable {
         return extend_class!=null;
     }
 
-    public void addImportMethod(String class_name, String method, String return_type, ArrayList<String> parameters){
+    public void addImportMethod(String class_name, String method, String return_type, ArrayList<String> parameters, boolean isStatic){
         String key = class_name+"."+method;
         if(imports.containsKey(key)){
             imports.get(key).incrementOverloads();
             key = key + imports.get(key).getOverloads();
-            imports.put(key, new ImportMethod(class_name, method, return_type, parameters));
+            imports.put(key, new ImportMethod(class_name, method, return_type, parameters, isStatic));
         }
-        else imports.put(key, new ImportMethod(class_name, method, return_type, parameters));
+        else imports.put(key, new ImportMethod(class_name, method, return_type, parameters, isStatic));
     }
 
     public boolean checkImportMethod(String class_name, String method){

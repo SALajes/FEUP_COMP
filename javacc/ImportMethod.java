@@ -8,12 +8,14 @@ public class ImportMethod {
     private ArrayList<String> parameter_types;
     private String return_type;
     private int overloads = 0;
+    private boolean isStatic = false;
 
-    public ImportMethod(String class_name, String method, String return_type, ArrayList<String> parameter_types){
+    public ImportMethod(String class_name, String method, String return_type, ArrayList<String> parameter_types, boolean isStatic){
         this.class_name=class_name;
         this.method=method;
         this.return_type = (return_type==null? "void" : return_type);
         this.parameter_types = parameter_types;
+        this.isStatic = isStatic;
     }
 
     public int getOverloads() {

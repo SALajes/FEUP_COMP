@@ -136,11 +136,11 @@ class CodeGenerator {
     }
 
     private void writeMethodBody(SimpleNode node) {
-        this.printWriter.printf("\t.limit stack 99\n");     // TODO: Calcular
+        this.printWriter.printf("\t.limit stack 99\n");                         // TODO: Calcular
 
         Method method = this.symbolTable.getMethod(node.getIdentity());
-        int numLocals = method.getNumLocalVars() + method.getNumParameters();   // NumLocalVars + NumParameters
-        this.printWriter.printf("\t.limit locals %d\n\n", numLocals);
+        int numLocals = method.getNumLocalVars() + method.getNumParameters();
+        this.printWriter.printf("\t.limit locals %d\n\n", numLocals);           // NumLocalVars + NumParameters
 
         /*for (int i = 0; i < node.jjtGetNumChildren(); i++) {
             this.printWriter.printf("\tId: %d\n", node.jjtGetChild(i).getId());
@@ -331,8 +331,12 @@ class CodeGenerator {
 
             if(this.symbolTable.checkImportMethod(left, right)){
                 this.printWriter.printf("\t;import method\n");
+                // Explorar no da direita se der
+                // invoke
             } else {
                 this.printWriter.printf("\t;local method\n");
+                // Explorar no da direita se der
+                // invoke
             }
             return;
         }

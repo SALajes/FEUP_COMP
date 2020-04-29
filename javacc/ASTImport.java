@@ -26,6 +26,10 @@ class ASTImport extends SimpleNode {
     this.methodName = methodName;
   }
 
+  public boolean isStatic() {
+    return isStatic;
+  }
+
   public String toString() {
     String pstatic = "";
     if(isStatic)

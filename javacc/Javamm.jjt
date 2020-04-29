@@ -101,7 +101,7 @@ void ImportDeclaration() #Import : { String type, method; Token t1, t2; } {
 	[ <DOT> t2=<ID> { jjtThis.setMethodName(t2.image); method=t2.image; } ]
 	[ <OPAREN> ParamList() <CPAREN> ]
 	[ <VOID> { jjtThis.setReturnType("void"); } | type=Type() {jjtThis.setReturnType(type); } ]
-	{ this.symbol_table.addImportMethod(t1.image, method, jjtThis.getReturnType(), parameters); }
+	{ this.symbol_table.addImportMethod(t1.image, method, jjtThis.getReturnType(), parameters, jjtThis.isStatic()); }
 	<SEMICOL>
 }
 
