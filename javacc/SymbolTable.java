@@ -128,6 +128,27 @@ public class SymbolTable {
         return false;
     }
 
+    public String getGlobalVarType(String identity){
+        if(global_variables.containsKey(identity)){
+            return global_variables.get(identity).getType();
+        }
+        return "";
+    }
+
+    public String getVariableType(String scope , String variable_name){
+        if(scope == "global")
+            return getGlobalVarType(variable_name);
+        else if(methodExists(scope)) {
+            String temp = methods.get(scope).getVariableType(variable_name);
+
+            if (temp.equals(""))
+                return getGlobalVarType(variable_name);
+            return temp;
+
+        }
+        return "";
+    }
+
     public void dump(){
         Iterator it = imports.entrySet().iterator();
         System.out.println("------- Imports -------");

@@ -3,18 +3,51 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTArrayInit extends SimpleNode {
+  boolean already_calculated_return;
 
   public ASTArrayInit(int id) {
     super(id);
+    this.return_type="";
+    already_calculated_return = false;
   }
 
   public ASTArrayInit(Javamm p, int id) {
     super(p, id);
+    this.return_type="";
+    already_calculated_return = false;
   }
 
   @Override
   public String toString(){
     return "Array " + this.identity + " = ";
   }
+
+  @Override
+  public String getReturnType(SymbolTable symbol_table){
+    if(this.return_type=="" && !already_calculated_return)
+      setReturnType(symbol_table);
+    return this.return_type;
+  }
+
+  @Override
+  public String getReturnType(){
+    return this.return_type;
+  }
+
+  private void setReturnType(SymbolTable symbol_table) {
+    if(symbol_table.checkVariable(this.getScope() , this.identity , "int[]"))
+      return_type = "int[]";
+
+    already_calculated_return = true;
+  }
+
+  @Override
+  public void checkNodeSemantics(SymbolTable symbol_table){
+    if(getReturnType(symbol_table) == "") {
+      SemanticErrorHandler.getInstance().printError(this.getScope(),
+              "Variable initialization is not possible because it does not exist: " + this.identity);
+    }
+  }
+
 }
 /* JavaCC - OriginalChecksum=ae6d23a8fc26b05b61ab851153c86c0c (do not edit this line) */
