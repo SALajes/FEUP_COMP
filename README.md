@@ -48,21 +48,21 @@ To test the program, run ``gradle test``. This will execute the build, and run t
 <br/>
 
 - **Symbol Table**  
-    - [ ] global: inclui info de imports e a classe declarada
-    - [ ] classe-specific: inclui info de extends, fields e methods
-    - [ ] method-specific: inclui info dos arguments e local variables
+    - [X] global: inclui info de imports e a classe declarada
+    - [X] classe-specific: inclui info de extends, fields e methods
+    - [X] method-specific: inclui info dos arguments e local variables
     - Sub topics:
        - [ ] Tem de permitir method overload (i.e. métodos com mesmo nome mas assinatura de parâmetros diferente)
-       - [ ] Tem de permitir consulta da tabela por parte da análise semantica (e geração de código)
+       - [X] Tem de permitir consulta da tabela por parte da análise semantica (e geração de código)
        - [ ] Tem de permitir ligar e desligar a sua impressão para fins de debug (neste caso para fins de avaliação)  
        
 - **Type Verification**
-    - [ ] Verificar se operações são efetuadas com o mesmo tipo (e.g. int + boolean tem de dar erro)
-    - [ ] Não é possível utilizar arrays diretamente para operações aritmeticas (e.g. array1 + array2)
+    - [X] Verificar se operações são efetuadas com o mesmo tipo (e.g. int + boolean tem de dar erro)
+    - [X] Não é possível utilizar arrays diretamente para operações aritmeticas (e.g. array1 + array2)
     - [ ] Verificar se um array access é de facto feito sobre um array
     - [ ] Verificar se o indice do array access é um inteiro
     - [ ] Verificar se valor do assignee é igual ao do assigned (a_int = b_boolean não é permitido!)
-    - [ ] Verificar se operação booleana é efetuada só com booleanos
+    - [X] Verificar se operação booleana é efetuada só com booleanos
     - [ ] Verificar se conditional expressions (if e while) resulta num booleano
     - [ ] Verificar se variáveis são inicializadas, dando um WARNING em vez de ERRO
        - Parametros são assumidos como inicializados
@@ -72,10 +72,10 @@ To test the program, run ``gradle test``. This will execute the build, and run t
 			- Caso pretendam fazer esta abordagem com erros adicionem uma forma de ativar/desativar o erro para facilitar no caso de haver problemas.  
 			
 - **Function Verification**
-	- [ ] Verificar se o "target" do método existe, e se este contém o método (e.g. a.foo, ver se 'a' existe e se tem um método 'foo')
+	- [X] Verificar se o "target" do método existe, e se este contém o método (e.g. a.foo, ver se 'a' existe e se tem um método 'foo')
 	    - Caso seja do tipo da classe declarada (e.g. a usar o this), verificar se é método do extends olhando para o que foi importado (isto se a classe fizer extends de outra classe importada)
-	- [ ] Caso o método não seja da classe declarada, isto é importada, verificar se método foi importado
-	- [ ] Verificar se o número de argumentos na invocação é igual ao número de parâmetros da declaração
+	- [X] Caso o método não seja da classe declarada, isto é importada, verificar se método foi importado
+	- [X] Verificar se o número de argumentos na invocação é igual ao número de parâmetros da declaração
 	- [ ] Verificar se o tipo dos parâmetros coincide com o tipo dos argumentos
 	    - Não esquecer que existe method overloading  
 	    
