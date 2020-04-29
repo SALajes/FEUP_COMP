@@ -13,6 +13,8 @@ class CodeGenerator {
 
     private PrintWriter printWriter;
 
+    private String scope;
+
     public CodeGenerator(SimpleNode root, SymbolTable symbolTable) {
         this.root = root;
         this.symbolTable = symbolTable;
@@ -112,7 +114,7 @@ class CodeGenerator {
         String args = genArgs(node);
 
         this.printWriter.printf(".method public %s(%s) %s\n", node.getIdentity().equals("main") ? "static main" : node.getIdentity(), args, convertType(node.getReturnType()));
-
+        this.scope = node.getIdentity();
         writeMethodBody(node);
 
         this.printWriter.printf(".end method\n\n");
@@ -273,6 +275,7 @@ class CodeGenerator {
 
             case JavammTreeConstants.JJTID:
                 this.printWriter.printf("\t;ID\n");
+                writeID(node);
                 break;
 
             case JavammTreeConstants.JJTARRAYACCESS:
@@ -351,6 +354,17 @@ class CodeGenerator {
                 // invoke
             }
             return;
+        }
+    }
+
+    private void writeID(SimpleNode node){
+        String varName = node.getIdentity();
+
+        if(this.symbolTable.getMethod(this.scope).checkVariable(varName))
+            this.printWriter.printf("\t;Local Var\n");
+        else if (this.symbolTable.globalVariableExists(varName)) {
+            this.printWriter.printf("\taload_0\n");
+            this.printWriter.printf("\tgetfield %s/%s %s\n", this.classNode.getIdentity(), varName, convertType(this.symbolTable.getGlobalVariable(varName).getType()));
         }
     }
 

@@ -68,7 +68,7 @@ public class SymbolTable {
         }
     }
 
-    private boolean globalVariableExists(String identifier) {
+    public boolean globalVariableExists(String identifier) {
         return global_variables.containsKey(identifier);
     }
 

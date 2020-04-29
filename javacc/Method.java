@@ -60,6 +60,10 @@ public class Method {
         return this.return_type;
     }
 
+    public boolean checkVariable(String identiy) {
+        return local_variables.containsKey(identiy) || parameter_variables.containsKey(identiy);
+    }
+
     public int checkVariable(String identity, String type){
         if(local_variables.containsKey(identity))
             if(local_variables.get(identity).checkType(type))
