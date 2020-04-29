@@ -19,7 +19,7 @@ public class Method {
 
     public boolean addParameterVariable(String type, String identifier){
         if(!parameterVariableExists(identifier)) {
-            parameter_variables.put(identifier, new Symbol(type, identifier));
+            parameter_variables.put(identifier, new Symbol(type, identifier, parameter_variables.size()));
             return true;
         }
         return false;
@@ -35,9 +35,10 @@ public class Method {
         return null;
     }
 
-    public void addLocalVariable(String identifier, Symbol variable){
+    public void addLocalVariable(String type, String identifier){
         if(!localVariableExists(identifier)) {
-            local_variables.put(identifier, variable);
+            int indexOffset = parameter_variables.size() + local_variables.size();
+            local_variables.put(identifier, new Symbol(type, identifier, indexOffset));
         }
     }
 

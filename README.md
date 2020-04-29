@@ -75,7 +75,7 @@ To test the program, run ``gradle test``. This will execute the build, and run t
 	- [X] Verificar se o "target" do método existe, e se este contém o método (e.g. a.foo, ver se 'a' existe e se tem um método 'foo')
 	    - Caso seja do tipo da classe declarada (e.g. a usar o this), verificar se é método do extends olhando para o que foi importado (isto se a classe fizer extends de outra classe importada)
 	- [X] Caso o método não seja da classe declarada, isto é importada, verificar se método foi importado
-	- [X] Verificar se o número de argumentos na invocação é igual ao número de parâmetros da declaração
+	- [ ] Verificar se o número de argumentos na invocação é igual ao número de parâmetros da declaração
 	- [ ] Verificar se o tipo dos parâmetros coincide com o tipo dos argumentos
 	    - Não esquecer que existe method overloading  
 	    

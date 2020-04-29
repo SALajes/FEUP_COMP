@@ -55,7 +55,7 @@ public class SymbolTable {
         if(scope == "global")
             addGlobalVariable(type, id);
         else if(methodExists(scope))
-            methods.get(scope).addLocalVariable(id, new Symbol(type, id));
+            methods.get(scope).addLocalVariable(type, id);
     }
 
     public void addGlobalVariable(String type, String id){
