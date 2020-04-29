@@ -184,8 +184,8 @@ class CodeGenerator {
 //                writeWhileStatement(node);
                 break;
 
-            case JavammTreeConstants.JJTVARIABLEINIT:
-                this.printWriter.printf("\t;Variable Init Statement\n");
+            case JavammTreeConstants.JJTASSIGNEMENT:
+                this.printWriter.printf("\t;Assigment Statement\n");
                 break;
 
             default:

@@ -11,7 +11,7 @@ public interface JavammTreeConstants
   public int JJTARGUMENT = 7;
   public int JJTIF = 8;
   public int JJTWHILE = 9;
-  public int JJTVARIABLEINIT = 10;
+  public int JJTASSIGNEMENT = 10;
   public int JJTVARINIT = 11;
   public int JJTINDEX = 12;
   public int JJTARRAYINIT = 13;
@@ -42,7 +42,7 @@ public interface JavammTreeConstants
     "Argument",
     "If",
     "While",
-    "VariableInit",
+    "Assignement",
     "VarInit",
     "Index",
     "ArrayInit",
@@ -62,4 +62,4 @@ public interface JavammTreeConstants
     "ExpressionNew",
   };
 }
-/* JavaCC - OriginalChecksum=a74247911bed085cf43963f30fa235ef (do not edit this line) */
+/* JavaCC - OriginalChecksum=fef5f216833846cd84dfec0202ae6d6f (do not edit this line) */
