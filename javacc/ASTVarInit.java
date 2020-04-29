@@ -6,6 +6,7 @@ public
 class ASTVarInit extends SimpleNode {
   public ASTVarInit(int id) {
     super(id);
+
   }
 
   public ASTVarInit(Javamm p, int id) {

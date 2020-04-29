@@ -12,6 +12,18 @@ class ASTVariableInit extends SimpleNode {
     super(p, id);
   }
 
+  @Override
+  protected void checkNodeSemantics(SymbolTable symbol_table) {
+    SimpleNode left_child = (SimpleNode) this.jjtGetChild(0); //var init - nome da variavel no identity
+    SimpleNode right_child = (SimpleNode) this.jjtGetChild(1); //expressão ou whatever
 
+    if(left_child.getType()!=right_child.getType()){
+      SemanticErrorHandler.getInstance().printError(this.getScope(),
+              this + " assign operation with different types ",
+              left_child.identity + right_child.identity);
+    }
+
+
+  }
 }
 /* JavaCC - OriginalChecksum=214a877005ca30c0c4f59a6543dd794e (do not edit this line) */

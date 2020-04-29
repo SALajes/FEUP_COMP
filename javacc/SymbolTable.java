@@ -33,6 +33,10 @@ public class SymbolTable {
         return this.imports.containsKey(class_name+"."+method);
     }
 
+    public boolean checkImportClass(String class_name){
+        return this.imports.containsKey(class_name);
+    }
+
     public String getImportReturnType(String class_name, String method){
         if(checkImportMethod(class_name, method)){
             return this.imports.get(class_name+"."+method).getReturnType();
