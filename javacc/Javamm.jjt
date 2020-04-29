@@ -217,7 +217,7 @@ void WhileStatement() #While : {} {
     Statement()
 }
 
-void VariableInit() : { Token id; } {
+void VariableInit() #Assignement : { Token id; } {
     id=<ID>
     (
         (<EQUALS> Expression()  { jjtThis.identity=id.image; } #VarInit )
