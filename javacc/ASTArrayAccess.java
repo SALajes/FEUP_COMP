@@ -12,5 +12,23 @@ class ASTArrayAccess extends SimpleNode {
     this.identity = "ArrayAccess";
   }
 
+  @Override
+  public void checkNodeSemantics(SymbolTable symbol_table) {
+ /*   if(this.jjtGetNumChildren() == 2) {
+      SimpleNode left_child = (SimpleNode) node.jjtGetChild(0);
+      SimpleNode right_child = (SimpleNode) node.jjtGetChild(1);
+
+      String code_fragment = left_child.toString() + operator + right_child.toString();
+
+      if (!((child.getIdentity() == "." && child.getReturnType(symbol_table) == "int") ||
+              child.getIdentity() == "ArrayAccess" ||
+              child.getType() == "int" ||
+              symbol_table.checkVariable(this.getScope(), child.getIdentity(), "int"))) {
+
+        SemanticErrorHandler.getInstance().printError(this.getScope(),
+                "An index must be an integer or an expression that returns an integer.");
+      }
+    }*/
+  }
 }
 /* JavaCC - OriginalChecksum=bc699f3d3143c9e0cad3b348c4d37626 (do not edit this line) */

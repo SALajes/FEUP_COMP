@@ -5,6 +5,7 @@ public
 class ASTExpressionNew extends SimpleNode {
   public ASTExpressionNew(int id) {
     super(id);
+    this.identity = "new";
   }
 
   public ASTExpressionNew(Javamm p, int id) {

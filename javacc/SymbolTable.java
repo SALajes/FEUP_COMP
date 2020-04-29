@@ -9,6 +9,15 @@ public class SymbolTable {
     private Hashtable<String, ImportMethod> imports = new Hashtable<>();
 
     public String class_name;
+    public String extend_class;
+
+    public boolean isClass(String identity){
+        return identity.equals(class_name);
+    }
+
+    public boolean extendsClass(){
+        return extend_class!=null;
+    }
 
     public void addImportMethod(String class_name, String method, String return_type, ArrayList<String> parameters){
         String key = class_name+"."+method;
@@ -29,6 +38,10 @@ public class SymbolTable {
             return this.imports.get(class_name+"."+method).getReturnType();
         }
         return "";
+    }
+
+    public String getReturnMethodInExtendClass(String method){
+        return getImportReturnType(extend_class, method);
     }
 
     public String getMethodReturnType(String method){

@@ -33,25 +33,7 @@ class ASTAdditionSubtraction extends SimpleNode {
 
   @Override
   protected void checkNodeSemantics(SymbolTable symbol_table) {
-    if(this.jjtGetNumChildren() == 2) {
-      SimpleNode left_child = (SimpleNode) this.jjtGetChild(0);
-      SimpleNode right_child = (SimpleNode) this.jjtGetChild(1);
-
-      if(!left_child.isBinaryOperator()){
-        if(!(left_child.getType() == "int" || symbol_table.checkVariable(this.getScope(), left_child.getIdentity(), "int"))){
-          SemanticErrorHandler.getInstance().printError(this.getScope(),
-                  "Left child of operator " + operator + " has to be an integer or a integer variable",
-                  left_child.toString()+operator+right_child.toString());
-        }
-      }
-      if(!right_child.isBinaryOperator()){
-        if(!(right_child.getType() == "int" || symbol_table.checkVariable(this.getScope(), right_child.getIdentity(), "int"))){
-          SemanticErrorHandler.getInstance().printError(this.getScope(),
-                  "Right child of operator " + operator + " has to be an integer or a integer variable",
-                  left_child.toString()+operator+right_child.toString());
-        }
-      }
-    }
+    ArithmeticSemantic.checkNodeSemantics(symbol_table, this, operator);
   }
 }
 /* JavaCC - OriginalChecksum=b661bd7b050d3e1baf919c7573f0190a (do not edit this line) */

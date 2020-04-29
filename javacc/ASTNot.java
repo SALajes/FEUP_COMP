@@ -6,10 +6,12 @@ public
 class ASTNot extends SimpleNode {
   public ASTNot(int id) {
     super(id);
+    this.return_type="boolean";
   }
 
   public ASTNot(Javamm p, int id) {
     super(p, id);
+    this.return_type="boolean";
   }
 
   @Override
