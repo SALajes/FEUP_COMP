@@ -22,9 +22,11 @@
 
 	;Expression Id: 19
 	;Dot
+	;local method
 
 	;Expression Id: 19
 	;Dot
+	;local method
 
 	return
 .end method
@@ -49,7 +51,7 @@
 
 	;Expression Id: 19
 	;Dot
-	aload_0
+	;this
 
 	ireturn
 .end method

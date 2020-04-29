@@ -156,16 +156,19 @@
 
 	;Expression Id: 19
 	;Dot
+	;local method
 
 	;While Statement
 
 	;Expression Id: 19
 	;Dot
+	;import method
 
 	;Variable Init Statement
 
 	;Expression Id: 19
 	;Dot
+	;import method
 
 	return
 .end method

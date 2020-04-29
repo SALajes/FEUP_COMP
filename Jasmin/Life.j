@@ -23,6 +23,7 @@
 
 	;Expression Id: 19
 	;Dot
+	;local method
 
 	;While Statement
 
@@ -301,9 +302,11 @@
 
 	;Expression Id: 19
 	;Dot
+	;import method
 
 	;Expression Id: 19
 	;Dot
+	;import method
 
 	;Expression Id: 21
 	;True
@@ -426,7 +429,7 @@
 	.limit locals 2
 
 	;Expression Id: 14
-;EXPRESSION DEFAULT: 14
+	;And
 
 	ireturn
 .end method

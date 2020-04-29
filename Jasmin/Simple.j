@@ -34,6 +34,7 @@
 
 	;Expression Id: 19
 	;Dot
+	;import method
 
 	return
 .end method

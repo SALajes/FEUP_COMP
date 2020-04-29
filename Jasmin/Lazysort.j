@@ -22,6 +22,7 @@
 
 	;Expression Id: 19
 	;Dot
+	;local method
 
 	;Variable Init Statement
 

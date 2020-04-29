@@ -1,3 +1,5 @@
+import com.sun.nio.sctp.AbstractNotificationHandler;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -219,6 +221,10 @@ class CodeGenerator {
 
     private void writeExpression(SimpleNode node) {
         switch (node.getId()) {
+            case JavammTreeConstants.JJTAND:
+                this.printWriter.printf("\t;And\n");
+                break;
+
             case JavammTreeConstants.JJTLESSTHAN:
                 this.printWriter.printf("\t;Less Than\n");
                 break;
@@ -310,8 +316,26 @@ class CodeGenerator {
                 this.printWriter.printf("\t\t Id: %d\n", node.jjtGetChild(i).jjtGetChild(j).getId());
             }
         }*/
-        if(node.jjtGetChild(0) instanceof ASTThis)
-            this.printWriter.printf("\taload_0\n");
+        // All nodes Dot have 2 children, guaranteed
+
+        if(node.jjtGetChild(0) instanceof ASTThis) {
+            this.printWriter.printf("\t;this\n");
+//            this.printWriter.printf("\taload_0\n");
+//            writeExpression((SimpleNode) node.jjtGetChild(1));
+            return;
+        }
+
+        if(node.jjtGetChild(0) instanceof ASTID && node.jjtGetChild(1) instanceof ASTExpressionDot) {
+            String left = ((ASTID) node.jjtGetChild(0)).getIdentity();
+            String right= ((ASTExpressionDot) node.jjtGetChild(1)).getIdentity();
+
+            if(this.symbolTable.checkImportMethod(left, right)){
+                this.printWriter.printf("\t;import method\n");
+            } else {
+                this.printWriter.printf("\t;local method\n");
+            }
+            return;
+        }
     }
 
     // -- Convert types and return --

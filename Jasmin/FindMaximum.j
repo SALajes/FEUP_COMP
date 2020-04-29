@@ -65,9 +65,11 @@
 
 	;Expression Id: 19
 	;Dot
+	;local method
 
 	;Expression Id: 19
 	;Dot
+	;import method
 
 	return
 .end method
