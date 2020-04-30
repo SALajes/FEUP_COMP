@@ -24,7 +24,7 @@ public class ASTAssignement extends SimpleNode {
       else if(!symbol_table.checkInitializationVariable(left_child.identity , this.getScope()))
       {
         symbol_table.initializeVariable(left_child.identity, this.getScope());
-      };
+      }
     } else SemanticErrorHandler.getInstance().printError(this.getScope(),
             this + ": Tried to initialize undeclared variable ",
             left_child.identity );

@@ -15,6 +15,7 @@ public class Symbol {
         this.type = type;
         this.id = id;
         this.index = index +1;
+        is_initialized=false;
     }
 
     public String getType() {
