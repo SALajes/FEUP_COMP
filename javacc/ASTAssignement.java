@@ -11,19 +11,23 @@ public class ASTAssignement extends SimpleNode {
 
   @Override
   protected void checkNodeSemantics(SymbolTable symbol_table) {
-    SimpleNode left_child = (SimpleNode) this.jjtGetChild(0); //var init - nome da variavel no identity
-    SimpleNode right_child = (SimpleNode) this.jjtGetChild(1); //expressão ou whatever
+    SimpleNode left_child = (SimpleNode) this.jjtGetChild(0);
+    SimpleNode right_child = (SimpleNode) this.jjtGetChild(1);
 
-    if(!left_child.getReturnType(symbol_table).equals(right_child.getReturnType(symbol_table))){
-      SemanticErrorHandler.getInstance().printError(this.getScope(),
-              this + " assign operation with different types ",
-              left_child.identity + " = " + right_child.identity);
-    }
-    else if(!symbol_table.checkInitializationVariable(left_child.identity , this.getScope()))
+    if(symbol_table.doesVariableExist(this.getScope(), left_child.identity))
     {
-      System.out.println("INITIALIZING.....................");
-      symbol_table.initializeVariable(left_child.identity, this.getScope());
-    };
+      if(!left_child.getReturnType(symbol_table).equals(right_child.getReturnType(symbol_table))){
+        SemanticErrorHandler.getInstance().printError(this.getScope(),
+                this + ": assign operation with different types ",
+                left_child.identity + " = " + right_child.identity);
+      }
+      else if(!symbol_table.checkInitializationVariable(left_child.identity , this.getScope()))
+      {
+        symbol_table.initializeVariable(left_child.identity, this.getScope());
+      };
+    } else SemanticErrorHandler.getInstance().printError(this.getScope(),
+            this + ": Tried to initialize undeclared variable ",
+            left_child.identity );
 
   }
 

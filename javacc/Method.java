@@ -108,6 +108,13 @@ public class Method {
         return false;
     }
 
+    public boolean doesVariableExist(String identity){
+        if(!local_variables.containsKey(identity)){
+           return parameter_variables.containsKey(identity);
+        }
+        else return true;
+    }
+
     public int getOverloads() {
         return overloads;
     }

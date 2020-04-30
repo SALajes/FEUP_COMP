@@ -40,12 +40,5 @@ class ASTVarInit extends SimpleNode {
       already_calculated_return = true;
   }
 
-  @Override
-  public void checkNodeSemantics(SymbolTable symbol_table){
-    if(getReturnType(symbol_table) == "") {
-      SemanticErrorHandler.getInstance().printError(this.getScope(),
-              "Variable initialization is not possible because it does not exist: " + this.identity);
-    }
-  }
 }
 /* JavaCC - OriginalChecksum=fbaeb98e7c33909d7cc13b721b1a7b21 (do not edit this line) */

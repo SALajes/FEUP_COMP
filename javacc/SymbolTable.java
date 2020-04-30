@@ -149,6 +149,17 @@ public class SymbolTable {
         return "";
     }
 
+    public boolean doesVariableExist(String scope , String identity){
+        if(scope == "global")
+            return global_variables.containsKey(identity);
+        else if(methodExists(scope)) {
+           if(!methods.get(scope).doesVariableExist(identity))
+                return global_variables.containsKey(identity);
+           else return true;
+        }
+        return false;
+    }
+
     public boolean checkInitializationVariable(String variable , String scope){
         if(scope == "global")
             return isInitialized(variable);
