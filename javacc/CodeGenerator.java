@@ -228,9 +228,7 @@ class CodeGenerator {
     }
 
     private void writeWhileStatement(SimpleNode node) {
-        for (int i = 0; i < node.jjtGetNumChildren(); i++) {
-            this.printWriter.printf("\t\tId: %d\n", node.jjtGetChild(i).getId());
-        }
+
     }
 
     private void writeExpression(SimpleNode node) {
@@ -274,7 +272,6 @@ class CodeGenerator {
                 break;
 
             case JavammTreeConstants.JJTID:
-                this.printWriter.printf("\t;ID\n");
                 writeID(node);
                 break;
 
@@ -360,9 +357,21 @@ class CodeGenerator {
     private void writeID(SimpleNode node){
         String varName = node.getIdentity();
 
-        if(this.symbolTable.getMethod(this.scope).checkVariable(varName))
-            this.printWriter.printf("\t;Local Var\n");
-        else if (this.symbolTable.globalVariableExists(varName)) {
+        if(this.symbolTable.getMethod(this.scope).checkVariable(varName)) {
+            Symbol var = this.symbolTable.getMethod(this.scope).getVariable(varName);
+
+            switch (var.getType()) {
+                case "int":
+                case "boolean":
+                    this.printWriter.printf("\tiload%s%d\n", var.getIndex() <= 3 ? "_" : " ", var.getIndex());
+                    break;
+                case "int[]":
+                default:
+                    this.printWriter.printf("\taload%s%d\n", var.getIndex() <= 3 ? "_" : " ", var.getIndex());
+                    break;
+            }
+
+        } else if (this.symbolTable.globalVariableExists(varName)) {
             this.printWriter.printf("\taload_0\n");
             this.printWriter.printf("\tgetfield %s/%s %s\n", this.classNode.getIdentity(), varName, convertType(this.symbolTable.getGlobalVariable(varName).getType()));
         }

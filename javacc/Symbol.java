@@ -9,6 +9,7 @@ public class Symbol {
         this.type = type;
         this.id = id;
         is_initialized = false;
+        System.out.println("Type: "+this.type+"\tId: "+this.id+"\n");
     }
 
     public Symbol(String type, String id, int index){
@@ -16,10 +17,11 @@ public class Symbol {
         this.id = id;
         this.index = index +1;
         is_initialized=false;
+        System.out.println("Type: "+this.type+"\tId: "+this.id+"\tInd: "+this.index+"\n");
     }
 
     public String getType() {
-        return type;
+        return this.type;
     }
 
     public boolean checkType(String type) {

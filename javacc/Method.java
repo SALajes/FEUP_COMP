@@ -70,8 +70,16 @@ public class Method {
         else return "";
     }
 
-    public boolean checkVariable(String identiy) {
-        return local_variables.containsKey(identiy);
+    // Given an identity it returns a variable, first checks if its a local then if its a parameter variable
+    public Symbol getVariable(String identity){
+        if(local_variables.containsKey(identity))
+            return local_variables.get(identity);
+
+        return parameter_variables.get(identity);
+    }
+
+    public boolean checkVariable(String identity) {
+        return local_variables.containsKey(identity) || parameter_variables.containsKey(identity);
     }
 
     public int checkVariable(String identity, String type){
