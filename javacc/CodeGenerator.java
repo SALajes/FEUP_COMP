@@ -144,34 +144,14 @@ class CodeGenerator {
         int numLocals = method.getNumLocalVars() + method.getNumParameters();
         this.printWriter.printf("\t.limit locals %d\n\n", numLocals);           // NumLocalVars + NumParameters
 
-        /*for (int i = 0; i < node.jjtGetNumChildren(); i++) {
-            this.printWriter.printf("\tId: %d\n", node.jjtGetChild(i).getId());
-            for (int j = 0; j < node.jjtGetChild(i).jjtGetNumChildren(); j++) {
-                this.printWriter.printf("\t\tId: %d\n", node.jjtGetChild(i).jjtGetChild(j).getId());
-            }
-        }*/
-
         for (int i = 0; i < node.jjtGetNumChildren(); i++) {
-            if(node.jjtGetChild(i) instanceof ASTArgument)
+            if(node.jjtGetChild(i) instanceof ASTArgument || node.jjtGetChild(i) instanceof ASTVarDeclaration)
                 continue;
 
-            if(node.jjtGetChild(i) instanceof ASTVarDeclaration)
-                // writeVarDeclaration(node.jjtGetChild(i);
-                continue;
-
-            if(node.jjtGetChild(i) != null)
-                writeStatement((SimpleNode) node.jjtGetChild(i));
+            writeStatement((SimpleNode) node.jjtGetChild(i));
         }
 
         this.printWriter.printf("\t%s\n", convertReturnType(node.getReturnType()));
-    }
-
-    private void writeVarDeclaration(SimpleNode node) {
-        switch (node.getType()) {
-            case "int":
-            case "int[]":
-            case "boolean":
-        }
     }
 
     private void writeStatement(SimpleNode node) {
@@ -188,6 +168,7 @@ class CodeGenerator {
 
             case JavammTreeConstants.JJTASSIGNEMENT:
                 this.printWriter.printf("\t;Assigment Statement\n");
+                writeAssignStatement(node);
                 break;
 
             default:
@@ -231,6 +212,42 @@ class CodeGenerator {
 
     }
 
+    private void writeAssignStatement(SimpleNode node) {
+        SimpleNode left = (SimpleNode) node.jjtGetChild(0);
+        SimpleNode right = (SimpleNode) node.jjtGetChild(1);
+
+        writeExpression(right);
+
+        if(left instanceof ASTArrayInit) {
+            this.printWriter.printf("\t;Array Init\n");
+//            writeArrayInit(left);
+            return;
+        }
+
+        String varName = left.getIdentity();
+
+        if(this.symbolTable.getMethod(this.scope).checkVariable(varName)) {
+            Symbol var = this.symbolTable.getMethod(this.scope).getVariable(varName);
+
+            switch (var.getType()) {
+                case "int":
+                case "boolean":
+                    this.printWriter.printf("\tistore%s%d\n", var.getIndex() <= 3 ? "_" : " ", var.getIndex());
+                    break;
+                default:
+                    this.printWriter.printf("\tastore%s%d\n", var.getIndex() <= 3 ? "_" : " ", var.getIndex());
+                    break;
+            }
+        } else if (this.symbolTable.globalVariableExists(varName)) {
+            this.printWriter.printf("\taload_0\n");
+            this.printWriter.printf("\tputfield %s/%s %s\n", this.classNode.getIdentity(), varName, convertType(this.symbolTable.getGlobalVarType(varName)));
+        }
+    }
+
+    private void writeArrayInit(SimpleNode node) {
+
+    }
+
     private void writeExpression(SimpleNode node) {
         switch (node.getId()) {
             case JavammTreeConstants.JJTAND:
@@ -256,7 +273,7 @@ class CodeGenerator {
                 break;
 
             case JavammTreeConstants.JJTINTEGER:
-                this.printWriter.printf("\t;Integer\n");
+                writeInteger(node);
                 break;
 
             case JavammTreeConstants.JJTTRUE:
@@ -373,8 +390,17 @@ class CodeGenerator {
 
         } else if (this.symbolTable.globalVariableExists(varName)) {
             this.printWriter.printf("\taload_0\n");
-            this.printWriter.printf("\tgetfield %s/%s %s\n", this.classNode.getIdentity(), varName, convertType(this.symbolTable.getGlobalVariable(varName).getType()));
+            this.printWriter.printf("\tgetfield %s/%s %s\n", this.classNode.getIdentity(), varName, convertType(this.symbolTable.getGlobalVarType(varName)));
         }
+    }
+
+    private void writeInteger(SimpleNode node) {
+        int val = Integer.parseInt(node.getIdentity());
+
+        if(val < 6)
+            this.printWriter.printf("\ticonst_%d\n", val);
+        else
+            this.printWriter.printf("\tldc %d\n", val);     // TODO: Mudar para ser mais optimizado
     }
 
     // -- Convert types and return --
