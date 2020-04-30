@@ -220,11 +220,17 @@ void WhileStatement() #While : {} {
 void VariableInit() #Assignement : { Token id; } {
     id=<ID>
     (
-        (<EQUALS> Expression()  { jjtThis.identity=id.image; } #VarInit )
+        ArrayInit(id.image)
         |
-        ((<OSBRACKET> (Expression() #Index) <CSBRACKET> { jjtThis.identity=id.image; } #ArrayInit)<EQUALS> Expression())
+        ({ jjtThis.identity=id.image; }#VarInit )
     )
+    <EQUALS>
+    Expression()
     <SEMICOL>
+}
+
+void ArrayInit(String id) : {}{
+    <OSBRACKET> (Expression() #Index) <CSBRACKET> { jjtThis.identity=id; }
 }
 
 void Expression() #void : { } {

@@ -3,49 +3,27 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTArrayInit extends SimpleNode {
-  boolean already_calculated_return;
 
   public ASTArrayInit(int id) {
     super(id);
-    this.return_type="";
-    already_calculated_return = false;
+    this.return_type="int";
   }
 
   public ASTArrayInit(Javamm p, int id) {
     super(p, id);
-    this.return_type="";
-    already_calculated_return = false;
+    this.return_type="int";
   }
 
   @Override
   public String toString(){
-    return "Array " + this.identity + " = ";
-  }
-
-  @Override
-  public String getReturnType(SymbolTable symbol_table){
-    if(this.return_type=="" && !already_calculated_return)
-      setReturnType(symbol_table);
-    return this.return_type;
-  }
-
-  @Override
-  public String getReturnType(){
-    return this.return_type;
-  }
-
-  private void setReturnType(SymbolTable symbol_table) {
-    if(symbol_table.checkVariable(this.getScope() , this.identity , "int[]"))
-      return_type = "int[]";
-
-    already_calculated_return = true;
+    return "Array " + this.identity ;
   }
 
   @Override
   public void checkNodeSemantics(SymbolTable symbol_table){
-    if(getReturnType(symbol_table) == "") {
+    if(!symbol_table.checkVariable(this.getScope() , this.identity , "int[]")) {
       SemanticErrorHandler.getInstance().printError(this.getScope(),
-              "Variable initialization is not possible because it does not exist: " + this.identity);
+              "Array initialization is not possible because it does not exist or is not an array: " + this.identity);
     }
   }
 

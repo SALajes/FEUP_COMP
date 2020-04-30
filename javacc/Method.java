@@ -19,7 +19,9 @@ public class Method {
 
     public boolean addParameterVariable(String type, String identifier){
         if(!parameterVariableExists(identifier)) {
-            parameter_variables.put(identifier, new Symbol(type, identifier));
+            Symbol parameter = new Symbol(type, identifier);
+            parameter.initialize();
+            parameter_variables.put(identifier, parameter);
             return true;
         }
         return false;
@@ -77,6 +79,33 @@ public class Method {
                 return 0;
             else return 1;
         else return 2;
+    }
+
+    public boolean isInitialized(String variable){
+        Symbol var = local_variables.get(variable);
+
+        if(var != null){
+            return var.isInitialized();
+        }
+
+        var = parameter_variables.get(variable);
+
+        if(var != null){
+            return var.isInitialized();
+        }
+
+        return false;
+    }
+
+    public boolean initialize(String variable){
+        if(local_variables.containsKey(variable)){
+            local_variables.get(variable).initialize();
+            return true;
+        }else if (parameter_variables.containsKey(variable)){
+            parameter_variables.get(variable).initialize();
+            return true;
+        }
+        return false;
     }
 
     public int getOverloads() {

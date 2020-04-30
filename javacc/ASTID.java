@@ -4,12 +4,19 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTID extends SimpleNode {
+
+  boolean already_calculated_return;
+
   public ASTID(int id) {
     super(id);
+    this.return_type="";
+    already_calculated_return = false;
   }
 
   public ASTID(Javamm p, int id) {
     super(p, id);
+    this.return_type="";
+    already_calculated_return = false;
   }
 
   @Override
@@ -17,5 +24,26 @@ class ASTID extends SimpleNode {
     return this.identity;
   }
 
+  @Override
+  public String getReturnType(SymbolTable symbol_table){
+    if(this.return_type=="" && !already_calculated_return)
+      setReturnType(symbol_table);
+    return this.return_type;
+  }
+
+  @Override
+  public String getReturnType(){
+    return this.return_type;
+  }
+
+  private void setReturnType(SymbolTable symbol_table) {
+    return_type = symbol_table.getVariableType(this.getScope() , this.identity);
+    already_calculated_return = true;
+  }
+
+  @Override
+  protected void checkNodeSemantics(SymbolTable symbol_table) {
+    super.checkNodeSemantics(symbol_table);
+  }
 }
 /* JavaCC - OriginalChecksum=28a0e7985073fe41c798463bd70b5ce9 (do not edit this line) */

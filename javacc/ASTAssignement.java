@@ -14,11 +14,17 @@ public class ASTAssignement extends SimpleNode {
     SimpleNode left_child = (SimpleNode) this.jjtGetChild(0); //var init - nome da variavel no identity
     SimpleNode right_child = (SimpleNode) this.jjtGetChild(1); //expressão ou whatever
 
-    if(left_child.getType()!=right_child.getType()){
+    if(!left_child.getReturnType(symbol_table).equals(right_child.getReturnType(symbol_table))){
       SemanticErrorHandler.getInstance().printError(this.getScope(),
               this + " assign operation with different types ",
-              left_child.identity + right_child.identity);
+              left_child.identity + " = " + right_child.identity);
     }
+    else if(!symbol_table.checkInitializationVariable(left_child.identity , this.getScope()))
+    {
+      System.out.println("INITIALIZING.....................");
+      symbol_table.initializeVariable(left_child.identity, this.getScope());
+    };
+
   }
 
 }

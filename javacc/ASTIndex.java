@@ -7,10 +7,12 @@ class ASTIndex extends SimpleNode {
 
   public ASTIndex(int id) {
     super(id);
+    return_type = "int";
   }
 
   public ASTIndex(Javamm p, int id) {
     super(p, id);
+    return_type = "int";
   }
 
   @Override
