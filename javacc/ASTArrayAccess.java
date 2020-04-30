@@ -5,11 +5,13 @@ class ASTArrayAccess extends SimpleNode {
   public ASTArrayAccess(int id) {
     super(id);
     this.identity = "ArrayAccess";
+    this.return_type = "int";
   }
 
   public ASTArrayAccess(Javamm p, int id) {
     super(p, id);
     this.identity = "ArrayAccess";
+    this.return_type = "int";
   }
 
   @Override

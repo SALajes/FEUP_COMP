@@ -157,6 +157,49 @@ public class SymbolTable {
         return "";
     }
 
+    public boolean doesVariableExist(String scope , String identity){
+        if(scope == "global")
+            return global_variables.containsKey(identity);
+        else if(methodExists(scope)) {
+           if(!methods.get(scope).doesVariableExist(identity))
+                return global_variables.containsKey(identity);
+           else return true;
+        }
+        return false;
+    }
+
+    public boolean checkInitializationVariable(String variable , String scope){
+        if(scope == "global")
+            return isInitialized(variable);
+        else if(methodExists(scope)) {
+            if(!methods.get(scope).isInitialized(variable))
+                return isInitialized(variable);
+            else return true;
+        }
+        return false;
+    }
+
+    public void initializeVariable(String variable , String scope){
+        System.out.println("initializing varible : " + variable + " :)");
+        if(scope == "global") {
+            global_variables.get(variable).initialize();
+        }
+        else if(methodExists(scope)) {
+            if(!methods.get(scope).initialize(variable))
+            global_variables.get(variable).initialize();
+        }
+
+    }
+
+    public boolean isInitialized(String variable){
+        Symbol var = global_variables.get(variable);
+
+        if(var != null){
+            return var.isInitialized();
+        }
+        return false;
+    }
+
     public void dump(){
         Iterator it = imports.entrySet().iterator();
         System.out.println("------- Imports -------");

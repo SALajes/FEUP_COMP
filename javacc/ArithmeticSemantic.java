@@ -15,10 +15,16 @@ public final class ArithmeticSemantic {
 
     private static void checkChildConditions(SimpleNode node, String child, SymbolTable symbol_table, String scope, String operator,  String code_fragment){
         if(!node.isBinaryOperator()){
-            if(!((node.getIdentity()=="." && node.getReturnType(symbol_table) == "int") ||
+            if(!((node.getIdentity()=="." && node.getReturnType(symbol_table) == "int") ||//no need
                     node.getIdentity()=="ArrayAccess" ||
-                    node.getType() == "int" ||
-                    symbol_table.checkVariable(scope, node.getIdentity(), "int"))){
+                    node.getType() == "int")){
+
+                if(symbol_table.checkVariable(scope, node.getIdentity(), "int")){
+                   if(symbol_table.checkInitializationVariable(node.getIdentity(), node.getScope())) {
+                       return;
+                   }
+                   else System.out.println("NOT INITIALIZED" + child);
+                }
                 printSemanticError(child, scope, operator, code_fragment);
             }
         }

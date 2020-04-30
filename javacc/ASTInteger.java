@@ -5,10 +5,12 @@ public
 class ASTInteger extends SimpleNode {
   public ASTInteger(int id) {
     super(id);
+    return_type = "int";
   }
 
   public ASTInteger(Javamm p, int id) {
     super(p, id);
+    return_type = "int";
   }
 
   @Override

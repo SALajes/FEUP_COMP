@@ -24,7 +24,7 @@ class ASTVarDeclaration extends SimpleNode {
     if(!( types.contains(this.type) || symbol_table.checkImportClass(this.type) || symbol_table.class_name.equals(this.type)))
     {
       SemanticErrorHandler.getInstance().printError(scope,
-              this + " type of variable " + this.varName + " is not valid",
+              this + " type of variable " + this.identity + " is not valid",
               this.toString());
     }
   }
