@@ -287,8 +287,8 @@ class CodeGenerator {
                 this.printWriter.printf("\t;False\n");
                 break;
 
-            case JavammTreeConstants.JJTTHIS:
-                this.printWriter.printf("\t;This\n");
+            case JavammTreeConstants.JJTINDEX:
+                writeExpression((SimpleNode) node.jjtGetChild(0));
                 break;
 
             case JavammTreeConstants.JJTID:
@@ -299,12 +299,7 @@ class CodeGenerator {
                 this.printWriter.printf("\t;Array Access\n");
                 break;
 
-            case JavammTreeConstants.JJTEXPRESSIONDOT:
-                this.printWriter.printf("\t;Expression Dot\n");
-                break;
-
             case JavammTreeConstants.JJTEXPRESSIONNEW:
-                this.printWriter.printf("\t;Expression New\n");
                 writeNew(node);
                 break;
 
@@ -413,9 +408,11 @@ class CodeGenerator {
             this.printWriter.printf("\tldc %d\n", val);     // TODO: Mudar para ser mais optimizado
     }
 
+    // TODO: New int[]
     private void writeNew(SimpleNode node) {
         if(node.jjtGetNumChildren() > 0){
-            this.printWriter.printf("\t;New int[]\n");
+            writeExpression((SimpleNode) node.jjtGetChild(0));
+            this.printWriter.printf("\tnewarray int\n");
         } else {
             this.printWriter.printf("\tnew %s\n", node.getReturnType());
             this.printWriter.printf("\tdup\n");
