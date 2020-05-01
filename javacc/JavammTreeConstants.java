@@ -10,25 +10,27 @@ public interface JavammTreeConstants
   public int JJTMETHOD = 6;
   public int JJTARGUMENT = 7;
   public int JJTIF = 8;
-  public int JJTWHILE = 9;
-  public int JJTASSIGNEMENT = 10;
-  public int JJTVARINIT = 11;
-  public int JJTINDEX = 12;
-  public int JJTARRAYINIT = 13;
-  public int JJTAND = 14;
-  public int JJTLESSTHAN = 15;
-  public int JJTADDITIONSUBTRACTION = 16;
-  public int JJTMULTIPLICATIONDIVISION = 17;
-  public int JJTNOT = 18;
-  public int JJTDOT = 19;
-  public int JJTINTEGER = 20;
-  public int JJTTRUE = 21;
-  public int JJTFALSE = 22;
-  public int JJTTHIS = 23;
-  public int JJTID = 24;
-  public int JJTARRAYACCESS = 25;
-  public int JJTEXPRESSIONDOT = 26;
-  public int JJTEXPRESSIONNEW = 27;
+  public int JJTIFBODY = 9;
+  public int JJTIFELSE = 10;
+  public int JJTWHILE = 11;
+  public int JJTASSIGNEMENT = 12;
+  public int JJTVARINIT = 13;
+  public int JJTARRAYINIT = 14;
+  public int JJTINDEX = 15;
+  public int JJTAND = 16;
+  public int JJTLESSTHAN = 17;
+  public int JJTADDITIONSUBTRACTION = 18;
+  public int JJTMULTIPLICATIONDIVISION = 19;
+  public int JJTNOT = 20;
+  public int JJTDOT = 21;
+  public int JJTINTEGER = 22;
+  public int JJTTRUE = 23;
+  public int JJTFALSE = 24;
+  public int JJTTHIS = 25;
+  public int JJTID = 26;
+  public int JJTARRAYACCESS = 27;
+  public int JJTEXPRESSIONDOT = 28;
+  public int JJTEXPRESSIONNEW = 29;
 
 
   public String[] jjtNodeName = {
@@ -41,11 +43,13 @@ public interface JavammTreeConstants
     "Method",
     "Argument",
     "If",
+    "IfBody",
+    "IfElse",
     "While",
     "Assignement",
     "VarInit",
-    "Index",
     "ArrayInit",
+    "Index",
     "And",
     "LessThan",
     "AdditionSubtraction",
@@ -62,4 +66,4 @@ public interface JavammTreeConstants
     "ExpressionNew",
   };
 }
-/* JavaCC - OriginalChecksum=fef5f216833846cd84dfec0202ae6d6f (do not edit this line) */
+/* JavaCC - OriginalChecksum=aa05ab37a1fb0d79bb9c25d5eaa1d633 (do not edit this line) */

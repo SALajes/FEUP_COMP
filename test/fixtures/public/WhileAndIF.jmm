@@ -12,6 +12,7 @@ class WhileAndIf {
         d = new int[10];
         if( a < b){
             c  = a-1;
+            c = c-3;
         }else{
             c = b-1;
         }

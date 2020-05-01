@@ -183,8 +183,8 @@ void Statement() #void: {} {
 
 void IfStatement() #If : {} {
     <IF> <OPAREN> Expression() <CPAREN>
-    Statement() //Then 
-    <ELSE>  Statement() //else
+    Statement() #IfBody
+    <ELSE>  Statement() #IfElse
 }
 
 void WhileStatement() #While : {} {

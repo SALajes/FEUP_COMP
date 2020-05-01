@@ -86,7 +86,9 @@ class CodeGenerator {
 
             this.printWriter.printf(".fileld %s %s\n", node.getIdentity(), convertType(node.getType()));
         }
-        this.printWriter.printf("\n");
+
+        if(this.symbolTable.getGlobal_variables().size() < 0)
+            this.printWriter.printf("\n");
     }
 
     private void writeInitializer() {
@@ -157,17 +159,14 @@ class CodeGenerator {
     private void writeStatement(SimpleNode node) {
         switch (node.getId()) {
             case JavammTreeConstants.JJTIF:
-                this.printWriter.printf("\t;If Statement\n");
-//                writeIfStatement(node);
+                writeIfStatement(node);
                 break;
 
             case JavammTreeConstants.JJTWHILE:
-                this.printWriter.printf("\t;While Statement\n");
-//                writeWhileStatement(node);
+                writeWhileStatement(node);
                 break;
 
             case JavammTreeConstants.JJTASSIGNEMENT:
-                this.printWriter.printf("\t;Assigment Statement\n");
                 writeAssignStatement(node);
                 break;
 
@@ -180,38 +179,36 @@ class CodeGenerator {
         this.printWriter.printf("\n");
     }
 
-    // TODO: Gerar codigo do if
+    // TODO: Gerar codigo do if block e da condition
+    // Codigo body e else já está
     private void writeIfStatement(SimpleNode node) {
         SimpleNode condition = (SimpleNode) node.jjtGetChild(0);
         SimpleNode body = (SimpleNode) node.jjtGetChild(1);
-        SimpleNode then = node.jjtGetNumChildren() == 3 ? (SimpleNode) node.jjtGetChild(2) : null;
+        SimpleNode then = (SimpleNode) node.jjtGetChild(2);
 
-        /*
-        this.printWriter.printf("\t\tCondition: %d\n", condition.getId());
-        for (int i = 0; i < body.jjtGetNumChildren(); i++)
-            this.printWriter.printf("\t\t\t Id: %d\n", body.jjtGetChild(i).getId());
-        if(then != null) {
-            this.printWriter.printf("\t\tThen: \n");
-            for (int i = 0; i < then.jjtGetNumChildren(); i++)
-                this.printWriter.printf("\t\t\t Id: %d\n", then.jjtGetChild(i).getId());
-            this.printWriter.printf("\n");
-        }
-        */
-
+        this.printWriter.printf("\t;Condition\n");
         writeExpression(condition);
 
+        this.printWriter.printf("\n\t;If Body\n");
         for (int i = 0; i < body.jjtGetNumChildren(); i++)
             writeStatement((SimpleNode) body.jjtGetChild(i));
 
-        if(then != null) {
-            for (int i = 0; i < then.jjtGetNumChildren(); i++)
-                writeStatement((SimpleNode) then.jjtGetChild(i));
-        }
+        this.printWriter.printf("\t;Else\n");
+        for (int i = 0; i < then.jjtGetNumChildren(); i++)
+            writeStatement((SimpleNode) then.jjtGetChild(i));
     }
 
     // TODO: Gerar codigo do while
+    // Codigo body já está
     private void writeWhileStatement(SimpleNode node) {
+        SimpleNode condition = (SimpleNode) node.jjtGetChild(0);
 
+        this.printWriter.printf("\t;Condition\n");
+        writeExpression(condition);
+
+        this.printWriter.printf("\n\t;While Body\n");
+        for (int i = 1; i < node.jjtGetNumChildren(); i++)
+            writeStatement((SimpleNode) node.jjtGetChild(i));
     }
 
     private void writeAssignStatement(SimpleNode node) {
@@ -351,13 +348,11 @@ class CodeGenerator {
             Method method = this.symbolTable.getMethod(right.getIdentity());
             String args = genArgsString(method);
             this.printWriter.printf("\tinvokevirtual %s/%s(%s)%s\n", this.classNode.getIdentity(), right.getIdentity(), args, convertType(method.getReturnType()));
-
             return;
         }
 
         if(left instanceof ASTID && right instanceof ASTExpressionDot)
-         this.printWriter.printf("\t;Local or Import method\n");
-
+            this.printWriter.printf("\t;Local or Import method\n");
     }
 
     private String genArgsString(Method method) {
@@ -373,6 +368,16 @@ class CodeGenerator {
         }
 
         return ret;
+    }
+
+    // TODO: Optimizar load de valores > 5
+    private void writeInteger(SimpleNode node) {
+        int val = Integer.parseInt(node.getIdentity());
+
+        if(val < 6)
+            this.printWriter.printf("\ticonst_%d\n", val);
+        else
+            this.printWriter.printf("\tldc %d\n", val);     // TODO: Mudar para ser mais optimizado
     }
 
     private void writeID(SimpleNode node){
@@ -398,17 +403,6 @@ class CodeGenerator {
         }
     }
 
-    // TODO: Optimizar load de valores > 5
-    private void writeInteger(SimpleNode node) {
-        int val = Integer.parseInt(node.getIdentity());
-
-        if(val < 6)
-            this.printWriter.printf("\ticonst_%d\n", val);
-        else
-            this.printWriter.printf("\tldc %d\n", val);     // TODO: Mudar para ser mais optimizado
-    }
-
-    // TODO: New int[]
     private void writeNew(SimpleNode node) {
         if(node.jjtGetNumChildren() > 0){
             writeExpression((SimpleNode) node.jjtGetChild(0));
