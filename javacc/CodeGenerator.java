@@ -302,6 +302,7 @@ class CodeGenerator {
 
             case JavammTreeConstants.JJTEXPRESSIONNEW:
                 this.printWriter.printf("\t;Expression New\n");
+                writeNew(node);
                 break;
 
             default:
@@ -401,6 +402,17 @@ class CodeGenerator {
             this.printWriter.printf("\ticonst_%d\n", val);
         else
             this.printWriter.printf("\tldc %d\n", val);     // TODO: Mudar para ser mais optimizado
+    }
+
+    private void writeNew(SimpleNode node) {
+        if(node.jjtGetNumChildren() > 0){
+            this.printWriter.printf("\t;New int[]\n");
+            return;
+        } else {
+            this.printWriter.printf("\tnew %s\n", node.getReturnType());
+            this.printWriter.printf("\tdup\n");
+            this.printWriter.printf("\tinvokespecial %s/<init>()V", node.getReturnType());
+        }
     }
 
     // -- Convert types and return --
