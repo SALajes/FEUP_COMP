@@ -24,7 +24,7 @@ class ASTIndex extends SimpleNode {
         if (!((child.getIdentity() == "." && child.getReturnType(symbol_table) == "int") ||
                 child.getIdentity() == "ArrayAccess" ||
                 child.getType() == "int" ||
-                symbol_table.checkVariable(this.getScope(), child.getIdentity(), "int"))) {
+                symbol_table.checkVariableType(this.getScope(), child.getIdentity(), "int"))) {
 
           SemanticErrorHandler.getInstance().printError(this.getScope(),
                   "An index must be an integer or an expression that returns an integer.");

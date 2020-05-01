@@ -1,6 +1,8 @@
 import java.io.FileNotFoundException;
 
 public class Main {
+    private static final String DEBUG_FLAG = "-d";
+
     public Main() {
     }
 
@@ -17,7 +19,8 @@ public class Main {
 
             root.dump("");
 
-            javamm.symbol_table.dump();
+            if(args.length > 1 && DEBUG_FLAG.equals("-d"))
+                javamm.symbol_table.dump();
 
             //check semantics
             final SymbolTable symbol_table = javamm.getSymbolTable();

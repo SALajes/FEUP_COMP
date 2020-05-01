@@ -29,7 +29,7 @@ public class ImportMethod {
     }
 
     public String dump(){
-        String print = class_name + "." + method + " returns " + return_type + "\nParameters: (";
+        String print = ":: " + class_name + "." + method + " returns " + return_type + "\n:parameters: (";
 
         for(int i = 0; i < parameter_types.size(); i++){
             if(i!=0)

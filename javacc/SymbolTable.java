@@ -11,8 +11,8 @@ public class SymbolTable {
     public String class_name;
     public String extend_class;
 
-    public boolean isClass(String identity){
-        return identity.equals(class_name);
+    public boolean isClass(String identifier){
+        return identifier.equals(class_name);
     }
 
     public boolean extendsClass(){
@@ -55,20 +55,38 @@ public class SymbolTable {
         return "";
     }
 
-    public void addVariable(String scope, String type, String id){
+    public Symbol getVariable(String scope, String identifier){
         if(scope == "global")
-            addGlobalVariable(type, id);
+            return getGlobalVariable(identifier);
+        else if(methodExists(scope)) {
+            Symbol var = methods.get(scope).getVariable(identifier);
+            if(var == null)
+                return getGlobalVariable(identifier);
+            else return var;
+        }
+        else return null;
+    }
+
+    public void addVariable(String scope, String type, String identifier){
+        if(scope == "global")
+            addGlobalVariable(type, identifier);
         else if(methodExists(scope))
-            methods.get(scope).addLocalVariable(id, new Symbol(type, id));
+            methods.get(scope).addLocalVariable(identifier, new Symbol(type, identifier));
     }
 
-    public void addGlobalVariable(String type, String id){
-        global_variables.put(id, new Symbol(type, id));
+    public void addGlobalVariable(String type, String identifier){
+        global_variables.put(identifier, new Symbol(type, identifier));
     }
 
-    public void addArgument(String scope, String type, String id){
+    public void addArgument(String scope, String type, String identifier){
         if(methodExists(scope)) {
-            methods.get(scope).addParameterVariable(type, id);
+            methods.get(scope).addParameterVariable(type, identifier);
+        }
+    }
+
+    public void addMethod(String identifier, String type){
+        if(!methodExists(identifier)) {
+            methods.put(identifier, new Method(identifier, type));
         }
     }
 
@@ -82,12 +100,6 @@ public class SymbolTable {
         return null;
     }
 
-    public void addMethod(String identifier, String type){
-        if(!methodExists(identifier)) {
-            methods.put(identifier, new Method(identifier, type));
-        }
-    }
-
     public boolean methodExists(String identifier) {
         return methods.containsKey(identifier);
     }
@@ -98,123 +110,97 @@ public class SymbolTable {
         return null;
     }
 
-    public boolean checkMethod(String identity, String return_type){
-        if(methodExists(identity)){
-            return methods.get(identity).checkReturnType(return_type);
+    public boolean checkMethodType(String identifier, String return_type){
+        if(methodExists(identifier)){
+            return methods.get(identifier).checkReturnType(return_type);
         }
         else return false;
     }
 
-    public boolean checkVariable(String scope, String identity, String type){
+    public boolean checkVariableType(String scope, String identifier, String type){
         if(scope == "global")
-            return checkGlobalVariable(identity, type);
+            return checkGlobalVariable(identifier, type);
         else if(methodExists(scope)) {
-            switch(methods.get(scope).checkVariable(identity, type)){
+            switch(methods.get(scope).checkVariableType(identifier, type)){
                 case 0:
                     return true;
                 case 1:
                     return false;
                 case 2:
-                    return checkGlobalVariable(identity, type);
+                    return checkGlobalVariable(identifier, type);
             }
         }
         return false;
     }
 
-    private boolean checkGlobalVariable(String identity, String type) {
-        if(global_variables.containsKey(identity)){
-            return global_variables.get(identity).checkType(type);
+    private boolean checkGlobalVariable(String identifier, String type) {
+        if(global_variables.containsKey(identifier)){
+            return global_variables.get(identifier).checkType(type);
         }
         return false;
     }
 
-    public String getGlobalVarType(String identity){
-        if(global_variables.containsKey(identity)){
-            return global_variables.get(identity).getType();
-        }
-        return "";
+    public String getVariableType(String scope , String identifier){
+        Symbol var = getVariable(scope, identifier);
+        if(var != null)
+            return var.getType();
+        else return "";
     }
 
-    public String getVariableType(String scope , String variable_name){
-        if(scope == "global")
-            return getGlobalVarType(variable_name);
-        else if(methodExists(scope)) {
-            String temp = methods.get(scope).getVariableType(variable_name);
-
-            if (temp.equals(""))
-                return getGlobalVarType(variable_name);
-            return temp;
-
-        }
-        return "";
+    public boolean doesVariableExist(String scope , String identifier){
+        Symbol var = getVariable(scope, identifier);
+        if(var != null)
+            return true;
+        else return false;
     }
 
-    public boolean doesVariableExist(String scope , String identity){
-        if(scope == "global")
-            return global_variables.containsKey(identity);
-        else if(methodExists(scope)) {
-           if(!methods.get(scope).doesVariableExist(identity))
-                return global_variables.containsKey(identity);
-           else return true;
-        }
-        return false;
-    }
+    public boolean isVariableInitialized(String identifier , String scope){
+        Symbol var = getVariable(scope, identifier);
 
-    public boolean checkInitializationVariable(String variable , String scope){
-        if(scope == "global")
-            return isInitialized(variable);
-        else if(methodExists(scope)) {
-            if(!methods.get(scope).isInitialized(variable))
-                return isInitialized(variable);
-            else return true;
-        }
-        return false;
-    }
-
-    public void initializeVariable(String variable , String scope){
-        System.out.println("initializing varible : " + variable + " :)");
-        if(scope == "global") {
-            global_variables.get(variable).initialize();
-        }
-        else if(methodExists(scope)) {
-            if(!methods.get(scope).initialize(variable))
-            global_variables.get(variable).initialize();
-        }
-
-    }
-
-    public boolean isInitialized(String variable){
-        Symbol var = global_variables.get(variable);
-
-        if(var != null){
+        if(var != null)
             return var.isInitialized();
-        }
-        return false;
+        else return false;
+    }
+
+    public void initializeVariable(String identifier , String scope){
+        getVariable(scope, identifier).initialize();
     }
 
     public void dump(){
-        Iterator it = imports.entrySet().iterator();
-        System.out.println("------- Imports -------");
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
-            ImportMethod imp = (ImportMethod) pair.getValue();
-            System.out.println(imp.dump());
+        System.out.println("\n=== SYMBOL TABLE ===");
+
+        Iterator it;
+
+        if(imports.size() > 0){
+            it = imports.entrySet().iterator();
+            System.out.println("------ IMPORT ------");
+            while (it.hasNext()) {
+                Map.Entry pair = (Map.Entry)it.next();
+                ImportMethod imp = (ImportMethod) pair.getValue();
+                System.out.println(imp.dump());
+            }
         }
 
-        it = global_variables.entrySet().iterator();
-        System.out.println("------- GLOBAL -------");
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
-            Symbol symbol = (Symbol) pair.getValue();
-            System.out.println(symbol.dump());
+        if(global_variables.size() > 0){
+            it = global_variables.entrySet().iterator();
+            System.out.println("------ GLOBAL ------");
+            while (it.hasNext()) {
+                Map.Entry pair = (Map.Entry)it.next();
+                Symbol symbol = (Symbol) pair.getValue();
+                System.out.println(symbol.dump());
+            }
         }
 
-        System.out.println("------- METHODS -------");
-        it = methods.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
-            Method method = (Method) pair.getValue();
-            method.dump();
+        if(methods.size() > 0){
+            System.out.println("------ METHOD ------");
+            it = methods.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry pair = (Map.Entry)it.next();
+                Method method = (Method) pair.getValue();
+                System.out.println(method.dump());
+            }
         }
+
+        System.out.println("====== FINISH ======\n");
     }
 }
