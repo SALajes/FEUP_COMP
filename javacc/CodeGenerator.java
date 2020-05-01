@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Hashtable;
 
 class CodeGenerator {
     private SymbolTable symbolTable;
@@ -137,12 +138,13 @@ class CodeGenerator {
         return ret;
     }
 
+    // TODO: Calcular stack
     private void writeMethodBody(SimpleNode node) {
         this.printWriter.printf("\t.limit stack 99\n");                         // TODO: Calcular
 
         Method method = this.symbolTable.getMethod(node.getIdentity());
         int numLocals = method.getNumLocalVars() + method.getNumParameters();
-        this.printWriter.printf("\t.limit locals %d\n\n", numLocals);           // NumLocalVars + NumParameters
+        this.printWriter.printf("\t.limit locals %d\n\n", numLocals);
 
         for (int i = 0; i < node.jjtGetNumChildren(); i++) {
             if(node.jjtGetChild(i) instanceof ASTArgument || node.jjtGetChild(i) instanceof ASTVarDeclaration)
@@ -180,6 +182,7 @@ class CodeGenerator {
         this.printWriter.printf("\n");
     }
 
+    // TODO: Gerar codigo do if
     private void writeIfStatement(SimpleNode node) {
         SimpleNode condition = (SimpleNode) node.jjtGetChild(0);
         SimpleNode body = (SimpleNode) node.jjtGetChild(1);
@@ -208,6 +211,7 @@ class CodeGenerator {
         }
     }
 
+    // TODO: Gerar codigo do while
     private void writeWhileStatement(SimpleNode node) {
 
     }
@@ -244,6 +248,7 @@ class CodeGenerator {
         }
     }
 
+    // TODO: Array Init
     private void writeArrayInit(SimpleNode node) {
 
     }
@@ -340,36 +345,39 @@ class CodeGenerator {
     }
 
     private void writeDot(SimpleNode node){
-        /*for (int i = 0; i < node.jjtGetNumChildren(); i++) {
-            this.printWriter.printf("\tId: %d\n", node.jjtGetChild(i).getId());
-            for (int j = 0; j < node.jjtGetChild(i).jjtGetNumChildren(); j++) {
-                this.printWriter.printf("\t\t Id: %d\n", node.jjtGetChild(i).jjtGetChild(j).getId());
-            }
-        }*/
-        // All nodes Dot have 2 children, guaranteed
+        SimpleNode left = (SimpleNode) node.jjtGetChild(0);
+        SimpleNode right = (SimpleNode) node.jjtGetChild(1);
 
-        if(node.jjtGetChild(0) instanceof ASTThis) {
+        if(left instanceof ASTThis) {
             this.printWriter.printf("\t;this\n");
-//            this.printWriter.printf("\taload_0\n");
-//            writeExpression((SimpleNode) node.jjtGetChild(1));
-            return;
-        }
-
-        if(node.jjtGetChild(0) instanceof ASTID && node.jjtGetChild(1) instanceof ASTExpressionDot) {
-            String left = ((ASTID) node.jjtGetChild(0)).getIdentity();
-            String right= ((ASTExpressionDot) node.jjtGetChild(1)).getIdentity();
-
-            if(this.symbolTable.checkImportMethod(left, right)){
-                this.printWriter.printf("\t;import method\n");
-                // Explorar no da direita se der
-                // invoke
-            } else {
-                this.printWriter.printf("\t;local method\n");
-                // Explorar no da direita se der
-                // invoke
+            this.printWriter.printf("\taload_0\n");
+            for (int i = 0; i < right.jjtGetNumChildren(); i++) {
+                writeExpression((SimpleNode) right.jjtGetChild(i));
             }
+            Method method = this.symbolTable.getMethod(right.getIdentity());
+            String args = genArgsString(method);
+            this.printWriter.printf("\tinvokevirtual %s/%s(%s)%s\n", this.classNode.getIdentity(), right.getIdentity(), args, convertType(method.getReturnType()));
             return;
         }
+
+        if(left instanceof ASTID && right instanceof ASTExpressionDot)
+         this.printWriter.printf("\t;Local or Import method\n");
+
+    }
+
+    private String genArgsString(Method method) {
+        String ret = "";
+
+        if(method.getNumLocalVars() == 0)
+            return ret;
+
+        Hashtable<String, Symbol> vars = method.getLocalVariables();
+
+        for (Symbol s : vars.values()) {
+            ret += convertType(s.getType());
+        }
+
+        return ret;
     }
 
     private void writeID(SimpleNode node){
@@ -395,6 +403,7 @@ class CodeGenerator {
         }
     }
 
+    // TODO: Optimizar load de valores > 5
     private void writeInteger(SimpleNode node) {
         int val = Integer.parseInt(node.getIdentity());
 
@@ -407,11 +416,10 @@ class CodeGenerator {
     private void writeNew(SimpleNode node) {
         if(node.jjtGetNumChildren() > 0){
             this.printWriter.printf("\t;New int[]\n");
-            return;
         } else {
             this.printWriter.printf("\tnew %s\n", node.getReturnType());
             this.printWriter.printf("\tdup\n");
-            this.printWriter.printf("\tinvokespecial %s/<init>()V", node.getReturnType());
+            this.printWriter.printf("\tinvokespecial %s/<init>()V\n", node.getReturnType());
         }
     }
 

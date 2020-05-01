@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class Method {
     private String name;
-    private String return_type;
+    private String return_type = "";
 
     private int overloads = 0;
 
@@ -15,6 +15,15 @@ public class Method {
     public Method(String name, String type) {
         this.name = name;
         this.return_type = type;
+        System.out.println("METHOD RETURN TYPE: " + this.return_type);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getReturnType(){
+        return return_type;
     }
 
     public boolean addParameterVariable(String type, String identifier){
@@ -56,10 +65,6 @@ public class Method {
 
     public boolean checkReturnType(String return_type){
         return this.return_type.equals(return_type);
-    }
-
-    public String getReturnType(){
-        return this.return_type;
     }
 
     public String getVariableType(String identity){
@@ -142,6 +147,10 @@ public class Method {
 
     public int getNumParameters() {
         return this.parameter_variables.size();
+    }
+
+    public Hashtable<String, Symbol> getLocalVariables() {
+        return local_variables;
     }
 
     public void dump(){
