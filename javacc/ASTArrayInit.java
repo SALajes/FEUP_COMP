@@ -21,7 +21,7 @@ class ASTArrayInit extends SimpleNode {
 
   @Override
   public void checkNodeSemantics(SymbolTable symbol_table){
-    if(!symbol_table.checkVariable(this.getScope() , this.identity , "int[]")) {
+    if(!symbol_table.checkVariableType(this.getScope() , this.identity , "int[]")) {
       SemanticErrorHandler.getInstance().printError(this.getScope(),
               "Array initialization is not possible because it does not exist or is not an array: " + this.identity);
     }

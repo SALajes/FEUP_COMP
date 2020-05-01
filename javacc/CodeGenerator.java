@@ -1,5 +1,3 @@
-import com.sun.nio.sctp.AbstractNotificationHandler;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -349,14 +347,16 @@ class CodeGenerator {
         SimpleNode right = (SimpleNode) node.jjtGetChild(1);
 
         if(left instanceof ASTThis) {
-            this.printWriter.printf("\t;this\n");
             this.printWriter.printf("\taload_0\n");
+
             for (int i = 0; i < right.jjtGetNumChildren(); i++) {
                 writeExpression((SimpleNode) right.jjtGetChild(i));
             }
+
             Method method = this.symbolTable.getMethod(right.getIdentity());
             String args = genArgsString(method);
             this.printWriter.printf("\tinvokevirtual %s/%s(%s)%s\n", this.classNode.getIdentity(), right.getIdentity(), args, convertType(method.getReturnType()));
+
             return;
         }
 

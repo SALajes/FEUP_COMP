@@ -18,17 +18,16 @@ public class ASTAssignement extends SimpleNode {
     {
       if(!left_child.getReturnType(symbol_table).equals(right_child.getReturnType(symbol_table))){
         SemanticErrorHandler.getInstance().printError(this.getScope(),
-                this + ": assign operation with different types ",
+                "Assign operation with different types ",
                 left_child.identity + " = " + right_child.identity);
       }
-      else if(!symbol_table.checkInitializationVariable(left_child.identity , this.getScope()))
+      else if(!symbol_table.isVariableInitialized(left_child.identity , this.getScope()))
       {
         symbol_table.initializeVariable(left_child.identity, this.getScope());
       }
     } else SemanticErrorHandler.getInstance().printError(this.getScope(),
-            this + ": Tried to initialize undeclared variable ",
+            "Tried to initialize undeclared variable ",
             left_child.identity );
-
   }
 
 }

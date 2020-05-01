@@ -36,14 +36,14 @@ class ASTDot extends SimpleNode {
       SimpleNode right_child = (SimpleNode) this.jjtGetChild(1);
 
       if(right_child.getIdentity() == "length"){
-        if(symbol_table.checkVariable(this.getScope(), left_child.getIdentity(), "int[]") ||
-                symbol_table.checkMethod(left_child.getIdentity(), "int[]")){
+        if(symbol_table.checkVariableType(this.getScope(), left_child.getIdentity(), "int[]") ||
+                symbol_table.checkMethodType(left_child.getIdentity(), "int[]")){
           this.return_type="int";
         }
       }
       else if((left_child.getIdentity()=="new" && symbol_table.isClass(left_child.getReturnType())) ||
               left_child.getIdentity()=="this" || symbol_table.isClass(left_child.getIdentity()) ||
-              symbol_table.checkVariable(this.getScope(), left_child.getIdentity(), symbol_table.class_name)){
+              symbol_table.checkVariableType(this.getScope(), left_child.getIdentity(), symbol_table.class_name)){
 
         this.return_type = symbol_table.getMethodReturnType(right_child.getIdentity());
         if(this.return_type=="" && symbol_table.extendsClass()){

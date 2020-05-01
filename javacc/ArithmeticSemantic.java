@@ -19,8 +19,8 @@ public final class ArithmeticSemantic {
                     node.getIdentity()=="ArrayAccess" ||
                     node.getType() == "int")){
 
-                if(symbol_table.checkVariable(scope, node.getIdentity(), "int")){
-                   if(symbol_table.checkInitializationVariable(node.getIdentity(), node.getScope())) {
+                if(symbol_table.checkVariableType(scope, node.getIdentity(), "int")){
+                   if(symbol_table.isVariableInitialized(node.getIdentity(), node.getScope())) {
                        return;
                    }
                    else System.out.println("NOT INITIALIZED" + child);

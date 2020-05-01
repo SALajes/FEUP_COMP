@@ -11,26 +11,18 @@ class ASTArrayAccess extends SimpleNode {
   public ASTArrayAccess(Javamm p, int id) {
     super(p, id);
     this.identity = "ArrayAccess";
-    this.return_type = "int";
+    this.return_type = "nint";
   }
 
   @Override
   public void checkNodeSemantics(SymbolTable symbol_table) {
- /*   if(this.jjtGetNumChildren() == 2) {
-      SimpleNode left_child = (SimpleNode) node.jjtGetChild(0);
-      SimpleNode right_child = (SimpleNode) node.jjtGetChild(1);
+    if(this.jjtGetNumChildren() == 2) {
+      SimpleNode left_child = (SimpleNode) this.jjtGetChild(0);
 
-      String code_fragment = left_child.toString() + operator + right_child.toString();
-
-      if (!((child.getIdentity() == "." && child.getReturnType(symbol_table) == "int") ||
-              child.getIdentity() == "ArrayAccess" ||
-              child.getType() == "int" ||
-              symbol_table.checkVariable(this.getScope(), child.getIdentity(), "int"))) {
-
+      if (!symbol_table.checkVariableType(this.getScope(), left_child.getIdentity(), "int[]"))
         SemanticErrorHandler.getInstance().printError(this.getScope(),
-                "An index must be an integer or an expression that returns an integer.");
-      }
-    }*/
+                "Can not access an element of a variable that is not an array: " + left_child.getIdentity());
+    }
   }
 }
 /* JavaCC - OriginalChecksum=bc699f3d3143c9e0cad3b348c4d37626 (do not edit this line) */

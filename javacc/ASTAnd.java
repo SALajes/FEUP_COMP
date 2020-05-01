@@ -40,7 +40,7 @@ class ASTAnd extends SimpleNode {
       if(!((node.getIdentity()=="." && node.getReturnType(symbol_table) == "boolean") ||
               node.getReturnType() == "boolean" ||
               node.getType() == "boolean" ||
-              symbol_table.checkVariable(scope, node.getIdentity(), "boolean"))){
+              symbol_table.checkVariableType(scope, node.getIdentity(), "boolean"))){
         printSemanticError(child, scope, operator, code_fragment);
       }
     }
