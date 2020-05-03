@@ -8,14 +8,26 @@ public class Method {
     private int overloads = 0;
     private boolean invalid;
 
-    private Hashtable<String, Symbol> parameter_variables = new Hashtable<>();
+    private ArrayList<String> parameter_types;
+
+    private Hashtable<String, Symbol> parameter_variables;
     private Hashtable<String, Symbol> local_variables = new Hashtable<>();
 
-    public Method(String name, String type, Hashtable<String, Symbol> parameters) {
+    public Method(String name, String type, ArrayList<Pair<String, String>> parameters) {
         this.name = name;
         this.return_type = type;
-        this.parameter_variables = parameters;
         this.invalid = false;
+
+        this.parameter_variables = new Hashtable<>();
+        this.parameter_types = new ArrayList<>();
+
+        for(int i=0; i < parameters.size(); i++){
+            Symbol symbol = new Symbol(parameters.get(i).second, parameters.get(i).first);
+            symbol.initialize();
+            parameter_variables.put(parameters.get(i).first, symbol);
+
+            parameter_types.add(parameters.get(i).second);
+        }
     }
 
     public Symbol getVariable(String identifier){
@@ -72,6 +84,28 @@ public class Method {
         return invalid;
     }
 
+    public Pair<String, String> getReturnType(ArrayList<String> arguments) {
+        Pair<String, String> result = new Pair<>();
+
+        if(arguments.size() != parameter_variables.size()) {
+            result.first = "Parameters don't match that of method " + name + " : expected " + parameter_variables.size() + " received " + arguments.size();
+            result.second = "";
+            return result;
+        }
+
+        for(int i=0; i < arguments.size(); i++){
+            if(parameter_types.get(i) != arguments.get(i)){
+                result.first = "Argument " + i + " type does not match parameter type of method " + name + " : expected " + parameter_types.get(i) + " received " + arguments.get(i);
+                result.second = "";
+                return result;
+            }
+        }
+
+        result.first = null;
+        result.second = return_type;
+        return result;
+    }
+
     public String dump(){
         String print = "## " + name + " returns " + return_type + '\n';
         Iterator it;
@@ -97,10 +131,6 @@ public class Method {
         }
 
         return print;
-    }
-
-    public String compareArguments(ArrayList<String> arguments) {
-        return null;
     }
 
     @Override

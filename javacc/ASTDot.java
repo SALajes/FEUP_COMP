@@ -48,37 +48,32 @@ class ASTDot extends SimpleNode {
 
         ArrayList<String> arguments = right_child.getParameters(symbol_table);
 
-        this.return_type = symbol_table.getMethodReturnType(right_child.getIdentity());
+        //result<error,return_type>
+        Pair<String, String> result = symbol_table.getMethodReturnType(right_child.getIdentity(), arguments);
 
-        if(this.return_type=="" && symbol_table.extendsClass()){
-          this.return_type = symbol_table.getReturnMethodInExtendClass(right_child.getIdentity());
-          if(return_type != "") {
-            String error = symbol_table.checkExtendedMethodParameters(right_child.getIdentity(), arguments);
-            checkError(error, right_child.getIdentity());
-          }
-        }
-        else {
-          String error = symbol_table.checkMethodParameters(right_child.getIdentity(), arguments);
-          checkError(error, right_child.getIdentity());
+        return_type = result.second;
+
+        if(return_type == "") {
+          checkError(result.first, left_child.toString() + "." + right_child.toString());
         }
       }
       else {
-        this.return_type = symbol_table.getImportReturnType(left_child.getIdentity(), right_child.getIdentity());
-        if(return_type != "") {
-          ArrayList<String> arguments = right_child.getParameters(symbol_table);
-          String error = symbol_table.checkImportMethodParameters(left_child.getIdentity(), right_child.getIdentity(), arguments);
-          checkError(error, right_child.getIdentity());
+        ArrayList<String> arguments = right_child.getParameters(symbol_table);
+        Pair<String, String> result = symbol_table.getImportReturnType(left_child.getIdentity(), right_child.getIdentity(), arguments);
+
+        return_type = result.first;
+        if(return_type == "") {
+          checkError(result.first, left_child.toString() + "." + right_child.toString());
         }
       }
     }
     this.already_calculated_return = true;
   }
 
-  private void checkError(String error, String identity) {
+  private void checkError(String error, String code) {
     if (error != null)
       SemanticErrorHandler.getInstance().printError(this.getScope(),
-              "Arguments in method call do not match the method's parameters.",
-              error);
+              error, code);
   }
 
   @Override

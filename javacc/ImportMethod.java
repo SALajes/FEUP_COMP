@@ -42,7 +42,25 @@ public class ImportMethod {
         return print;
     }
 
-    public String compareArguments(ArrayList<String> arguments) {
-        return null;
+    public Pair<String, String> getReturnType(ArrayList<String> arguments) {
+        Pair<String, String> result = new Pair<>();
+
+        if(arguments.size() != parameter_types.size()) {
+            result.first = "Parameters don't match that of method " + class_name + "." + method + " : expected " + parameter_types.size() + " received " + arguments.size();
+            result.second = "";
+            return result;
+        }
+
+        for(int i=0; i < arguments.size(); i++){
+            if(parameter_types.get(i) != arguments.get(i)){
+                result.first = "Argument " + i + " type does not match parameter type of method " + class_name + "." + method + " : expected " + parameter_types.get(i) + " received " + arguments.get(i);
+                result.second = "";
+                return result;
+            }
+        }
+
+        result.first = null;
+        result.second = return_type;
+        return result;
     }
 }
