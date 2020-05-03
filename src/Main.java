@@ -6,7 +6,8 @@
 import java.io.FileNotFoundException;
 
 public class Main {
-    private static final String DEBUG_FLAG = "-d";
+    private static boolean printAST = false;
+    private static boolean printTable = false;
 
     public Main() {
     }
@@ -22,9 +23,12 @@ public class Main {
                 throw new RuntimeException();
             }
 
-            root.dump("");
+            parseArgs(args);
 
-            if(args.length > 1 && DEBUG_FLAG.equals("-d"))
+            if(printAST)
+                root.dump("");
+
+            if(printTable)
                 javamm.symbol_table.dump();
 
             //check semantics
@@ -46,5 +50,15 @@ public class Main {
 
     public static int eval(SimpleNode node) {
         return 0;
+    }
+
+    private static void parseArgs(String[] args) {
+        for (String arg : args) {
+            if (arg.equals("-t") || arg.equals("--table"))
+                printTable = true;
+
+            if (arg.equals("-a") || arg.equals("--ast"))
+                printAST = true;
+        }
     }
 }
