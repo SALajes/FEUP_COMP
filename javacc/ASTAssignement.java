@@ -11,6 +11,8 @@ public class ASTAssignement extends SimpleNode {
 
   @Override
   protected void checkNodeSemantics(SymbolTable symbol_table) {
+
+    String parent = ((SimpleNode) this.jjtGetParent()).toString();
     SimpleNode left_child = (SimpleNode) this.jjtGetChild(0);
     SimpleNode right_child = (SimpleNode) this.jjtGetChild(1);
 
@@ -21,8 +23,13 @@ public class ASTAssignement extends SimpleNode {
                 "Assign operation with different types ",
                 left_child.identity + " = " + right_child.identity);
       }
-      else if(symbol_table.isVariableInitialized(right_child.identity , this.getScope()))
+      else if(symbol_table.isVariableInitialized(right_child.identity , this.getScope())) {
         symbol_table.initializeVariable(left_child.identity, this.getScope());
+        if(parent.equals("Statement while")||parent.equals("IfBody")||parent.equals("IfElse"))
+        {
+          SemanticErrorHandler.getInstance().printWarning(this.getScope(), "Variable " + left_child.identity + " may not be initialized");
+        }
+      }
       else {
         //QUESTION : lançar erro ou warning?
         /*SemanticErrorHandler.getInstance().printWarning(this.getScope(),
@@ -35,6 +42,10 @@ public class ASTAssignement extends SimpleNode {
                 left_child.identity + " = " + right_child.identity + " ; right child is not initialized.");
         //QUESTION : devemos inicializar?
         symbol_table.initializeVariable(left_child.identity, this.getScope());
+        if(parent.equals("Statement while")||parent.equals("IfBody")||parent.equals("IfElse"))
+        {
+          SemanticErrorHandler.getInstance().printWarning(this.getScope(), "Variable " + left_child.identity + " may not be initialized");
+        }
       }
     } else SemanticErrorHandler.getInstance().printError(this.getScope(),
             "Tried to initialize undeclared variable ",

@@ -13,5 +13,15 @@ class ASTWhile extends SimpleNode {
   public String toString() {
     return "Statement while";
   }
+
+  @Override
+  protected void checkNodeSemantics(SymbolTable symbol_table) {
+    SimpleNode child = (SimpleNode) this.jjtGetChild(0);
+
+    if(child.getReturnType(symbol_table) != "boolean"){
+      SemanticErrorHandler.getInstance().printError(this.getScope(), "Condition for while statement must return a boolean");
+    }
+
+  }
 }
 /* JavaCC - OriginalChecksum=2706f5e4eb3caeff77af14b38670635b (do not edit this line) */

@@ -69,7 +69,6 @@ public class SymbolTable {
         if(checkImportMethod(class_name, method)){
             String identifier = class_name+"."+method;
             int num_overloads = imports.get(identifier).getOverloads();
-            System.out.println("IDENTIFIER: " +identifier + " num de overloads" + num_overloads);
 
             for(int i=0; i <= num_overloads; i++) {
 
@@ -77,7 +76,6 @@ public class SymbolTable {
                     identifier = identifier + i;
 
                 result = this.imports.get(identifier).getReturnType(arguments);
-                System.out.println("result : " + result.first + result.second);
 
                 if(result.first == null && result.second != ""){
                     return result;
@@ -102,17 +100,11 @@ public class SymbolTable {
             String identifier = method;
             int num_overloads = methods.get(identifier).getOverloads();
 
-            methods.entrySet().forEach( entry -> {
-                System.out.println( entry.getKey());
-            });
-
             for(int i=0; i <= num_overloads; i++) {
                 if (i > 0)
                     identifier = method + i;
 
-                System.out.println("IDENTIFIER: " + identifier + "  ARGS SIZE: " +arguments.size());
                 result = this.methods.get(identifier).getReturnType(arguments);
-                System.out.println("RESULT : " + result.first + "  second: " + result.second);
 
                 if(result.first == null && result.second != ""){
                     return result;
