@@ -108,7 +108,7 @@ public class SymbolTable {
 
             for(int i=0; i <= num_overloads; i++) {
                 if (i > 0)
-                    identifier = identifier + i;
+                    identifier = method + i;
 
                 System.out.println("IDENTIFIER: " + identifier + "  ARGS SIZE: " +arguments.size());
                 result = this.methods.get(identifier).getReturnType(arguments);

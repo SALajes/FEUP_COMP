@@ -1,6 +1,29 @@
 import static ioPlus.printHelloWorld(void) void;
+import static maria.getMaria(int) int;
 class HelloWorld {
     public static void main(String[] args) {
+        int meh;
+        boolean hello;
+        meh = this.pica(9);
+        meh = this.pica(meh);
+        meh = this.pica(meh , 1);
         ioPlus.printHelloWorld();
+    }
+
+    public int pica(int lol){
+        return lol;
+    }
+    public int pica(int chupamos){
+        int a;
+        a = 2;
+        return a;
+    }
+
+    public int pica(int lolitos , int megaTop){
+        int maria;
+        maria = lolitos;
+        megaTop = maria;
+
+        return 9;
     }
 }

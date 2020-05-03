@@ -139,7 +139,7 @@ public class Method {
         if (o == null || getClass() != o.getClass()) return false;
         Method method = (Method) o;
         return Objects.equals(name, method.name) &&
-                Objects.equals(parameter_variables, method.parameter_variables);
+                Objects.equals(parameter_types, method.parameter_types);
     }
 
     @Override
