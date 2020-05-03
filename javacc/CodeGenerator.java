@@ -275,7 +275,6 @@ class CodeGenerator {
                 break;
 
             case JavammTreeConstants.JJTDOT:
-                this.printWriter.printf("\t;Dot\n");
                 writeDot(node);
                 break;
 
@@ -293,6 +292,10 @@ class CodeGenerator {
 
             case JavammTreeConstants.JJTFALSE:
                 this.printWriter.printf("\ticonst_0\n");
+                break;
+
+            case JavammTreeConstants.JJTTHIS:
+                this.printWriter.printf("\taload_0\n");
                 break;
 
             case JavammTreeConstants.JJTINDEX:
@@ -350,28 +353,36 @@ class CodeGenerator {
         }
     }
 
-    // TODO: invoke de métodos locais ou de imports. this.<METHOD> já está
     private void writeDot(SimpleNode node){
         SimpleNode left = (SimpleNode) node.jjtGetChild(0);
         SimpleNode right = (SimpleNode) node.jjtGetChild(1);
 
-        if(left instanceof ASTThis) {
-            this.printWriter.printf("\taload_0\n");
+        if(right.getIdentity().equals("length")) {
+            writeExpression(left);
+            this.printWriter.printf("\tarraylength\n");
+            return;
+        }
 
+        String className = left.getIdentity();
+        String methodName = right.getIdentity();
+        ImportMethod importMethod = this.symbolTable.getImportMethod(className, methodName);
+
+        if(importMethod != null && importMethod.isStatic()) {
             writeExpression((SimpleNode) right.jjtGetChild(0));
-
-            boolean isImport = this.symbolTable.isMethodImport(right.getIdentity(), genArgsArray((SimpleNode) right.jjtGetChild(0)));
-
-            if(isImport)
-                writeImportMethod(right);
-            else
-                writeLocalMethod(right);
+            writeImportMethod(className, right);
 
             return;
         }
 
-        if(left instanceof ASTID && right instanceof ASTExpressionDot)
-            this.printWriter.printf("\t;Local or Import method\n");
+        writeExpression(left);
+        writeExpression((SimpleNode) right.jjtGetChild(0));
+
+        boolean isImport = this.symbolTable.isMethodImport(methodName, genArgsArray((SimpleNode) right.jjtGetChild(0)));
+
+        if(isImport)
+            writeImportMethod(this.classNode.getExtend(), right);
+        else
+            writeLocalMethod(right);
     }
 
     private ArrayList<String> genArgsArray(SimpleNode node) {
@@ -392,8 +403,8 @@ class CodeGenerator {
         this.printWriter.printf("\tinvokevirtual %s/%s(%s)%s\n", this.classNode.getIdentity(), node.getIdentity(), args, convertType(method.getReturnType()));
     }
 
-    private void writeImportMethod(SimpleNode node) {
-        ImportMethod importMethod = this.symbolTable.getImportMethod(this.classNode.getExtend(), node.getIdentity());
+    private void writeImportMethod(String className, SimpleNode node) {
+        ImportMethod importMethod = this.symbolTable.getImportMethod(className, node.getIdentity());
 
         if(importMethod.isStatic())
             this.printWriter.printf("\tinvokestatic ");
