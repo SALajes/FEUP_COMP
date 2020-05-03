@@ -13,5 +13,15 @@ class ASTIf extends SimpleNode {
   public String toString() {
     return "Statement if";
   }
+
+  @Override
+  protected void checkNodeSemantics(SymbolTable symbol_table) {
+    SimpleNode child = (SimpleNode) this.jjtGetChild(0);
+
+    if(child.getReturnType(symbol_table) != "boolean"){
+      SemanticErrorHandler.getInstance().printError(this.getScope(), "Condition for if statement must return a boolean");
+    }
+
+  }
 }
 /* JavaCC - OriginalChecksum=04ee7893447596dd3d1759e2d7db89ef (do not edit this line) */
