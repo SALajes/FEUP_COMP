@@ -39,13 +39,13 @@ public class SymbolTable {
             for(int i=0; i <= num_overloads; i++){
                 String method = identifier;
                 if(i>0)
-                    method = method + "_" + i;
+                    method = method + i;
                 if(methods.get(method).equals(new_method))
                     new_method.invalidate();
             }
 
             methods.get(identifier).incrementOverloads();
-            methods.put(identifier+methods.get(identifier).getOverloads() , new_method);
+            methods.put(identifier+methods.get(identifier).getOverloads() , new_method);//era aqui que o method nao tava a guardar como querias
             return identifier+methods.get(identifier).getOverloads();
         }
         return identifier;
@@ -69,14 +69,17 @@ public class SymbolTable {
         if(checkImportMethod(class_name, method)){
             String identifier = class_name+"."+method;
             int num_overloads = imports.get(identifier).getOverloads();
+            System.out.println("IDENTIFIER: " +identifier + " num de overloads" + num_overloads);
 
             for(int i=0; i <= num_overloads; i++) {
+
                 if (i > 0)
-                    identifier = identifier + "_" + i;
+                    identifier = identifier + i;
 
                 result = this.imports.get(identifier).getReturnType(arguments);
+                System.out.println("result : " + result.first + result.second);
 
-                if(result.first != null && result.second != ""){
+                if(result.first == null && result.second != ""){
                     return result;
                 }
             }
@@ -99,13 +102,19 @@ public class SymbolTable {
             String identifier = method;
             int num_overloads = methods.get(identifier).getOverloads();
 
+            methods.entrySet().forEach( entry -> {
+                System.out.println( entry.getKey());
+            });
+
             for(int i=0; i <= num_overloads; i++) {
                 if (i > 0)
-                    identifier = identifier + "_" + i;
+                    identifier = identifier + i;
 
+                System.out.println("IDENTIFIER: " + identifier + "  ARGS SIZE: " +arguments.size());
                 result = this.methods.get(identifier).getReturnType(arguments);
+                System.out.println("RESULT : " + result.first + "  second: " + result.second);
 
-                if(result.first != null && result.second != ""){
+                if(result.first == null && result.second != ""){
                     return result;
                 }
             }

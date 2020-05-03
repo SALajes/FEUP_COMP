@@ -108,7 +108,7 @@ void ImportDeclaration() #Import : { String type, method; Token t1, t2; } {
 }
 
 void ParamList() #void : { String type; } {
-    [ <VOID> {this.parameters.add("void");} | type=Type() {this.parameters.add(type);} [<COL> ParamList()] ]
+    [ <VOID>| type=Type() {this.parameters.add(type);} [<COL> ParamList()] ]
 }
 
 void ClassDeclaration() #Class : { Token class_id, extend_class; } {

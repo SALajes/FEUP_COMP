@@ -61,7 +61,7 @@ class ASTDot extends SimpleNode {
         ArrayList<String> arguments = right_child.getParameters(symbol_table);
         Pair<String, String> result = symbol_table.getImportReturnType(left_child.getIdentity(), right_child.getIdentity(), arguments);
 
-        return_type = result.first;
+        return_type = result.second;
         if(return_type == "") {
           checkError(result.first, left_child.toString() + "." + right_child.toString());
         }

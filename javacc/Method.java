@@ -86,7 +86,7 @@ public class Method {
 
     public Pair<String, String> getReturnType(ArrayList<String> arguments) {
         Pair<String, String> result = new Pair<>();
-
+        System.out.println("method parameters size: " + parameter_variables.size() + "  TAMANHO DOS ARGS" + arguments.size());
         if(arguments.size() != parameter_variables.size()) {
             result.first = "Parameters don't match that of method " + name + " : expected " + parameter_variables.size() + " received " + arguments.size();
             result.second = "";
@@ -100,7 +100,7 @@ public class Method {
                 return result;
             }
         }
-
+        System.out.println("IM OK");
         result.first = null;
         result.second = return_type;
         return result;
