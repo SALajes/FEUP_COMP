@@ -198,7 +198,7 @@ class CodeGenerator {
             writeStatement((SimpleNode) then.jjtGetChild(i));
     }
 
-    // TODO: Gerar codigo do while
+    // TODO: Gerar codigo do while block
     // Codigo body já está
     private void writeWhileStatement(SimpleNode node) {
         SimpleNode condition = (SimpleNode) node.jjtGetChild(0);
@@ -277,11 +277,11 @@ class CodeGenerator {
                 break;
 
             case JavammTreeConstants.JJTTRUE:
-                this.printWriter.printf("\t;True\n");
+                this.printWriter.printf("\ticonst_1\n");
                 break;
 
             case JavammTreeConstants.JJTFALSE:
-                this.printWriter.printf("\t;False\n");
+                this.printWriter.printf("\ticonst_0\n");
                 break;
 
             case JavammTreeConstants.JJTINDEX:
@@ -294,6 +294,7 @@ class CodeGenerator {
 
             case JavammTreeConstants.JJTARRAYACCESS:
                 this.printWriter.printf("\t;Array Access\n");
+//                writeArrayAccess(node);
                 break;
 
             case JavammTreeConstants.JJTEXPRESSIONNEW:
@@ -304,6 +305,10 @@ class CodeGenerator {
                 this.printWriter.printf(";EXPRESSION DEFAULT: %d\n", node.getId());
                 break;
         }
+    }
+
+    private  void writeBoolean(SimpleNode node) {
+
     }
 
     private void writeArithmetic(SimpleNode node){
@@ -334,6 +339,7 @@ class CodeGenerator {
         }
     }
 
+    // TODO: invoke de métodos locais ou de imports. this.<METHOD> já está
     private void writeDot(SimpleNode node){
         SimpleNode left = (SimpleNode) node.jjtGetChild(0);
         SimpleNode right = (SimpleNode) node.jjtGetChild(1);
@@ -401,6 +407,11 @@ class CodeGenerator {
             this.printWriter.printf("\taload_0\n");
             this.printWriter.printf("\tgetfield %s/%s %s\n", this.classNode.getIdentity(), varName, convertType(this.symbolTable.getGlobalVarType(varName)));
         }
+    }
+
+    // TODO: CP3
+    private void writeArrayAccess(SimpleNode node) {
+
     }
 
     private void writeNew(SimpleNode node) {
