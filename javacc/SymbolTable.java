@@ -56,6 +56,8 @@ public class SymbolTable {
     }
 
     public Symbol getVariable(String scope, String identifier){
+        if(identifier == null) return null;
+
         if(scope == "global")
             return getGlobalVariable(identifier);
         else if(methodExists(scope)) {
@@ -78,16 +80,27 @@ public class SymbolTable {
         global_variables.put(identifier, new Symbol(type, identifier));
     }
 
-    public void addArgument(String scope, String type, String identifier){
-        if(methodExists(scope)) {
-            methods.get(scope).addParameterVariable(type, identifier);
-        }
-    }
-
-    public void addMethod(String identifier, String type){
+    public String addMethod(String identifier, String type, Hashtable<String,Symbol> parameters){
         if(!methodExists(identifier)) {
-            methods.put(identifier, new Method(identifier, type));
+            methods.put(identifier, new Method(identifier, type, parameters));
         }
+        else{
+            int num_overloads = methods.get(identifier).getOverloads();
+            Method new_method = new Method(identifier, type, parameters);
+
+            for(int i=0; i <= num_overloads; i++){
+                String method = identifier;
+                if(i>0)
+                    method = method + "_" + i;
+                if(methods.get(method).equals(new_method))
+                    new_method.invalidate();
+            }
+
+            methods.get(identifier).incrementOverloads();
+            methods.put(identifier+methods.get(identifier).getOverloads() , new_method);
+            return identifier+methods.get(identifier).getOverloads();
+        }
+        return identifier;
     }
 
     private boolean globalVariableExists(String identifier) {
@@ -102,12 +115,6 @@ public class SymbolTable {
 
     public boolean methodExists(String identifier) {
         return methods.containsKey(identifier);
-    }
-
-    public Method getParameterVariable(String identifier){
-        if(methodExists(identifier))
-            return methods.get(identifier);
-        return null;
     }
 
     public boolean checkMethodType(String identifier, String return_type){
@@ -159,11 +166,27 @@ public class SymbolTable {
 
         if(var != null)
             return var.isInitialized();
-        else return false;
+        else return true;
     }
 
     public void initializeVariable(String identifier , String scope){
         getVariable(scope, identifier).initialize();
+    }
+
+    public String checkMethodParameters(String method_name, ArrayList<String> arguments) {
+        return methods.get(method_name).compareArguments(arguments);
+    }
+
+    public String checkExtendedMethodParameters(String method_name, ArrayList<String> arguments) {
+        return imports.get(extend_class+"."+method_name).compareArguments(arguments);
+    }
+
+    public String checkImportMethodParameters(String class_name, String method_name, ArrayList<String> arguments) {
+        return imports.get(class_name+"."+method_name).compareArguments(arguments);
+    }
+
+    public boolean isInvalidMethod(String scope) {
+        return methods.get(scope).isInvalid();
     }
 
     public void dump(){
@@ -201,6 +224,6 @@ public class SymbolTable {
             }
         }
 
-        System.out.println("====== FINISH ======\n");
+        System.out.println("====== FINISH ======");
     }
 }

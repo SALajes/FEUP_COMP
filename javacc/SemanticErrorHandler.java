@@ -4,6 +4,7 @@ public class SemanticErrorHandler {
     private static SemanticErrorHandler handler = new SemanticErrorHandler();
 
     private int number_of_errors = 0;
+    private int number_of_warnings = 0;
     private final int MAX_NUM_ERRORS = 10;
 
     private SemanticErrorHandler(){}
@@ -12,8 +13,9 @@ public class SemanticErrorHandler {
         return handler;
     }
 
-    public void resetNumberOfErrors(){
+    public void resetRegistry(){
         number_of_errors = 0;
+        number_of_warnings = 0;
     }
 
     public void printError(String scope, String message){
@@ -22,24 +24,33 @@ public class SemanticErrorHandler {
 
     public void printError(String scope, String message, String code_fragment){
         number_of_errors++;
-        System.out.println("\nERROR " + number_of_errors + ": in scope " + scope);
+        print("\nERROR ", number_of_errors, scope, message, code_fragment);
+    }
+
+    public void printWarning(String scope, String message){
+        printWarning(scope, message, null);
+    }
+
+    public void printWarning(String scope, String message, String code_fragment){
+        number_of_warnings++;
+        print("\nWARNING ", number_of_warnings, scope, message, code_fragment);
+    }
+
+    private void print(String type, int number, String scope, String message, String code_fragment){
+        System.out.println(type + number + ": in scope " + scope);
         System.out.println(message);
         System.out.println(code_fragment==null ? "" : ("Code fragment: " + code_fragment));
     }
 
-    public void printNumberOfErrors(){
-        System.out.println("------------------------------------");
-        System.out.println("Number of semantic errors: " + number_of_errors);
-        System.out.println("------------------------------------");
-        System.out.println("Compilation status: " + (number_of_errors == 0 ? "SUCCESS" : "FAIL"));
-        number_of_errors = 0;
-    }
+    public void determineSemanticAnalysis() throws ParseException {
+        System.out.println("\n------------ ANALYSIS ------------");
+        System.out.println(number_of_errors + " ERRORS");
+        System.out.println(number_of_warnings + " WARNINGS");
+        System.out.println("----------------------------------");
+        System.out.println("> Compilation status: " + (number_of_errors == 0 ? "SUCCESS" : "FAIL"));
 
-    public void determineCompilation() throws ParseException {
         if(number_of_errors > 0){
-            System.out.println("\n" + number_of_errors + " errors found. Compilation was not possible.");
             throw new ParseException();
         }
-        else System.out.println("\nCompilation is possible.");
     }
 }

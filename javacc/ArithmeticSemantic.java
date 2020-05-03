@@ -20,16 +20,23 @@ public final class ArithmeticSemantic {
                     node.getType() == "int")){
 
                 if(symbol_table.checkVariableType(scope, node.getIdentity(), "int")){
-                   if(symbol_table.isVariableInitialized(node.getIdentity(), node.getScope())) {
-                       return;
+                   if(!symbol_table.isVariableInitialized(node.getIdentity(), node.getScope())) {
+                       //QUESTION : lançar erro ou warning?
+                       SemanticErrorHandler.getInstance().printError(scope,
+                               child + " child of operator " + operator + " is not initialized: " + node.getIdentity());
                    }
-                   else System.out.println("NOT INITIALIZED" + child);
+                   return;
                 }
                 printSemanticError(child, scope, operator, code_fragment);
             }
         }
         else if(node.getReturnType() != "int")
             printSemanticError(child, scope, operator, code_fragment);
+    }
+
+    private static void printSemanticWarning(String node, String scope, String operator, String identity) {
+        SemanticErrorHandler.getInstance().printWarning(scope,
+                node + " child of operator " + operator + " is not initialized: " + identity);
     }
 
     private static void printSemanticError(String node, String scope, String operator, String code_fragment) {
