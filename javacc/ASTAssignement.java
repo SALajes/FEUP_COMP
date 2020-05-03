@@ -21,8 +21,19 @@ public class ASTAssignement extends SimpleNode {
                 "Assign operation with different types ",
                 left_child.identity + " = " + right_child.identity);
       }
-      else if(!symbol_table.isVariableInitialized(left_child.identity , this.getScope()))
-      {
+      else if(symbol_table.isVariableInitialized(right_child.identity , this.getScope()))
+        symbol_table.initializeVariable(left_child.identity, this.getScope());
+      else {
+        //QUESTION : lançar erro ou warning?
+        /*SemanticErrorHandler.getInstance().printWarning(this.getScope(),
+                "In assign operation with  ",
+                left_child.identity + " = " + right_child.identity + " ; right child is not initialized.");
+
+         */
+        SemanticErrorHandler.getInstance().printError(this.getScope(),
+                "In assign operation with  ",
+                left_child.identity + " = " + right_child.identity + " ; right child is not initialized.");
+        //QUESTION : devemos inicializar?
         symbol_table.initializeVariable(left_child.identity, this.getScope());
       }
     } else SemanticErrorHandler.getInstance().printError(this.getScope(),

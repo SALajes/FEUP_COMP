@@ -30,7 +30,8 @@ public interface JavammTreeConstants
   public int JJTID = 26;
   public int JJTARRAYACCESS = 27;
   public int JJTEXPRESSIONDOT = 28;
-  public int JJTEXPRESSIONNEW = 29;
+  public int JJTFUNCTIONCALLARGUMENTS = 29;
+  public int JJTEXPRESSIONNEW = 30;
 
 
   public String[] jjtNodeName = {
@@ -63,7 +64,8 @@ public interface JavammTreeConstants
     "ID",
     "ArrayAccess",
     "ExpressionDot",
+    "FunctionCallArguments",
     "ExpressionNew",
   };
 }
-/* JavaCC - OriginalChecksum=aa05ab37a1fb0d79bb9c25d5eaa1d633 (do not edit this line) */
+/* JavaCC - OriginalChecksum=84395e1a8b21798698732dc10ea2355d (do not edit this line) */

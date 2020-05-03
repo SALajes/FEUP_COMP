@@ -1,20 +1,21 @@
 
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 public class Method {
     private String name;
     private String return_type;
 
     private int overloads = 0;
+    private boolean invalid;
 
     private Hashtable<String, Symbol> parameter_variables = new Hashtable<>();
     private Hashtable<String, Symbol> local_variables = new Hashtable<>();
 
-    public Method(String name, String type) {
+    public Method(String name, String type, Hashtable<String, Symbol> parameters) {
         this.name = name;
         this.return_type = type;
+        this.parameter_variables = parameters;
+        this.invalid = false;
     }
 
     public Symbol getVariable(String identifier){
@@ -52,12 +53,6 @@ public class Method {
 
     private boolean localVariableExists(String identifier) {
         return local_variables.containsKey(identifier);
-    }
-
-    public Symbol getLocalVariable(String identifier){
-        if(localVariableExists(identifier))
-            return local_variables.get(identifier);
-        return null;
     }
 
     public boolean checkReturnType(String return_type){
@@ -104,12 +99,20 @@ public class Method {
         return local_variables;
     }
 
+    public void invalidate() {
+        this.invalid = true;
+    }
+
+    public boolean isInvalid() {
+        return invalid;
+    }
+
     public String dump(){
-        String print = "## " + name + " returns " + return_type;
+        String print = "## " + name + " returns " + return_type + '\n';
         Iterator it;
 
         if(parameter_variables.size() > 0){
-            print = print + "\n:parameters:\n";
+            print = print + ":parameters:\n";
             it = parameter_variables.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry pair = (Map.Entry)it.next();
@@ -129,5 +132,23 @@ public class Method {
         }
 
         return print;
+    }
+
+    public String compareArguments(ArrayList<String> arguments) {
+        return null;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Method method = (Method) o;
+        return Objects.equals(name, method.name) &&
+                Objects.equals(parameter_variables, method.parameter_variables);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, parameter_variables);
     }
 }

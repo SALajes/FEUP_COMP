@@ -9,11 +9,13 @@ PARSER_BEGIN(Javamm)
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 public class Javamm {
     public String scope = "global";
 
     public ArrayList<String> parameters;
+    public Hashtable<String, Symbol> method_parameters;
 
     public SymbolTable symbol_table = new SymbolTable();
 
@@ -31,6 +33,7 @@ public class Javamm {
 
     public void reinitiateParameters(){
         this.parameters = new ArrayList<String>();
+        this.method_parameters = new Hashtable<String, Symbol>();
     }
 }
 
@@ -128,20 +131,29 @@ void MethodsDeclaration() #void : { } {
 }
 
 void MainDeclaration() #Main : { Token id; } {
-	<STATIC> <VOID> <MAIN> { this.scope="main"; jjtThis.setScope(this.scope); this.symbol_table.addMethod("main", "void"); }
-	<OPAREN> <STRING> <OSBRACKET> <CSBRACKET> id=<ID> <CPAREN> <OCURLY>
-	{ jjtThis.setArgs(id.image); this.symbol_table.addArgument(this.scope, "String[]", id.image);}
+	<STATIC> <VOID> <MAIN>
+	<OPAREN> <STRING> <OSBRACKET> <CSBRACKET> id=<ID> <CPAREN>
+	{
+        this.scope="main"; jjtThis.setScope(this.scope); this.reinitiateParameters();
+        Symbol symbol = new Symbol("String[]", id.image); symbol.initialize();
+        this.method_parameters.put(id.image, symbol);
+        jjtThis.setArgs(id.image); this.symbol_table.addMethod("main", "void", this.method_parameters);
+    }
+    <OCURLY>
 		( LOOKAHEAD(2) VarDeclaration() )*
 		( Statement() ) *
 	<CCURLY>
 }
 
 void MethodDeclaration() #Method : { String type; Token id; } {
-	type=Type() id=<ID>
-        { jjtThis.identity=id.image; jjtThis.setReturnType(type); this.scope=id.image;
-          jjtThis.setScope(this.scope); this.symbol_table.addMethod(id.image, type);
-        }
-	<OPAREN> MethodArguments() <CPAREN> <OCURLY>
+	type=Type() id=<ID> { this.reinitiateParameters(); }
+	<OPAREN> MethodArguments() <CPAREN>
+	{
+        jjtThis.identity = id.image; jjtThis.setReturnType(type);
+        this.scope = this.symbol_table.addMethod(id.image, type, this.method_parameters);
+        jjtThis.setScope(this.scope);
+    }
+	<OCURLY>
 		( LOOKAHEAD(2) VarDeclaration() )*
 		( Statement() )*
 		<RETURN> Expression() <SEMICOL>
@@ -154,7 +166,16 @@ void MethodArguments() #void : { } {
 
 void Argument() : { String type; Token id; } {
     type=Type() id=<ID>
-    { jjtThis.type=type; jjtThis.identity=id.image; this.symbol_table.addArgument(this.scope, type, id.image); }
+    {
+        jjtThis.type=type; jjtThis.identity=id.image;
+        String identifier = id.image;
+        if(this.method_parameters.contains(id.image)){
+            identifier = identifier + "_repeatedArgumentID";
+        }
+        Symbol symbol = new Symbol(type, id.image);
+        symbol.initialize();
+        this.method_parameters.put(identifier, symbol);
+    }
 }
 
 String Type() #void : { String return_value; Token id; } {
@@ -286,6 +307,10 @@ void ExpressionDot() : { Token id; } {
     |
     id=<ID> <OPAREN> [Expression() (<COL> Expression())*] <CPAREN>)
     { jjtThis.identity=id.image; }
+}
+
+void FunctionCallArguments() : { } {
+    [ Expression() (<COL> Expression() )* ]
 }
 
 void ExpressionNew()  : { Token return_value; } {

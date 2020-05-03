@@ -13,5 +13,13 @@ class ASTMethod extends SimpleNode {
   public String toString() {
     return "Method " + identity + " " + return_type;
   }
+
+  @Override
+  public void checkNodeSemantics(SymbolTable symbol_table){
+    if(symbol_table.isInvalidMethod(this.getScope())){
+      SemanticErrorHandler.getInstance().printWarning(this.scope,
+              "Invalid overload (same parameters) of method " + this.identity);
+    }
+  }
 }
 /* JavaCC - OriginalChecksum=959391f8f71ac4092a93282428213e76 (do not edit this line) */

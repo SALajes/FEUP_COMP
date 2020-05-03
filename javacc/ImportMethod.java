@@ -43,4 +43,8 @@ public class ImportMethod {
 
         return print;
     }
+
+    public String compareArguments(ArrayList<String> arguments) {
+        return null;
+    }
 }
