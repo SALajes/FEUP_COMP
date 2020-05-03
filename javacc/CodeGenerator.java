@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 class CodeGenerator {
@@ -13,6 +14,7 @@ class CodeGenerator {
     private PrintWriter printWriter;
 
     private String scope;
+    private boolean extend = false;
 
     public CodeGenerator(SimpleNode root, SymbolTable symbolTable) {
         this.root = root;
@@ -73,9 +75,10 @@ class CodeGenerator {
     private void writeClass() {
         this.printWriter.printf(".class public %s\n", this.classNode.getIdentity());
 
-        if(this.classNode.getExtend() != null)
+        if(this.classNode.getExtend() != null) {
             this.printWriter.printf(".super %s\n\n", this.classNode.getExtend());
-        else
+            this.extend = true;
+        } else
             this.printWriter.print(".super java/lang/Object\n\n");
     }
 
@@ -357,14 +360,48 @@ class CodeGenerator {
 
             writeExpression((SimpleNode) right.jjtGetChild(0));
 
-            Method method = this.symbolTable.getMethod(right.getIdentity());
-            String args = genArgs(method);
-            this.printWriter.printf("\tinvokevirtual %s/%s(%s)%s\n", this.classNode.getIdentity(), right.getIdentity(), args, convertType(method.getReturnType()));
+            boolean isImport = this.symbolTable.isMethodImport(right.getIdentity(), genArgsArray((SimpleNode) right.jjtGetChild(0)));
+
+            if(isImport)
+                writeImportMethod(right);
+            else
+                writeLocalMethod(right);
+
             return;
         }
 
         if(left instanceof ASTID && right instanceof ASTExpressionDot)
             this.printWriter.printf("\t;Local or Import method\n");
+    }
+
+    private ArrayList<String> genArgsArray(SimpleNode node) {
+        ArrayList<String> args = new ArrayList<>();
+
+        for (int i = 0; i < node.jjtGetNumChildren(); i++) {
+            SimpleNode child = (SimpleNode) node.jjtGetChild(i);
+            args.add(child.getReturnType());
+        }
+
+        return args;
+    }
+
+    private void writeLocalMethod(SimpleNode node) {
+        Method method = this.symbolTable.getMethod(node.getIdentity());
+        String args = genArgs(method);
+
+        this.printWriter.printf("\tinvokevirtual %s/%s(%s)%s\n", this.classNode.getIdentity(), node.getIdentity(), args, convertType(method.getReturnType()));
+    }
+
+    private void writeImportMethod(SimpleNode node) {
+        ImportMethod importMethod = this.symbolTable.getImportMethod(this.classNode.getExtend(), node.getIdentity());
+
+        if(importMethod.isStatic())
+            this.printWriter.printf("\tinvokestatic ");
+        else
+            this.printWriter.printf("\tinvokevirtual ");
+
+        String args = genArgs(importMethod);
+        this.printWriter.printf("%s/%s(%s)%s\n", importMethod.getClassName(), node.getIdentity(), args, convertType(importMethod.getReturnType()));
     }
 
     private String genArgs(Method method) {
@@ -377,6 +414,21 @@ class CodeGenerator {
 
         for (Symbol s : vars.values()) {
             ret.append(convertType(s.getType()));
+        }
+
+        return ret.toString();
+    }
+
+    private String genArgs(ImportMethod method) {
+        StringBuilder ret = new StringBuilder();
+
+        ArrayList<String> vars = method.getParameters();
+
+        if(vars.size() == 0)
+            return ret.toString();
+
+        for (String var : vars) {
+            ret.append(convertType(var));
         }
 
         return ret.toString();

@@ -26,8 +26,20 @@ public class ImportMethod {
         this.overloads++;
     }
 
+    public String getClassName() {
+        return class_name;
+    }
+
+    public ArrayList<String> getParameters() {
+        return parameter_types;
+    }
+
     public String getReturnType(){
         return return_type;
+    }
+
+    public boolean isStatic() {
+        return isStatic;
     }
 
     public String dump(){
@@ -42,10 +54,6 @@ public class ImportMethod {
         print = print + ")\n";
 
         return print;
-    }
-
-    public boolean isStatic() {
-        return isStatic;
     }
 
     public Pair<String, String> getReturnType(ArrayList<String> arguments) {

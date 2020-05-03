@@ -94,6 +94,28 @@ public class SymbolTable {
         return result;
     }
 
+    public boolean isMethodImport(String idendity, ArrayList<String> arguments) {
+        Pair<String, String> result = new Pair<>();
+        System.out.println(idendity);
+        System.out.println(arguments.toString());
+        if(methodExists(idendity)) {
+            String methodName = idendity;
+            int num_overloads = this.methods.get(idendity).getOverloads();
+
+            for (int i = 0; i <= num_overloads; i++) {
+                if(i > 0)
+                    methodName = idendity + i;
+
+                    result = this.methods.get(methodName).getReturnType(arguments);
+
+                    if(result.first == null && !result.second.equals(""))
+                        return false;
+            }
+        }
+
+        return true;
+    }
+
     public Pair<String, String> getMethodReturnType(String method, ArrayList<String> arguments){
         Pair<String, String> result = new Pair<>();
         boolean method_not_found = false;
@@ -108,7 +130,7 @@ public class SymbolTable {
 
             for(int i=0; i <= num_overloads; i++) {
                 if (i > 0)
-                    identifier = identifier + i;
+                    identifier = method + i;
 
                 System.out.println("IDENTIFIER: " + identifier + "  ARGS SIZE: " +arguments.size());
                 result = this.methods.get(identifier).getReturnType(arguments);
@@ -181,6 +203,11 @@ public class SymbolTable {
 
     public Method getMethod(String id) {
         return methods.get(id);
+    }
+
+    public ImportMethod getImportMethod(String className, String methodName) {
+        String key = className+"."+methodName;
+        return imports.get(key);
     }
 
     public Method getParameterVariable(String identifier){
