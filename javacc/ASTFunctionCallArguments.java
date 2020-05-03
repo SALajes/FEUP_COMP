@@ -4,15 +4,19 @@ import java.util.ArrayList;
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTFunctionCallArguments extends SimpleNode {
-  private ArrayList<String> arguments = new ArrayList<>();
-  private  boolean already_calculated_return = false;
+  private ArrayList<String> arguments;
+  private  boolean already_calculated_return;
 
   public ASTFunctionCallArguments(int id) {
     super(id);
+    already_calculated_return = false;
+    arguments = new ArrayList<>();
   }
 
   public ASTFunctionCallArguments(Javamm p, int id) {
     super(p, id);
+    already_calculated_return = false;
+    arguments = new ArrayList<>();
   }
 
   @Override
@@ -27,7 +31,6 @@ class ASTFunctionCallArguments extends SimpleNode {
     for(int i = 0; i < this.jjtGetNumChildren(); i++){
       SimpleNode child = (SimpleNode) this.jjtGetChild(i);
       arguments.add(child.getReturnType(symbol_table));
-      System.out.println("DA ME A TUA NUDEZ #nohomo : " + child.getReturnType());
     }
     already_calculated_return=true;
   }
