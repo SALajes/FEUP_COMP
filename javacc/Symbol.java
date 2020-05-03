@@ -1,42 +1,48 @@
 
 public class Symbol {
-    String type;
-    String value;
-    boolean is_initialized;
-    boolean is_static;
-    boolean is_constant;
+    private String type;
+    private String id;
+    private int index;
+    private boolean is_initialized;
 
-    public Symbol(String type, String value, boolean is_static, boolean is_constant){
+    public Symbol(String type, String id){
         this.type = type;
-        this.value = value;
-        this.is_initialized = true;
-        this.is_constant = is_constant;
-        this.is_static = is_static;
+        this.id = id;
+        is_initialized = false;
     }
 
-    public Symbol(String type, boolean is_static, boolean is_constant){
+    public Symbol(String type, String id, int index){
         this.type = type;
-        this.is_initialized = false;
-        this.is_constant = is_constant;
-        this.is_static = is_static;
+        this.id = id;
+        this.index = index +1;
+        is_initialized=false;
     }
 
-    public void Initialize (String value){
+    public String getType() {
+        return this.type;
+    }
+
+    public boolean checkType(String type) {
+        return this.type.equals(type);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public String dump(){
+        return type + " " + id;
+    }
+
+    public boolean isInitialized() {
+        return is_initialized;
+    }
+
+    public void initialize() {
         this.is_initialized = true;
-        this.value = value;
-    }
-
-    public String getValue(){
-        return this.value;
-    }
-
-    public boolean isInitialized(){
-        return this.is_initialized;
-    }
-    public boolean isStatic(){
-        return this.is_static;
-    }
-    public boolean isConstant(){
-        return this.is_constant;
     }
 }

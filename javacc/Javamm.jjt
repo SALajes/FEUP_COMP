@@ -8,14 +8,32 @@ PARSER_BEGIN(Javamm)
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Hashtable;
 
 public class Javamm {
+    public String scope = "global";
+
+    public ArrayList<String> parameters;
+    public ArrayList<Pair<String, String>> method_parameters;
+
+    public SymbolTable symbol_table = new SymbolTable();
+
     static final int MAX_NUM_ERRORS = 16;
 
     private int numErrors = 0;
 
     public int getNumErrors(){
         return numErrors;
+    }
+
+    public SymbolTable getSymbolTable(){
+        return symbol_table;
+    }
+
+    public void reinitiateParameters(){
+        this.parameters = new ArrayList<String>();
+        this.method_parameters = new ArrayList<Pair<String, String>>();
     }
 }
 
@@ -72,66 +90,95 @@ TOKEN: {
 }
 
 SimpleNode Start() : { } {
+    { jjtThis.setScope( "global"); }
 	( ImportDeclaration() )*
+	{ jjtThis.setScope( "global"); }
 	ClassDeclaration() <EOF> 
 	{ return jjtThis; }
 }
 
-void ImportDeclaration() #Import : { Token id; } {
-	<IMPORT>  [<STATIC> ]
-	id=<ID> { jjtThis.identity=id.image; } [ ImportDeclarationDot() ]
-	[ <VOID> | Type() ]
+void ImportDeclaration() #Import : { String type, method; Token t1, t2; } {
+	<IMPORT>
+    [ <STATIC> { jjtThis.setStatic(true); } ]
+	t1=<ID> { jjtThis.setClassName(t1.image); this.reinitiateParameters(); method=""; }
+	[ <DOT> t2=<ID> { jjtThis.setMethodName(t2.image); method=t2.image; } ]
+	[ <OPAREN> ParamList() <CPAREN> ]
+	[ <VOID> { jjtThis.setReturnType("void"); } | type=Type() {jjtThis.setReturnType(type); } ]
+	{ this.symbol_table.addImportMethod(t1.image, method, jjtThis.getReturnType(), parameters, jjtThis.isStatic()); }
 	<SEMICOL>
 }
 
-void ImportDeclarationDot() : { String type; Token id; } {
-    (<DOT> id=<ID> { jjtThis.identity = id.image; }  ImportDeclarationDot())
-    |
-    <OPAREN> [ <VOID> | ( type=Type() (<COL> Type())* ) { jjtThis.type = type; } ] <CPAREN>
+void ParamList() #void : { String type; } {
+    [ <VOID>| type=Type() {this.parameters.add(type);} [<COL> ParamList()] ]
 }
 
 void ClassDeclaration() #Class : { Token class_id, extend_class; } {
-	<CLASS> class_id=<ID> { jjtThis.identity=class_id.image; }
-	  ( <EXTENDS> extend_class=<ID> { jjtThis.extend=extend_class.image; } #Extends )? <OCURLY>
+	<CLASS> class_id=<ID> { jjtThis.setClassName(class_id.image); this.symbol_table.class_name=class_id.image; }
+	  ( <EXTENDS> extend_class=<ID> { jjtThis.setExt(extend_class.image); this.symbol_table.extend_class=extend_class.image; } )? <OCURLY>
 		( VarDeclaration() )*
-		( MethodDeclaration() )*
+		( MethodsDeclaration() )*
 	<CCURLY>
 }
 
-void VarDeclaration() #Var : { String type; Token id; } {
-	type=Type() id=<ID> { jjtThis.type=type; jjtThis.identity=id.image; }
-	    [ <EQUALS> <OCURLY> (<NUM>|<ID>) (<COL> (<NUM>|<ID>))* <CCURLY> ]<SEMICOL> //curly solve
+void VarDeclaration() : { String type; Token id; } {
+	type=Type() id=<ID>
+	{ jjtThis.type=type; jjtThis.identity=id.image ; this.symbol_table.addVariable(this.scope, type, id.image); }
+	<SEMICOL>
 }
 
-void MethodDeclaration() #void : { } {
-	<PUBLIC> ( MainDeclaration() | FunctionDeclaration())
+void MethodsDeclaration() #void : { } {
+	<PUBLIC> ( MainDeclaration() | MethodDeclaration())
 }
 
 void MainDeclaration() #Main : { Token id; } {
-	<STATIC> <VOID> <MAIN> <OPAREN> <STRING> <OSBRACKET> <CSBRACKET> id=<ID> { jjtThis.identity=id.image; } <CPAREN> <OCURLY>
+	<STATIC> <VOID> <MAIN>
+	<OPAREN> <STRING> <OSBRACKET> <CSBRACKET> id=<ID> <CPAREN>
+	{
+        this.scope="main"; jjtThis.setScope(this.scope); this.reinitiateParameters();
+        this.method_parameters.add(new Pair(id.image, "String[]"));
+        jjtThis.setArgs(id.image); this.symbol_table.addMethod("main", "void", this.method_parameters);
+    }
+    <OCURLY>
 		( LOOKAHEAD(2) VarDeclaration() )*
 		( Statement() ) *
 	<CCURLY>
 }
 
-void FunctionDeclaration() #Method : { String type; Token id; } {
-	type=Type() id=<ID> { jjtThis.identity=id.image; jjtThis.type=type; } <OPAREN>
-	    FunctionArguments() <CPAREN> <OCURLY>
+void MethodDeclaration() #Method : { String type; Token id; } {
+	type=Type() id=<ID> { this.reinitiateParameters(); }
+	<OPAREN> MethodArguments() <CPAREN>
+	{
+        jjtThis.identity = id.image; jjtThis.setReturnType(type);
+        this.scope = this.symbol_table.addMethod(id.image, type, this.method_parameters);
+        jjtThis.setScope(this.scope);
+    }
+	<OCURLY>
 		( LOOKAHEAD(2) VarDeclaration() )*
 		( Statement() )*
 		<RETURN> Expression() <SEMICOL>
 	<CCURLY>
 }
 
-void Argument() : { String type; Token id; } {
-    type=Type() id=<ID> { jjtThis.type=type; jjtThis.identity=id.image; }
-}
-
-void FunctionArguments() #Arguments : { } {
+void MethodArguments() #void : { } {
     [ Argument() (<COL> Argument())* ]
 }
 
-String Type() : { String return_value; Token id; } {
+void Argument() : { String type; Token id; } {
+    type=Type() id=<ID>
+    {
+        jjtThis.type=type; jjtThis.identity=id.image;
+        String identifier = id.image;
+        for(int i=0; i < method_parameters.size(); i++)
+            if(method_parameters.get(i).first == id.image){
+                identifier = identifier + "_repeatedArgumentID";
+                break;
+            }
+
+        this.method_parameters.add(new Pair(identifier, type));
+    }
+}
+
+String Type() #void : { String return_value; Token id; } {
 	<INT> { return_value = "int"; }
 	[<OSBRACKET> <CSBRACKET> { return_value = "int[]"; } ]
 	{return return_value;}
@@ -157,91 +204,98 @@ void Statement() #void: {} {
 
 void IfStatement() #If : {} {
     <IF> <OPAREN> Expression() <CPAREN>
-    Statement() //Then 
-    <ELSE>  Statement() //else
+    Statement() #IfBody
+    <ELSE>  Statement() #IfElse
 }
 
 void WhileStatement() #While : {} {
     <WHILE> <OPAREN>
-    	try {
-    	    (Expression())* <CPAREN> // We only need to check for errors inside the while parenthesis
-    	} catch(ParseException e) {
-            System.out.println(e.toString());  // print the error message
-            Token t;
-            this.numErrors++; // Increase the number of errors since execution
+    try {
+        (Expression())* <CPAREN> // We only need to check for errors inside the while parenthesis
+    } catch(ParseException e) {
+        System.out.println(e.toString());  // print the error message
+        Token t;
+        this.numErrors++; // Increase the number of errors since execution
 
-            if (this.numErrors > Javamm.MAX_NUM_ERRORS) {
-                System.out.println("Too many errors. Aborting. (" + this.numErrors + ")");
-                throw e;
-            }
+        if (this.numErrors > Javamm.MAX_NUM_ERRORS) {
+            System.out.println("Too many errors. Aborting. (" + this.numErrors + ")");
+            throw e;
+        }
 
-            while(true) {
-              t = getToken(1); // Skip the tokens until the close of parenthesis
-              if(t.kind == CPAREN || t.kind == CCURLY){
-                t = getNextToken();
-                t=getToken(1);
-                if(t.kind != CPAREN)
-                    break;
-              }
-              else if(t.kind == OCURLY)
+        while(true) {
+          t = getToken(1); // Skip the tokens until the close of parenthesis
+          if(t.kind == CPAREN || t.kind == CCURLY){
+            t = getNextToken();
+            t=getToken(1);
+            if(t.kind != CPAREN)
                 break;
-              else t = getNextToken();
-            }
-    	}
-        Statement()
+          }
+          else if(t.kind == OCURLY)
+            break;
+          else t = getNextToken();
+        }
+    }
+    Statement()
 }
 
-void VariableInit() : { Token id; } {
-    id=<ID> { jjtThis.identity=id.image; }
-
+void VariableInit() #Assignement : { Token id; } {
+    id=<ID>
     (
-        <EQUALS> Expression() #VarInit
+        ArrayInit(id.image)
         |
-        <OSBRACKET> Expression() #Index <CSBRACKET> <EQUALS> Expression() #ArrayInit
+        ({ jjtThis.identity=id.image; }#VarInit )
     )
+    <EQUALS>
+    Expression()
     <SEMICOL>
 }
 
-void Expression() : { } {
+void ArrayInit(String id) : {}{
+    <OSBRACKET> (Expression() #Index) <CSBRACKET> { jjtThis.identity=id; }
+}
+
+void Expression() #void : { } {
     //We will now dispose operators from lowest to highest precedence:
     // &&, <, + -, * /, new, !, (), ., []
-    LessThan() (<AND> LessThan() #And )*
+    LessThan() (<AND> LessThan() #And(2) )*
  }
 
-void LessThan() : {} {
-    AdditionSubtraction() (<LTHAN> AdditionSubtraction())*
+void LessThan() #void : {} {
+    AdditionSubtraction() (<LTHAN> AdditionSubtraction() #LessThan(2))*
 }
 
-void AdditionSubtraction() : {Token operator;} {
+void AdditionSubtraction() #void : {Token operator;} {
     MultiplicationDivision()
     (
-        (operator=<PLUS> | operator=<MINUS>) MultiplicationDivision() { jjtThis.identity=operator.image; }
+        (operator=<PLUS> | operator=<MINUS>) MultiplicationDivision() { jjtThis.setOperator(operator.image); }
+        #AdditionSubtraction(2)
     )*
 }
 
-void MultiplicationDivision() : { Token operator; } {
+void MultiplicationDivision() #void : { Token operator; } {
     ExpressionIntermediateDivision()
     (
-        (operator=<ASTERISK> | operator=<FSLASH> ) ExpressionTerminal() { jjtThis.identity=operator.image; }
+        (operator=<ASTERISK> | operator=<FSLASH> ) ExpressionTerminal() { jjtThis.setOperator(operator.image); }
+        #MultiplicationDivision(2)
     )*
 }
 
-void ExpressionIntermediateDivision() : {} {
+void ExpressionIntermediateDivision() #void : {} {
     <NOT> ExpressionIntermediateDivision() #Not
     |
-    ExpressionTerminal() [<DOT> ExpressionDot()]
+    ExpressionTerminal() [<DOT> ExpressionDot() #Dot(2)]
 }
 
-void ExpressionTerminal() #Terminal : { Token id;} {
+void ExpressionTerminal() #void : { Token id;} {
     id=<NUM> {jjtThis.identity=id.image; jjtThis.type="int"; } #Integer
     |
-    id=<TRUE> {jjtThis.identity=id.image; jjtThis.type="boolean";} #True
+    <TRUE> {jjtThis.identity="true"; jjtThis.type="boolean";} #True
     |
-    id=<FALSE> {jjtThis.identity=id.image; jjtThis.type="boolean"; } #False
+    <FALSE> {jjtThis.identity="false"; jjtThis.type="boolean"; } #False
     |
     <THIS> #This
     |
-    id=<ID> {jjtThis.identity=id.image;} #ID [ <OSBRACKET> Expression() <CSBRACKET> ]
+    id=<ID> {jjtThis.identity=id.image;} #ID [ <OSBRACKET> (Expression() #Index) <CSBRACKET> #ArrayAccess(2)]
     |
     <OPAREN> Expression() <CPAREN>
     |
@@ -249,17 +303,21 @@ void ExpressionTerminal() #Terminal : { Token id;} {
 }
 
 void ExpressionDot() : { Token id; } {
-    <LEN> #Length
+    (id=<LEN>
     |
-    (LOOKAHEAD(2) ExpressionTerminal() <DOT>)* id=<ID> <OPAREN> [Expression() (<COL> Expression())*] <CPAREN>
-        { jjtThis.identity=id.image; }
+    id=<ID> <OPAREN> FunctionCallArguments() <CPAREN>)
+    { jjtThis.identity=id.image; }
 }
 
-void ExpressionNew() : { Token return_value; } {
+void FunctionCallArguments() : { } {
+    [ Expression() (<COL> Expression() )* ]
+}
+
+void ExpressionNew()  : { Token return_value; } {
     <NEW>
     (
-        <INT> <OSBRACKET> Expression() <CSBRACKET> { jjtThis.returns="int[]"; }
+        <INT> <OSBRACKET> (Expression() #Index) <CSBRACKET> { jjtThis.setReturnType("int[]"); }
         |
-        return_value=<ID> { jjtThis.returns=return_value.image; }  <OPAREN> <CPAREN>
+        return_value=<ID> { jjtThis.setReturnType(return_value.image); }  <OPAREN> <CPAREN>
     )
 }
