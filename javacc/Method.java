@@ -26,14 +26,6 @@ public class Method {
         else return null;
     }
 
-    public void addParameterVariable(String type, String identifier){
-        if(!parameterVariableExists(identifier)) {
-            Symbol parameter = new Symbol(type, identifier, parameter_variables.size());
-            parameter.initialize();
-            parameter_variables.put(identifier, parameter);
-        }
-    }
-
     private boolean parameterVariableExists(String identifier) {
         return parameter_variables.containsKey(identifier);
     }

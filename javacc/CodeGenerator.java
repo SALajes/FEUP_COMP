@@ -65,12 +65,14 @@ class CodeGenerator {
             fileWriter = new FileWriter(file);
         } catch (IOException e) {
             e.printStackTrace();
+            System.exit(-1);
         }
         this.printWriter = new PrintWriter(fileWriter);
     }
 
     private void writeClass() {
         this.printWriter.printf(".class public %s\n", this.classNode.getIdentity());
+
         if(this.classNode.getExtend() != null)
             this.printWriter.printf(".super %s\n\n", this.classNode.getExtend());
         else
@@ -87,17 +89,19 @@ class CodeGenerator {
             this.printWriter.printf(".fileld %s %s\n", node.getIdentity(), convertType(node.getType()));
         }
 
-        if(this.symbolTable.getGlobal_variables().size() < 0)
+        if(!this.symbolTable.getGlobal_variables().isEmpty())
             this.printWriter.printf("\n");
     }
 
     private void writeInitializer() {
         this.printWriter.print(".method public <init> ()V\n");
         this.printWriter.print("\taload_0\n");
+
         if(this.classNode.getExtend() != null)
             this.printWriter.printf("\tinvokespecial " + this.classNode.getExtend()+"\n");
         else
             this.printWriter.print("\tinvokenonvirtual java/lang/Object/<ini>()V\n");
+
         this.printWriter.print("\treturn\n");
         this.printWriter.print(".end method\n\n");
     }
@@ -125,17 +129,17 @@ class CodeGenerator {
         if(node instanceof ASTMain)
             return convertType("String[]");
 
-        String ret = "";
+        StringBuilder ret = new StringBuilder();
         int i = 0;
         while (node.jjtGetChild(i) instanceof ASTArgument) {
             SimpleNode arg = (SimpleNode) node.jjtGetChild(i);
 
-            ret += convertType(arg.getType());
+            ret.append(convertType(arg.getType()));
 
             i++;
         }
 
-        return ret;
+        return ret.toString();
     }
 
     // TODO: Calcular stack
@@ -272,6 +276,10 @@ class CodeGenerator {
                 writeDot(node);
                 break;
 
+            case JavammTreeConstants.JJTFUNCTIONCALLARGUMENTS:
+                writeFunctionCallArguments(node);
+                break;
+
             case JavammTreeConstants.JJTINTEGER:
                 writeInteger(node);
                 break;
@@ -347,12 +355,10 @@ class CodeGenerator {
         if(left instanceof ASTThis) {
             this.printWriter.printf("\taload_0\n");
 
-            for (int i = 0; i < right.jjtGetNumChildren(); i++) {
-                writeExpression((SimpleNode) right.jjtGetChild(i));
-            }
+            writeExpression((SimpleNode) right.jjtGetChild(0));
 
             Method method = this.symbolTable.getMethod(right.getIdentity());
-            String args = genArgsString(method);
+            String args = genArgs(method);
             this.printWriter.printf("\tinvokevirtual %s/%s(%s)%s\n", this.classNode.getIdentity(), right.getIdentity(), args, convertType(method.getReturnType()));
             return;
         }
@@ -361,19 +367,25 @@ class CodeGenerator {
             this.printWriter.printf("\t;Local or Import method\n");
     }
 
-    private String genArgsString(Method method) {
-        String ret = "";
+    private String genArgs(Method method) {
+        StringBuilder ret = new StringBuilder();
 
         if(method.getNumLocalVars() == 0)
-            return ret;
+            return ret.toString();
 
         Hashtable<String, Symbol> vars = method.getLocalVariables();
 
         for (Symbol s : vars.values()) {
-            ret += convertType(s.getType());
+            ret.append(convertType(s.getType()));
         }
 
-        return ret;
+        return ret.toString();
+    }
+
+    private void writeFunctionCallArguments(SimpleNode node) {
+        for (int i = 0; i < node.jjtGetNumChildren(); i++) {
+            writeExpression((SimpleNode) node.jjtGetChild(i));
+        }
     }
 
     // TODO: Optimizar load de valores > 5
