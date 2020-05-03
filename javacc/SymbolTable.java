@@ -178,7 +178,7 @@ public class SymbolTable {
         global_variables.put(identifier, new Symbol(type, identifier));
     }
 
-    public boolean globalVariableExists(String identifier) {
+    boolean globalVariableExists(String identifier) {
         return global_variables.containsKey(identifier);
     }
 
@@ -192,19 +192,13 @@ public class SymbolTable {
         return methods.containsKey(identifier);
     }
 
-    public Method getMethod(String id) {
+    Method getMethod(String id) {
         return methods.get(id);
     }
 
-    public ImportMethod getImportMethod(String className, String methodName) {
+    ImportMethod getImportMethod(String className, String methodName) {
         String key = className+"."+methodName;
         return imports.get(key);
-    }
-
-    public Method getParameterVariable(String identifier){
-        if(methodExists(identifier))
-            return methods.get(identifier);
-        return null;
     }
 
     public boolean checkMethodType(String identifier, String return_type){
@@ -214,7 +208,7 @@ public class SymbolTable {
         else return false;
     }
 
-    public String getGlobalVarType(String identity){
+    String getGlobalVarType(String identity){
         if(global_variables.containsKey(identity)){
             return global_variables.get(identity).getType();
         }
@@ -244,7 +238,7 @@ public class SymbolTable {
         return false;
     }
 
-    public Hashtable<String, Symbol> getGlobal_variables() {
+    Hashtable<String, Symbol> getGlobal_variables() {
         return global_variables;
     }
 
