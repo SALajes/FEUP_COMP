@@ -7,6 +7,7 @@ import java.util.Hashtable;
 
 class CodeGenerator {
     private SymbolTable symbolTable;
+    private int counter = 0;
 
     private SimpleNode root;
     private SimpleNode classNode;
@@ -182,27 +183,31 @@ class CodeGenerator {
                 writeExpression(node);
                 break;
         }
-
-        this.printWriter.printf("\n");
     }
 
     // TODO: Gerar codigo do if block e da condition
     // Codigo body e else já está
+    // TODO: Falta verificar se de facto existe o else. Caso não exista
+    // não se pode imprimir a tag ELSE nem o resto que vem depois disso
     private void writeIfStatement(SimpleNode node) {
         SimpleNode condition = (SimpleNode) node.jjtGetChild(0);
         SimpleNode body = (SimpleNode) node.jjtGetChild(1);
         SimpleNode then = (SimpleNode) node.jjtGetChild(2);
 
-        this.printWriter.printf("\t;Condition\n");
+        this.printWriter.printf("\t;If\n");
         writeExpression(condition);
 
-        this.printWriter.printf("\n\t;If Body\n");
         for (int i = 0; i < body.jjtGetNumChildren(); i++)
             writeStatement((SimpleNode) body.jjtGetChild(i));
-
-        this.printWriter.printf("\t;Else\n");
+        this.printWriter.printf("\tgoto NEXT" + this.counter + "\n");
+        this.printWriter.printf("\tELSE" + this.counter + ":" + "\n");
+        this.printWriter.printf("\ticonst_0" + "\n");
         for (int i = 0; i < then.jjtGetNumChildren(); i++)
             writeStatement((SimpleNode) then.jjtGetChild(i));
+
+        this.printWriter.printf("\n");
+        this.printWriter.printf("\tNEXT" + this.counter + ":" + "\n");
+        this.counter++;
     }
 
     // TODO: Gerar codigo do while block
@@ -258,11 +263,12 @@ class CodeGenerator {
     private void writeExpression(SimpleNode node) {
         switch (node.getId()) {
             case JavammTreeConstants.JJTAND:
-                this.printWriter.printf("\t;And\n");
+                writeAndCondition(node);
                 break;
 
             case JavammTreeConstants.JJTLESSTHAN:
                 this.printWriter.printf("\t;Less Than\n");
+                writeLessThanCondition(node);
                 break;
 
             case JavammTreeConstants.JJTMULTIPLICATIONDIVISION:
@@ -321,8 +327,26 @@ class CodeGenerator {
         }
     }
 
-    private  void writeBoolean(SimpleNode node) {
+    private void writeLessThanCondition(SimpleNode node) {
+        if (node.getId() == 17) { // if lessthan
+            writeExpression((SimpleNode) node.jjtGetChild(0));
+            writeExpression((SimpleNode) node.jjtGetChild(1));
+            this.printWriter.printf("\tisub\n");
+            this.printWriter.printf("\tifge ELSE" + this.counter + "\n");
+            this.printWriter.printf("\ticonst_1\n");
+        }
+    }
 
+    private void writeAndCondition(SimpleNode node) {
+        if (node.getId() == 16) {
+            writeExpression((SimpleNode) node.jjtGetChild(0));
+            this.printWriter.printf("\tifne AND" + this.counter + "\n");
+            this.printWriter.printf("\ticonst_0\n");
+            this.printWriter.printf("\tgoto NEXT" + this.counter + "\n");
+            this.printWriter.printf("\tAND" + ":\n");
+            writeExpression((SimpleNode) node.jjtGetChild(1));
+            this.printWriter.printf("\tNEXT" + this.counter + ":\n");
+        }
     }
 
     private void writeArithmetic(SimpleNode node){
