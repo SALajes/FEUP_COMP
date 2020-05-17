@@ -15,7 +15,6 @@ class CodeGenerator {
     private PrintWriter printWriter;
 
     private String scope;
-    private boolean extend = false;
 
     public CodeGenerator(SimpleNode root, SymbolTable symbolTable) {
         this.root = root;
@@ -76,10 +75,9 @@ class CodeGenerator {
     private void writeClass() {
         this.printWriter.printf(".class public %s\n", this.classNode.getIdentity());
 
-        if(this.classNode.getExtend() != null) {
+        if(this.classNode.getExtend() != null)
             this.printWriter.printf(".super %s\n\n", this.classNode.getExtend());
-            this.extend = true;
-        } else
+        else
             this.printWriter.print(".super java/lang/Object\n\n");
     }
 
@@ -98,7 +96,7 @@ class CodeGenerator {
     }
 
     private void writeInitializer() {
-        this.printWriter.print(".method public <init> ()V\n");
+        this.printWriter.print(".method public <init>()V\n");
         this.printWriter.print("\taload_0\n");
 
         if(this.classNode.getExtend() != null)
@@ -122,7 +120,7 @@ class CodeGenerator {
     private void writeMethod(SimpleNode node) {
         String args = genArgs(node);
 
-        this.printWriter.printf(".method public %s(%s) %s\n", node.getIdentity().equals("main") ? "static main" : node.getIdentity(), args, convertType(node.getReturnType()));
+        this.printWriter.printf(".method public %s(%s)%s\n", node.getIdentity().equals("main") ? "static main" : node.getIdentity(), args, convertType(node.getReturnType()));
         this.scope = node.getIdentity();
         writeMethodBody(node);
 

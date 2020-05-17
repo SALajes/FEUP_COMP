@@ -26,7 +26,7 @@ Possible arguments:
 
 ---
 
-## Semantic Analysis  
+## Semantic Analysis  - CP2 
 
 *Todas as verificações feitas na análise semantica devem reportar erro excepto a verificação de inicialização de variáveis que deverá apenas dar um warning*  
 <br/>
@@ -71,3 +71,17 @@ Possible arguments:
 	- [X] operações aritméticas (com prioridade de operações correta)
 		- neste checkpoint não é necessário a seleção das operações mais eficientes mas isto será considerado no CP3 e versão final
 	- [ ] invocação de métodos
+	
+---
+
+## Code generation - CP3
+
+- **Generate JVM code accepted by jasmin for loops:**
+    - [ ] similar to if statemnt, but with extra jumps
+
+- **Generate JVM code accepted by jasmin to deal with arrays:**
+    - [ ] array initialization
+    - [ ] array store (astore)
+    - [ ] array access (aload)
+    - [ ] array position store
+    - [ ] array postition access
