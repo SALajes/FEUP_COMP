@@ -273,7 +273,7 @@ class CodeGenerator {
     private void writeExpression(SimpleNode node) {
         switch (node.getId()) {
             case JavammTreeConstants.JJTAND:
-                this.printWriter.printf("\t;Anc\n");
+                this.printWriter.printf("\t;And\n");
                 writeAndCondition(node);
                 break;
 
@@ -289,6 +289,7 @@ class CodeGenerator {
 
             case JavammTreeConstants.JJTNOT:
                 this.printWriter.printf("\t;Not\n");
+                writeNot(node);
                 break;
 
             case JavammTreeConstants.JJTDOT:
@@ -387,6 +388,12 @@ class CodeGenerator {
         }
     }
 
+    private void writeNot(SimpleNode node) {
+        for (int i = 0; i < node.jjtGetNumChildren(); i++) {
+            this.printWriter.printf("\t;Id: %d\n", node.jjtGetChild(i).getId());
+        }
+    }
+
     private void writeDot(SimpleNode node){
         SimpleNode left = (SimpleNode) node.jjtGetChild(0);
         SimpleNode right = (SimpleNode) node.jjtGetChild(1);
@@ -452,10 +459,10 @@ class CodeGenerator {
     private String genArgs(Method method) {
         StringBuilder ret = new StringBuilder();
 
-        if(method.getNumLocalVars() == 0)
+        if(method.getNumParameters() == 0)
             return ret.toString();
 
-        Hashtable<String, Symbol> vars = method.getLocalVariables();
+        Hashtable<String, Symbol> vars = method.getParameterVariables();
 
         for (Symbol s : vars.values()) {
             ret.append(convertType(s.getType()));

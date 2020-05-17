@@ -103,6 +103,10 @@ public class Method {
         return local_variables;
     }
 
+    public Hashtable<String, Symbol> getParameterVariables() {
+        return parameter_variables;
+    }
+
     public void invalidate() {
         this.invalid = true;
     }
@@ -131,6 +135,10 @@ public class Method {
         result.first = null;
         result.second = return_type;
         return result;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public String dump(){
