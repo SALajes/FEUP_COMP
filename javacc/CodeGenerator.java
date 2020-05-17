@@ -181,7 +181,6 @@ class CodeGenerator {
                 break;
 
             default:
-                this.printWriter.printf("\t;Expression Id: %d\n", node.getId());
                 writeExpression(node);
                 break;
         }
@@ -260,7 +259,6 @@ class CodeGenerator {
         }
     }
 
-    // TODO: Array Init
     private void writeArrayInit(SimpleNode node) {
         SimpleNode left = (SimpleNode) node.jjtGetChild(0);
         SimpleNode right = (SimpleNode) node.jjtGetChild(1);
@@ -275,11 +273,12 @@ class CodeGenerator {
     private void writeExpression(SimpleNode node) {
         switch (node.getId()) {
             case JavammTreeConstants.JJTAND:
+                this.printWriter.printf("\t;AND\n");
                 writeAndCondition(node);
                 break;
 
             case JavammTreeConstants.JJTLESSTHAN:
-                this.printWriter.printf("\t;Less Than\n");
+                this.printWriter.printf("\t;LESSTHAN\n");
                 writeLessThanCondition(node);
                 break;
 
@@ -326,7 +325,7 @@ class CodeGenerator {
 
             case JavammTreeConstants.JJTARRAYACCESS:
                 this.printWriter.printf("\t;Array Access\n");
-//                writeArrayAccess(node);
+                writeArrayAccess(node);
                 break;
 
             case JavammTreeConstants.JJTEXPRESSIONNEW:
@@ -340,29 +339,25 @@ class CodeGenerator {
     }
 
     private void writeLessThanCondition(SimpleNode node) {
-        if (node.getId() == 17) { // if lessthan
-            writeExpression((SimpleNode) node.jjtGetChild(0));
-            writeExpression((SimpleNode) node.jjtGetChild(1));
+        writeExpression((SimpleNode) node.jjtGetChild(0));
+        writeExpression((SimpleNode) node.jjtGetChild(1));
 
-            this.printWriter.printf("\tisub\n");
-            this.printWriter.printf("\tifge else" + this.counter + "\n");
-            this.printWriter.printf("\ticonst_1\n");
-        }
+        this.printWriter.printf("\tisub\n");
+        this.printWriter.printf("\tifge else" + this.counter + "\n");
+        this.printWriter.printf("\ticonst_1\n");
     }
 
     private void writeAndCondition(SimpleNode node) {
-        if (node.getId() == 16) {
-            writeExpression((SimpleNode) node.jjtGetChild(0));
+        writeExpression((SimpleNode) node.jjtGetChild(0));
 
-            this.printWriter.printf("\tifne and" + this.counter + "\n");
-            this.printWriter.printf("\ticonst_0\n");
-            this.printWriter.printf("\tgoto next" + this.counter + "\n");
-            this.printWriter.printf("\tand" + ":\n");
+        this.printWriter.printf("\tifne and" + this.counter + "\n");
+        this.printWriter.printf("\ticonst_0\n");
+        this.printWriter.printf("\tgoto next" + this.counter + "\n");
+        this.printWriter.printf("\tand" + ":\n");
 
-            writeExpression((SimpleNode) node.jjtGetChild(1));
+        writeExpression((SimpleNode) node.jjtGetChild(1));
 
-            this.printWriter.printf("\tnext" + this.counter + ":\n");
-        }
+        this.printWriter.printf("\tnext" + this.counter + ":\n");
     }
 
     private void writeArithmetic(SimpleNode node){
@@ -527,9 +522,11 @@ class CodeGenerator {
         }
     }
 
-    // TODO: CP3
     private void writeArrayAccess(SimpleNode node) {
+        writeID((SimpleNode) node.jjtGetChild(0));              // Var name
+        writeExpression((SimpleNode) node.jjtGetChild(1));      // Index
 
+        this.printWriter.printf("\tiaload\n");
     }
 
     private void writeNew(SimpleNode node) {
