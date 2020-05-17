@@ -16,6 +16,7 @@ gradlew.bat
 comp2020-3c.iml
 
 Jasmin/
+*.class
 
 # Ignore Gradle GUI config
 gradle-app.setting

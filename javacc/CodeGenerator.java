@@ -3,7 +3,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Random;
 
 class CodeGenerator {
     private SymbolTable symbolTable;
@@ -13,6 +15,8 @@ class CodeGenerator {
     private SimpleNode classNode;
 
     private PrintWriter printWriter;
+
+    private HashMap<String, String> lutSwappedWords = new HashMap<>();
 
     private String scope;
 
@@ -88,7 +92,7 @@ class CodeGenerator {
             if(node instanceof ASTMethod || node instanceof ASTMain)
                 break;
 
-            this.printWriter.printf(".fileld %s %s\n", node.getIdentity(), convertType(node.getType()));
+            this.printWriter.printf(".field private %s %s\n", getVarName(node.getIdentity()), convertType(node.getType()));
         }
 
         if(!this.symbolTable.getGlobal_variables().isEmpty())
@@ -100,7 +104,7 @@ class CodeGenerator {
         this.printWriter.print("\taload_0\n");
 
         if(this.classNode.getExtend() != null)
-            this.printWriter.printf("\tinvokespecial " + this.classNode.getExtend()+"\n");
+            this.printWriter.printf("\tinvokespecial " + this.classNode.getExtend()+"/<init>()V\n");
         else
             this.printWriter.print("\tinvokenonvirtual java/lang/Object/<ini>()V\n");
 
@@ -146,7 +150,7 @@ class CodeGenerator {
 
     // TODO: Calcular stack
     private void writeMethodBody(SimpleNode node) {
-        this.printWriter.printf("\t.limit stack 99\n");                         // TODO: Calcular
+        this.printWriter.printf("\t.limit stack 99\n");
 
         Method method = this.symbolTable.getMethod(node.getIdentity());
         int numLocals = method.getNumLocalVars() + method.getNumParameters();
@@ -233,7 +237,7 @@ class CodeGenerator {
 
         if(left instanceof ASTArrayInit) {
             this.printWriter.printf("\t;Array Init\n");
-//            writeArrayInit(left);
+            writeArrayInit(left);
             return;
         }
 
@@ -253,13 +257,20 @@ class CodeGenerator {
             }
         } else if (this.symbolTable.globalVariableExists(varName)) {
             this.printWriter.printf("\taload_0\n");
-            this.printWriter.printf("\tputfield %s/%s %s\n", this.classNode.getIdentity(), varName, convertType(this.symbolTable.getGlobalVarType(varName)));
+            this.printWriter.printf("\tputfield %s/%s %s\n", this.classNode.getIdentity(), getVarName(varName), convertType(this.symbolTable.getGlobalVarType(varName)));
         }
     }
 
     // TODO: Array Init
     private void writeArrayInit(SimpleNode node) {
-
+        for (int i = 0; i < node.jjtGetNumChildren(); i++) {
+            SimpleNode simpleNode = (SimpleNode) node.jjtGetChild(i);
+            this.printWriter.printf("\tID: %d\n", simpleNode.getId());
+            for (int j = 0; j < simpleNode.jjtGetNumChildren(); j++) {
+                SimpleNode aux = (SimpleNode) simpleNode.jjtGetChild(i);
+                this.printWriter.printf("\t\tID: %s\n", aux.getIdentity());
+            }
+        }
     }
 
     private void writeExpression(SimpleNode node) {
@@ -512,7 +523,7 @@ class CodeGenerator {
 
         } else if (this.symbolTable.globalVariableExists(varName)) {
             this.printWriter.printf("\taload_0\n");
-            this.printWriter.printf("\tgetfield %s/%s %s\n", this.classNode.getIdentity(), varName, convertType(this.symbolTable.getGlobalVarType(varName)));
+            this.printWriter.printf("\tgetfield %s/%s %s\n", this.classNode.getIdentity(), getVarName(varName), convertType(this.symbolTable.getGlobalVarType(varName)));
         }
     }
 
@@ -570,5 +581,30 @@ class CodeGenerator {
             default:
                 return "return";
         }
+    }
+
+    // -- Dealing with Jasmin forbidden words --
+    // Forbidden words:
+    //      - field
+    private String getVarName(String varName) {
+        if(!varName.equals("field"))
+            return varName;
+
+        lutSwappedWords.putIfAbsent("field", genRandomVarName());
+
+        return lutSwappedWords.get("field");
+    }
+
+    private String genRandomVarName() {
+        int length = 8;
+        Random rng = new Random();
+        final String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+        char[] text = new char[length];
+        for (int i = 0; i < length; i++)
+        {
+            text[i] = characters.charAt(rng.nextInt(characters.length()));
+        }
+        return new String(text);
     }
 }
