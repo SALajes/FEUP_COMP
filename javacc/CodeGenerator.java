@@ -79,14 +79,14 @@ class CodeGenerator {
     private void writeClass() {
         this.printWriter.printf(".class public %s\n", this.classNode.getIdentity());
 
-        if(this.classNode.getExtend() != null)
+        if(this.classNode.getExtend() != null) {
             this.printWriter.printf(".super %s\n\n", this.classNode.getExtend());
-        else
+            boolean extend = true;
+        } else
             this.printWriter.print(".super java/lang/Object\n\n");
     }
 
     private void writeGlobalVars() {
-        // TODO: Verificar se o nome das variaveis não é um nome reservado em Jasmin
         for (int i = 0; i < this.classNode.jjtGetNumChildren(); i++) {
             SimpleNode node = (SimpleNode) this.classNode.jjtGetChild(i);
             if(node instanceof ASTMethod || node instanceof ASTMain)
@@ -233,13 +233,12 @@ class CodeGenerator {
         SimpleNode left = (SimpleNode) node.jjtGetChild(0);
         SimpleNode right = (SimpleNode) node.jjtGetChild(1);
 
-        writeExpression(right);
-
         if(left instanceof ASTArrayInit) {
-            this.printWriter.printf("\t;Array Init\n");
-            writeArrayInit(left);
+            writeArrayInit(node);
             return;
         }
+
+        writeExpression(right);
 
         String varName = left.getIdentity();
 
@@ -263,14 +262,14 @@ class CodeGenerator {
 
     // TODO: Array Init
     private void writeArrayInit(SimpleNode node) {
-        for (int i = 0; i < node.jjtGetNumChildren(); i++) {
-            SimpleNode simpleNode = (SimpleNode) node.jjtGetChild(i);
-            this.printWriter.printf("\tID: %d\n", simpleNode.getId());
-            for (int j = 0; j < simpleNode.jjtGetNumChildren(); j++) {
-                SimpleNode aux = (SimpleNode) simpleNode.jjtGetChild(i);
-                this.printWriter.printf("\t\tID: %s\n", aux.getIdentity());
-            }
-        }
+        SimpleNode left = (SimpleNode) node.jjtGetChild(0);
+        SimpleNode right = (SimpleNode) node.jjtGetChild(1);
+
+        writeID(left);                                              // Var name
+        writeExpression((SimpleNode) left.jjtGetChild(0));      // Index
+        writeExpression(right);                                     // = smth
+
+        this.printWriter.printf("\tiastore\n");
     }
 
     private void writeExpression(SimpleNode node) {
@@ -280,6 +279,7 @@ class CodeGenerator {
                 break;
 
             case JavammTreeConstants.JJTLESSTHAN:
+                this.printWriter.printf("\t;Less Than\n");
                 writeLessThanCondition(node);
                 break;
 
