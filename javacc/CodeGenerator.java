@@ -200,13 +200,13 @@ class CodeGenerator {
         for (int i = 0; i < body.jjtGetNumChildren(); i++)
             writeStatement((SimpleNode) body.jjtGetChild(i));
         this.printWriter.printf("\tgoto NEXT" + this.counter + "\n");
-        this.printWriter.printf("\tELSE" + this.counter + ":" + "\n");
+        this.printWriter.printf("\telse" + this.counter + ":" + "\n");
         this.printWriter.printf("\ticonst_0" + "\n");
         for (int i = 0; i < then.jjtGetNumChildren(); i++)
             writeStatement((SimpleNode) then.jjtGetChild(i));
 
         this.printWriter.printf("\n");
-        this.printWriter.printf("\tNEXT" + this.counter + ":" + "\n");
+        this.printWriter.printf("\tnext" + this.counter + ":" + "\n");
         this.counter++;
     }
 
@@ -332,7 +332,7 @@ class CodeGenerator {
             writeExpression((SimpleNode) node.jjtGetChild(0));
             writeExpression((SimpleNode) node.jjtGetChild(1));
             this.printWriter.printf("\tisub\n");
-            this.printWriter.printf("\tifge ELSE" + this.counter + "\n");
+            this.printWriter.printf("\tifge else" + this.counter + "\n");
             this.printWriter.printf("\ticonst_1\n");
         }
     }
@@ -340,12 +340,12 @@ class CodeGenerator {
     private void writeAndCondition(SimpleNode node) {
         if (node.getId() == 16) {
             writeExpression((SimpleNode) node.jjtGetChild(0));
-            this.printWriter.printf("\tifne AND" + this.counter + "\n");
+            this.printWriter.printf("\tifne and" + this.counter + "\n");
             this.printWriter.printf("\ticonst_0\n");
-            this.printWriter.printf("\tgoto NEXT" + this.counter + "\n");
-            this.printWriter.printf("\tAND" + ":\n");
+            this.printWriter.printf("\tgoto next" + this.counter + "\n");
+            this.printWriter.printf("\tand" + ":\n");
             writeExpression((SimpleNode) node.jjtGetChild(1));
-            this.printWriter.printf("\tNEXT" + this.counter + ":\n");
+            this.printWriter.printf("\tnext" + this.counter + ":\n");
         }
     }
 
