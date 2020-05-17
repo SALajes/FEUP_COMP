@@ -183,6 +183,8 @@ class CodeGenerator {
                 writeExpression(node);
                 break;
         }
+
+        this.printWriter.printf("\n");
     }
 
     // TODO: Gerar codigo do if block e da condition
@@ -199,9 +201,11 @@ class CodeGenerator {
 
         for (int i = 0; i < body.jjtGetNumChildren(); i++)
             writeStatement((SimpleNode) body.jjtGetChild(i));
+
         this.printWriter.printf("\tgoto NEXT" + this.counter + "\n");
         this.printWriter.printf("\telse" + this.counter + ":" + "\n");
         this.printWriter.printf("\ticonst_0" + "\n");
+
         for (int i = 0; i < then.jjtGetNumChildren(); i++)
             writeStatement((SimpleNode) then.jjtGetChild(i));
 
@@ -267,7 +271,6 @@ class CodeGenerator {
                 break;
 
             case JavammTreeConstants.JJTLESSTHAN:
-                this.printWriter.printf("\t;Less Than\n");
                 writeLessThanCondition(node);
                 break;
 
@@ -331,6 +334,7 @@ class CodeGenerator {
         if (node.getId() == 17) { // if lessthan
             writeExpression((SimpleNode) node.jjtGetChild(0));
             writeExpression((SimpleNode) node.jjtGetChild(1));
+
             this.printWriter.printf("\tisub\n");
             this.printWriter.printf("\tifge else" + this.counter + "\n");
             this.printWriter.printf("\ticonst_1\n");
@@ -340,11 +344,14 @@ class CodeGenerator {
     private void writeAndCondition(SimpleNode node) {
         if (node.getId() == 16) {
             writeExpression((SimpleNode) node.jjtGetChild(0));
+
             this.printWriter.printf("\tifne and" + this.counter + "\n");
             this.printWriter.printf("\ticonst_0\n");
             this.printWriter.printf("\tgoto next" + this.counter + "\n");
             this.printWriter.printf("\tand" + ":\n");
+
             writeExpression((SimpleNode) node.jjtGetChild(1));
+
             this.printWriter.printf("\tnext" + this.counter + ":\n");
         }
     }
@@ -475,14 +482,17 @@ class CodeGenerator {
         }
     }
 
-    // TODO: Optimizar load de valores > 5
     private void writeInteger(SimpleNode node) {
         int val = Integer.parseInt(node.getIdentity());
 
         if(val < 6)
             this.printWriter.printf("\ticonst_%d\n", val);
+        else if(val < 128)
+            this.printWriter.printf("\tbipush %d\n", val);      // bipush -> push byte
+        else if(val < 32768)
+            this.printWriter.printf("\tsipush %d\n", val);      // sipush -> push short
         else
-            this.printWriter.printf("\tldc %d\n", val);     // TODO: Mudar para ser mais optimizado
+            this.printWriter.printf("\tldc %d\n", val);
     }
 
     private void writeID(SimpleNode node){
