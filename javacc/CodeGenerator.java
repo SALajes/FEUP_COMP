@@ -231,7 +231,7 @@ class CodeGenerator {
 
         if(left instanceof ASTArrayInit) {
             this.printWriter.printf("\t;Array Init\n");
-//            writeArrayInit(left);
+            writeArrayInit(left);
             return;
         }
 
@@ -257,7 +257,18 @@ class CodeGenerator {
 
     // TODO: Array Init
     private void writeArrayInit(SimpleNode node) {
-
+        this.printWriter.printf("\tarrayinitlmao\n");
+        String identity = node.getIdentity();
+        if (this.symbolTable.getVariable(this.scope, identity) != null) {
+            Symbol localVar = this.symbolTable.getVariable(this.scope, identity);
+            this.printWriter.printf("\taload " + localVar.getIndex());
+        } else if (node.globalVariableExists(identity) != null) {
+            Symbol globalVar = this.symbolTable.getGlobalVariable(identity);
+            this.printWriter.printf("\taload_0" + globalVar.getIndex());
+        }
+        writeExpression(node.jjtGetChild(0));
+        writeExpression(node.jjtGetChild(1));
+        this.printWriter.printf("\tiastore");
     }
 
     private void writeExpression(SimpleNode node) {

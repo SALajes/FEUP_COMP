@@ -8,6 +8,10 @@ public class SymbolTable {
     private Hashtable<String, Method> methods = new Hashtable<>();
     private Hashtable<String, ImportMethod> imports = new Hashtable<>();
 
+    public String getClassName() {
+        return class_name;
+    }
+
     public String class_name;
     public String extend_class;
 
