@@ -17,6 +17,7 @@ comp2020-3c.iml
 
 Jasmin/
 *.class
+!jasmin.jar
 
 # Ignore Gradle GUI config
 gradle-app.setting

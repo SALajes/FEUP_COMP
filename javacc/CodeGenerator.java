@@ -106,7 +106,7 @@ class CodeGenerator {
         if(this.classNode.getExtend() != null)
             this.printWriter.printf("\tinvokespecial " + this.classNode.getExtend()+"/<init>()V\n");
         else
-            this.printWriter.print("\tinvokenonvirtual java/lang/Object/<ini>()V\n");
+            this.printWriter.print("\tinvokenonvirtual java/lang/Object/<init>()V\n");
 
         this.printWriter.print("\treturn\n");
         this.printWriter.print(".end method\n\n");
@@ -273,12 +273,12 @@ class CodeGenerator {
     private void writeExpression(SimpleNode node) {
         switch (node.getId()) {
             case JavammTreeConstants.JJTAND:
-                this.printWriter.printf("\t;AND\n");
+                this.printWriter.printf("\t;Anc\n");
                 writeAndCondition(node);
                 break;
 
             case JavammTreeConstants.JJTLESSTHAN:
-                this.printWriter.printf("\t;LESSTHAN\n");
+                this.printWriter.printf("\t;LessThan\n");
                 writeLessThanCondition(node);
                 break;
 
@@ -324,7 +324,6 @@ class CodeGenerator {
                 break;
 
             case JavammTreeConstants.JJTARRAYACCESS:
-                this.printWriter.printf("\t;Array Access\n");
                 writeArrayAccess(node);
                 break;
 
