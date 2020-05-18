@@ -9,7 +9,6 @@ import java.util.Random;
 
 class CodeGenerator {
     private SymbolTable symbolTable;
-    private int counter = 0;
 
     private SimpleNode root;
     private SimpleNode classNode;
@@ -153,7 +152,7 @@ class CodeGenerator {
         this.printWriter.printf("\t.limit stack 99\n");
 
         Method method = this.symbolTable.getMethod(node.getIdentity());
-        int numLocals = method.getNumLocalVars() + method.getNumParameters();
+        int numLocals = method.getNumLocalVars() + method.getNumParameters() +1;
         this.printWriter.printf("\t.limit locals %d\n\n", numLocals);
 
         for (int i = 0; i < node.jjtGetNumChildren(); i++) {
@@ -249,6 +248,7 @@ class CodeGenerator {
             }
         } else if (this.symbolTable.globalVariableExists(varName)) {
             this.printWriter.printf("\taload_0\n");
+            this.printWriter.printf("\tswap\n");
             this.printWriter.printf("\tputfield %s/%s %s\n", this.classNode.getIdentity(), getVarName(varName), convertType(this.symbolTable.getGlobalVarType(varName)));
         }
     }
@@ -267,12 +267,10 @@ class CodeGenerator {
     private void writeExpression(SimpleNode node) {
         switch (node.getId()) {
             case JavammTreeConstants.JJTAND:
-                this.printWriter.printf("\t;And\n");
                 writeAndCondition(node);
                 break;
 
             case JavammTreeConstants.JJTLESSTHAN:
-                this.printWriter.printf("\t;LessThan\n");
                 writeLessThanCondition(node);
                 break;
 

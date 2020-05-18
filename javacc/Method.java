@@ -137,10 +137,6 @@ public class Method {
         return result;
     }
 
-    public String getName() {
-        return name;
-    }
-
     public String dump(){
         String print = "## " + name + " returns " + return_type + '\n';
         Iterator it;
