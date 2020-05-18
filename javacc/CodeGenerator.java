@@ -208,17 +208,18 @@ class CodeGenerator {
         this.printWriter.printf("\tCONT%d:\n", node.getCount());
     }
 
-    // TODO: Gerar codigo do while block
-    // Codigo body já está
     private void writeWhileStatement(SimpleNode node) {
         SimpleNode condition = (SimpleNode) node.jjtGetChild(0);
 
-        this.printWriter.printf("\t;Condition\n");
+        this.printWriter.printf("\tWHILE%d:\n", node.getCount());
         writeExpression(condition);
+        this.printWriter.printf("\tifeq CONT%d\n", node.getCount());
 
-        this.printWriter.printf("\n\t;While Body\n");
         for (int i = 1; i < node.jjtGetNumChildren(); i++)
             writeStatement((SimpleNode) node.jjtGetChild(i));
+
+        this.printWriter.printf("\tgoto WHILE%d\n", node.getCount());
+        this.printWriter.printf("\tCONT%d:\n", node.getCount());
     }
 
     private void writeAssignStatement(SimpleNode node) {
