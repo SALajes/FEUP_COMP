@@ -2,14 +2,27 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTWhile extends SimpleNode {
+  private static int counter = 0;
+  private int count;
+
   public ASTWhile(int id) {
     super(id);
+    this.count = counter;
+    counter++;
   }
 
   public ASTWhile(Javamm p, int id) {
     super(p, id);
+    this.count = counter;
+    counter++;
   }
 
+  @Override
+  public int getCount() {
+    return this.count;
+  }
+
+  @Override
   public String toString() {
     return "Statement while";
   }

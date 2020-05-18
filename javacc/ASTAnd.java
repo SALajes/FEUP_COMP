@@ -3,18 +3,30 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTAnd extends SimpleNode {
+  private static int counter = 0;
+  private int count;
+
   protected final String operator = "&&";
 
   public ASTAnd(int id) {
     super(id);
     this.return_type = "boolean";
     this.binary_operator=true;
+    this.count = counter;
+    counter++;
   }
 
   public ASTAnd(Javamm p, int id) {
     super(p, id);
     this.return_type = "boolean";
     this.binary_operator=true;
+    this.count = counter;
+    counter++;
+  }
+
+  @Override
+  public int getCount() {
+    return super.getCount();
   }
 
   @Override

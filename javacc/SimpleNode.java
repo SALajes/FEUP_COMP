@@ -163,6 +163,10 @@ class SimpleNode implements Node {
     public static SymbolTable getSymbolTable() {
         return symbol_table;
     }
+
+    public int getCount() {
+        return 0;
+    }
 }
 
 /* JavaCC - OriginalChecksum=64dd3e3b2acf6bee9393de7b2d2f7b42 (do not edit this line) */

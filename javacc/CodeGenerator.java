@@ -188,31 +188,25 @@ class CodeGenerator {
         this.printWriter.printf("\n");
     }
 
-    // TODO: Gerar codigo do if block e da condition
-    // Codigo body e else já está
-    // TODO: Falta verificar se de facto existe o else. Caso não exista
-    // não se pode imprimir a tag ELSE nem o resto que vem depois disso
     private void writeIfStatement(SimpleNode node) {
         SimpleNode condition = (SimpleNode) node.jjtGetChild(0);
         SimpleNode body = (SimpleNode) node.jjtGetChild(1);
         SimpleNode then = (SimpleNode) node.jjtGetChild(2);
 
-        this.printWriter.printf("\t;If\n");
         writeExpression(condition);
+
+        this.printWriter.printf("\tifeq ELSE%d\n", node.getCount());
 
         for (int i = 0; i < body.jjtGetNumChildren(); i++)
             writeStatement((SimpleNode) body.jjtGetChild(i));
 
-        this.printWriter.printf("\tgoto NEXT" + this.counter + "\n");
-        this.printWriter.printf("\telse" + this.counter + ":" + "\n");
-        this.printWriter.printf("\ticonst_0" + "\n");
+        this.printWriter.printf("\tgoto CONT%d\n", node.getCount());
+        this.printWriter.printf("\tELSE%d:\n", node.getCount());
 
         for (int i = 0; i < then.jjtGetNumChildren(); i++)
             writeStatement((SimpleNode) then.jjtGetChild(i));
 
-        this.printWriter.printf("\n");
-        this.printWriter.printf("\tnext" + this.counter + ":" + "\n");
-        this.counter++;
+        this.printWriter.printf("\tCONT%d:\n", node.getCount());
     }
 
     // TODO: Gerar codigo do while block
@@ -343,21 +337,27 @@ class CodeGenerator {
         writeExpression((SimpleNode) node.jjtGetChild(1));
 
         this.printWriter.printf("\tisub\n");
-        this.printWriter.printf("\tifge else" + this.counter + "\n");
+        this.printWriter.printf("\tifge LT%d\n", node.getCount());
         this.printWriter.printf("\ticonst_1\n");
+
+        this.printWriter.printf("\tgoto CONT%d\n", node.getCount());
+        this.printWriter.printf("\tLT%d:\n", node.getCount());
+        this.printWriter.printf("\ticonst_0\n");
+
+        this.printWriter.printf("\tCONT%d:\n", node.getCount());
     }
 
     private void writeAndCondition(SimpleNode node) {
         writeExpression((SimpleNode) node.jjtGetChild(0));
 
-        this.printWriter.printf("\tifne and" + this.counter + "\n");
+        this.printWriter.printf("\tifne AND%d\n", node.getCount());
         this.printWriter.printf("\ticonst_0\n");
-        this.printWriter.printf("\tgoto next" + this.counter + "\n");
-        this.printWriter.printf("\tand" + ":\n");
+        this.printWriter.printf("\tgoto CONT%d\n", node.getCount());
+        this.printWriter.printf("\tAND%d:\n", node.getCount());
 
         writeExpression((SimpleNode) node.jjtGetChild(1));
 
-        this.printWriter.printf("\tnext" + this.counter + ":\n");
+        this.printWriter.printf("\tCONT%d:\n", node.getCount());
     }
 
     private void writeArithmetic(SimpleNode node){
@@ -388,6 +388,7 @@ class CodeGenerator {
         }
     }
 
+    // TODO: gerar not " ! "
     private void writeNot(SimpleNode node) {
         for (int i = 0; i < node.jjtGetNumChildren(); i++) {
             this.printWriter.printf("\t;Id: %d\n", node.jjtGetChild(i).getId());
