@@ -281,7 +281,6 @@ class CodeGenerator {
                 break;
 
             case JavammTreeConstants.JJTNOT:
-                this.printWriter.printf("\t;Not\n");
                 writeNot(node);
                 break;
 
@@ -387,11 +386,12 @@ class CodeGenerator {
         }
     }
 
-    // TODO: gerar not " ! "
+    // O not está a ser feito fazendo xor do valor do booleano inserido com o número 1.
+    // Desta forma, se o input for 1 o resultado é 0, e se o input for 0 o resultado é 1.
     private void writeNot(SimpleNode node) {
-        for (int i = 0; i < node.jjtGetNumChildren(); i++) {
-            this.printWriter.printf("\t;Id: %d\n", node.jjtGetChild(i).getId());
-        }
+        writeExpression((SimpleNode) node.jjtGetChild(0));
+        this.printWriter.printf("\ticonst_1\n");
+        this.printWriter.printf("\tixor\n");
     }
 
     private void writeDot(SimpleNode node){
