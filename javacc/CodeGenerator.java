@@ -10,7 +10,7 @@ class CodeGenerator {
     private PrintWriter printWriter;
 
     private HashMap<String, String> lutSwappedWords = new HashMap<>();
-    private String currMethod;
+    private Method currMethod;
     private String scope;
 
     private StackCalculator stackCalculator = new StackCalculator();
@@ -510,7 +510,12 @@ class CodeGenerator {
 
     private void writeLocalMethod(SimpleNode node) {
         Method method = this.symbolTable.getMethod(node.getIdentity());
-        String args = genArgs(method);
+        String args = genArgsMethodInvoke((SimpleNode) node.jjtGetChild(0));
+
+        for (int i = 0; i < node.jjtGetChild(0).jjtGetNumChildren(); i++) {
+            SimpleNode sn = (SimpleNode) node.jjtGetChild(0).jjtGetChild(i);
+            this.printWriter.printf("ID: %s\n", sn.getReturnType());
+        }
 
         this.stackCalculator.addInstruction("invokevirtual", method.getNumParameters());
         this.printWriter.printf("\tinvokevirtual %s/%s(%s)%s\n", this.classNode.getIdentity(), node.getIdentity(), args, convertType(method.getReturnType()));
@@ -531,16 +536,15 @@ class CodeGenerator {
         this.printWriter.printf("%s/%s(%s)%s\n", importMethod.getClassName(), node.getIdentity(), args, convertType(importMethod.getReturnType()));
     }
 
-    private String genArgs(Method method) {
+    private String genArgsMethodInvoke(SimpleNode node) {
+        if (node.getId() !=  JavammTreeConstants.JJTFUNCTIONCALLARGUMENTS)
+            return "";
+
         StringBuilder ret = new StringBuilder();
 
-        if(method.getNumParameters() == 0)
-            return ret.toString();
-
-        Hashtable<String, Symbol> vars = method.getParameterVariables();
-
-        for (Symbol s : vars.values()) {
-            ret.append(convertType(s.getType()));
+        for (int i = 0; i < node.jjtGetNumChildren(); i++) {
+            SimpleNode aux = (SimpleNode) node.jjtGetChild(i);
+            ret.append(convertType(aux.getReturnType()));
         }
 
         return ret.toString();

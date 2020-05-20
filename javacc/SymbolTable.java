@@ -49,7 +49,7 @@ public class SymbolTable {
             }
 
             methods.get(identifier).incrementOverloads();
-            methods.put(identifier+methods.get(identifier).getOverloads() , new_method);//era aqui que o method nao tava a guardar como querias
+            methods.put(identifier+methods.get(identifier).getOverloads() , new_method);
             return identifier+methods.get(identifier).getOverloads();
         }
         return identifier;
