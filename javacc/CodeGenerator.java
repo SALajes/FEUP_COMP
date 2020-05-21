@@ -1,4 +1,5 @@
 import java.io.*;
+import java.nio.file.Path;
 import java.util.*;
 
 class CodeGenerator {
@@ -468,7 +469,7 @@ class CodeGenerator {
         this.printWriter.printf("\ticonst_1\n");
         this.printWriter.printf("\tixor\n");
     }
-
+private String ret ="";
     private void writeDot(SimpleNode node){
         SimpleNode left = (SimpleNode) node.jjtGetChild(0);
         SimpleNode right = (SimpleNode) node.jjtGetChild(1);
@@ -479,16 +480,6 @@ class CodeGenerator {
             this.printWriter.printf("\tarraylength\n");
             return;
         }
-
-        SimpleNode parent = (SimpleNode) node.jjtGetParent();
-        String ret = "";
-
-        if(parent.getId() == JavammTreeConstants.JJTASSIGNEMENT)
-            ret = parent.getReturnType();
-        else if(parent.getId() == JavammTreeConstants.JJTARRAYINIT || parent.getId() == JavammTreeConstants.JJTADDITIONSUBTRACTION || parent.getId() == JavammTreeConstants.JJTMULTIPLICATIONDIVISION || parent.getId() == JavammTreeConstants.JJTLESSTHAN)
-            ret = "I";
-        else if(parent.getId() == JavammTreeConstants.JJTAND)
-            ret = "Z";
 
         String className = left.getIdentity();
         String methodName = right.getIdentity();
@@ -511,13 +502,32 @@ class CodeGenerator {
         else
             writeLocalMethod(right);
 
+        SimpleNode parent = (SimpleNode) node.jjtGetParent();
+
+        if(parent.getId() == JavammTreeConstants.JJTASSIGNEMENT) {
+            SimpleNode pp = (SimpleNode) parent.jjtGetChild(0);
+            this.printWriter.printf(";cp ass: %s\n", pp.getIdentity());
+            ret = convertType(pp.getReturnType());
+        } else if(parent.getId() == JavammTreeConstants.JJTARRAYINIT ||
+                parent.getId() == JavammTreeConstants.JJTADDITIONSUBTRACTION ||
+                parent.getId() == JavammTreeConstants.JJTMULTIPLICATIONDIVISION ||
+                parent.getId() == JavammTreeConstants.JJTLESSTHAN)
+            ret = "I";
+        else if(parent.getId() == JavammTreeConstants.JJTAND)
+            ret = "Z";
+
+        this.printWriter.printf(";ret: %s\n", ret);
+        this.printWriter.printf(";id: %d\n", node.getId());
+        this.printWriter.printf(";p id: %d\n", parent.getId());
+        this.printWriter.printf(";gp id: %d\n", parent.jjtGetParent().getId());
+
         // If resolve problema de stack height 0!=1 não remover muito importante ok? bye
         if((parent.getId() == JavammTreeConstants.JJTWHILE || parent.getId() == JavammTreeConstants.JJTIFELSE ||
-                parent.getId() == JavammTreeConstants.JJTIF || parent.getId() == JavammTreeConstants.JJTIFBODY ||
-                parent.getId() == JavammTreeConstants.JJTMETHOD || parent.getId() == JavammTreeConstants.JJTMAIN) &&
+                parent.getId() == JavammTreeConstants.JJTIFBODY || parent.getId() == JavammTreeConstants.JJTMETHOD ||
+                parent.getId() == JavammTreeConstants.JJTMAIN) &&
                 !ret.equals("V")) {
             this.stackCalculator.addInstruction("pop");
-            this.printWriter.printf("\tpop\n");
+            this.printWriter.printf("pop\n");
         }
     }
 
@@ -538,6 +548,7 @@ class CodeGenerator {
 
         this.stackCalculator.addInstruction("invokevirtual", method.getNumParameters());
         this.printWriter.printf("\tinvokevirtual %s/%s(%s)%s\n", this.classNode.getIdentity(), node.getIdentity(), args, convertType(method.getReturnType()));
+        ret = convertType(method.getReturnType());
     }
 
     private void writeImportMethod(String className, SimpleNode node) {
@@ -553,6 +564,8 @@ class CodeGenerator {
 
         String args = genArgs(importMethod);
         this.printWriter.printf("%s/%s(%s)%s\n", importMethod.getClassName(), node.getIdentity(), args, convertType(importMethod.getReturnType()));
+
+        ret = convertType(importMethod.getReturnType());
     }
 
     private String genArgsMethodInvoke(SimpleNode node) {
