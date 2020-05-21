@@ -1,5 +1,4 @@
 import java.io.*;
-import java.nio.file.Path;
 import java.util.*;
 
 class CodeGenerator {
@@ -469,7 +468,7 @@ class CodeGenerator {
         this.printWriter.printf("\ticonst_1\n");
         this.printWriter.printf("\tixor\n");
     }
-private String ret ="";
+
     private void writeDot(SimpleNode node){
         SimpleNode left = (SimpleNode) node.jjtGetChild(0);
         SimpleNode right = (SimpleNode) node.jjtGetChild(1);
@@ -497,10 +496,14 @@ private String ret ="";
 
         boolean isImport = this.symbolTable.isMethodImport(methodName, genArgsArray((SimpleNode) right.jjtGetChild(0)));
 
+        String ret = "";
+
         if(isImport)
-            writeImportMethod(this.classNode.getExtend(), right);
+            ret = writeImportMethod(this.classNode.getExtend(), right);
         else
-            writeLocalMethod(right);
+            ret = writeLocalMethod(right);
+
+        // Glorious part that fixes the problem of the stack height 0 != 1
 
         SimpleNode parent = (SimpleNode) node.jjtGetParent();
 
@@ -516,12 +519,6 @@ private String ret ="";
         else if(parent.getId() == JavammTreeConstants.JJTAND)
             ret = "Z";
 
-        this.printWriter.printf(";ret: %s\n", ret);
-        this.printWriter.printf(";id: %d\n", node.getId());
-        this.printWriter.printf(";p id: %d\n", parent.getId());
-        this.printWriter.printf(";gp id: %d\n", parent.jjtGetParent().getId());
-
-        // If resolve problema de stack height 0!=1 não remover muito importante ok? bye
         if((parent.getId() == JavammTreeConstants.JJTWHILE || parent.getId() == JavammTreeConstants.JJTIFELSE ||
                 parent.getId() == JavammTreeConstants.JJTIFBODY || parent.getId() == JavammTreeConstants.JJTMETHOD ||
                 parent.getId() == JavammTreeConstants.JJTMAIN) &&
@@ -542,16 +539,17 @@ private String ret ="";
         return args;
     }
 
-    private void writeLocalMethod(SimpleNode node) {
+    private String writeLocalMethod(SimpleNode node) {
         Method method = this.symbolTable.getMethod(node.getIdentity());
         String args = genArgsMethodInvoke((SimpleNode) node.jjtGetChild(0));
 
         this.stackCalculator.addInstruction("invokevirtual", method.getNumParameters());
         this.printWriter.printf("\tinvokevirtual %s/%s(%s)%s\n", this.classNode.getIdentity(), node.getIdentity(), args, convertType(method.getReturnType()));
-        ret = convertType(method.getReturnType());
+
+        return convertType(method.getReturnType());
     }
 
-    private void writeImportMethod(String className, SimpleNode node) {
+    private String writeImportMethod(String className, SimpleNode node) {
         ImportMethod importMethod = this.symbolTable.getImportMethod(className, node.getIdentity());
 
         if(importMethod.isStatic()) {
@@ -565,7 +563,7 @@ private String ret ="";
         String args = genArgs(importMethod);
         this.printWriter.printf("%s/%s(%s)%s\n", importMethod.getClassName(), node.getIdentity(), args, convertType(importMethod.getReturnType()));
 
-        ret = convertType(importMethod.getReturnType());
+        return convertType(importMethod.getReturnType());
     }
 
     private String genArgsMethodInvoke(SimpleNode node) {
