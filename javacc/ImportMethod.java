@@ -42,6 +42,10 @@ public class ImportMethod {
         return isStatic;
     }
 
+    public int getNumParameters() {
+        return parameter_types.size();
+    }
+
     public String dump(){
         String print = ":: " + class_name + "." + method + " returns " + return_type + "\n:parameters: (";
 
