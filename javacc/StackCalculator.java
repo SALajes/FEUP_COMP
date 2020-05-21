@@ -35,8 +35,6 @@ public class StackCalculator {
 
         if(this.stack > this.maxStack)
             this.maxStack = this.stack;
-
-        System.out.println("STACK: " + this.stack + "\tMAX: "+ this.maxStack+"\tINS: "+instruction);
     }
 
     void addInstruction(String instruction, int args) {
@@ -53,8 +51,6 @@ public class StackCalculator {
 
         if(this.stack > this.maxStack)
             this.maxStack = this.stack;
-
-        System.out.println("STACK: " + this.stack + "\tMAX: "+ this.maxStack+"\tINS: "+instruction);
     }
 
     // https://en.wikipedia.org/wiki/Java_bytecode_instruction_listings

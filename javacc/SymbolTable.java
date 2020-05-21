@@ -157,6 +157,25 @@ public class SymbolTable {
         return result;
     }
 
+    public Method getMethod(String methodName, ArrayList<String> argTypes) {
+        Method ret = this.methods.get(methodName);
+
+        if(ret.getOverloads() == 0)
+            return ret;
+
+        for (int i = 1; i <= ret.getOverloads(); i++) {
+            String name = methodName +i;
+
+            Method aux = this.methods.get(name);
+
+            if(aux.getParameterTypes().equals(argTypes))
+                return aux;
+
+        }
+
+        return ret;
+    }
+
     public Symbol getVariable(String scope, String identifier){
         if(identifier == null) return null;
 

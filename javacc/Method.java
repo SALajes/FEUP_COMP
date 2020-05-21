@@ -30,6 +30,10 @@ public class Method {
         }
     }
 
+    public String getName() {
+        return name;
+    }
+
     public Symbol getVariable(String identifier){
         if(local_variables.containsKey(identifier))
             return local_variables.get(identifier);
@@ -113,6 +117,10 @@ public class Method {
 
     public boolean isInvalid() {
         return invalid;
+    }
+
+    public ArrayList<String> getParameterTypes() {
+        return parameter_types;
     }
 
     public Pair<String, String> getReturnType(ArrayList<String> arguments) {

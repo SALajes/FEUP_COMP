@@ -164,18 +164,24 @@ class CodeGenerator {
     }
 
     private String genArgs(SimpleNode node) {
-        if(node instanceof ASTMain)
+        if(node instanceof ASTMain) {
+            this.currMethod = this.symbolTable.getMethod(node.getIdentity());
             return convertType("String[]");
-
+        }
+        ArrayList<String> argTypes = new ArrayList<>();
         StringBuilder ret = new StringBuilder();
         int i = 0;
+
         while (node.jjtGetChild(i) instanceof ASTArgument) {
             SimpleNode arg = (SimpleNode) node.jjtGetChild(i);
 
             ret.append(convertType(arg.getType()));
+            argTypes.add(arg.getType());
 
             i++;
         }
+
+        this.currMethod = this.symbolTable.getMethod(node.getIdentity(), argTypes);
 
         return ret.toString();
     }
@@ -183,9 +189,7 @@ class CodeGenerator {
     private void writeMethodBody(SimpleNode node) {
         this.printWriter.printf("\t.LIMIT STACK 99\n");
 
-        Method method = this.symbolTable.getMethod(node.getIdentity());
-        int numLocals = method.getNumLocalVars() + method.getNumParameters() +1;
-
+        int numLocals = this.currMethod.getNumLocalVars() + this.currMethod.getNumParameters() +1;
         this.printWriter.printf("\t.limit locals %d\n\n", numLocals);
 
         for (int i = 0; i < node.jjtGetNumChildren(); i++) {
