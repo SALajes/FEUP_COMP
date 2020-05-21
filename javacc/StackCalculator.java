@@ -93,6 +93,7 @@ public class StackCalculator {
         instructionCost.put("ldc", 1);
         instructionCost.put("new", 1);
         instructionCost.put("newarray", 0);
+        instructionCost.put("pop", 0);
         instructionCost.put("putfield", -2);
         instructionCost.put("return", 0);
         instructionCost.put("sipush", 1);

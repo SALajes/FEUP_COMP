@@ -185,6 +185,7 @@ class CodeGenerator {
 
         Method method = this.symbolTable.getMethod(node.getIdentity());
         int numLocals = method.getNumLocalVars() + method.getNumParameters() +1;
+
         this.printWriter.printf("\t.limit locals %d\n\n", numLocals);
 
         for (int i = 0; i < node.jjtGetNumChildren(); i++) {
@@ -236,13 +237,13 @@ class CodeGenerator {
             writeStatement((SimpleNode) body.jjtGetChild(i));
 
         this.stackCalculator.addInstruction("goto");
-        this.printWriter.printf("\tgoto CONT%d\n", node.getCount());
+        this.printWriter.printf("\tgoto ICONT%d\n", node.getCount());
         this.printWriter.printf("\tELSE%d:\n", node.getCount());
 
         for (int i = 0; i < then.jjtGetNumChildren(); i++)
             writeStatement((SimpleNode) then.jjtGetChild(i));
 
-        this.printWriter.printf("\tCONT%d:\n", node.getCount());
+        this.printWriter.printf("\tICONT%d:\n", node.getCount());
     }
 
     private void writeWhileStatement(SimpleNode node) {
@@ -252,14 +253,14 @@ class CodeGenerator {
         writeExpression(condition);
 
         this.stackCalculator.addInstruction("ifeq");
-        this.printWriter.printf("\tifeq CONT%d\n", node.getCount());
+        this.printWriter.printf("\tifeq WCONT%d\n", node.getCount());
 
         for (int i = 1; i < node.jjtGetNumChildren(); i++)
             writeStatement((SimpleNode) node.jjtGetChild(i));
 
         this.stackCalculator.addInstruction("goto");
         this.printWriter.printf("\tgoto WHILE%d\n", node.getCount());
-        this.printWriter.printf("\tCONT%d:\n", node.getCount());
+        this.printWriter.printf("\tWCONT%d:\n", node.getCount());
     }
 
     private void writeAssignStatement(SimpleNode node) {
@@ -306,7 +307,7 @@ class CodeGenerator {
         SimpleNode right = (SimpleNode) node.jjtGetChild(1);
 
         writeID(left);                                              // Var name
-        writeExpression((SimpleNode) left.jjtGetChild(0));      // Index
+        writeExpression((SimpleNode) left.jjtGetChild(0));          // Index
         writeExpression(right);                                     // = smth
 
         this.stackCalculator.addInstruction("iastore");
@@ -396,14 +397,14 @@ class CodeGenerator {
         this.printWriter.printf("\ticonst_1\n");
 
         this.stackCalculator.addInstruction("goto");
-        this.printWriter.printf("\tgoto CONT%d\n", node.getCount());
+        this.printWriter.printf("\tgoto LTCONT%d\n", node.getCount());
 
         this.printWriter.printf("\tLT%d:\n", node.getCount());
 
         this.stackCalculator.addInstruction("iconst_0");
         this.printWriter.printf("\ticonst_0\n");
 
-        this.printWriter.printf("\tCONT%d:\n", node.getCount());
+        this.printWriter.printf("\tLTCONT%d:\n", node.getCount());
     }
 
     private void writeAndCondition(SimpleNode node) {
@@ -416,13 +417,13 @@ class CodeGenerator {
         this.printWriter.printf("\ticonst_0\n");
 
         this.stackCalculator.addInstruction("goto");
-        this.printWriter.printf("\tgoto CONT%d\n", node.getCount());
+        this.printWriter.printf("\tgoto ACONT%d\n", node.getCount());
 
         this.printWriter.printf("\tAND%d:\n", node.getCount());
 
         writeExpression((SimpleNode) node.jjtGetChild(1));
 
-        this.printWriter.printf("\tCONT%d:\n", node.getCount());
+        this.printWriter.printf("\tACONT%d:\n", node.getCount());
     }
 
     private void writeArithmetic(SimpleNode node){
@@ -475,6 +476,16 @@ class CodeGenerator {
             return;
         }
 
+        SimpleNode parent = (SimpleNode) node.jjtGetParent();
+        String ret = "";
+
+        if(parent.getId() == JavammTreeConstants.JJTASSIGNEMENT)
+            ret = parent.getReturnType();
+        else if(parent.getId() == JavammTreeConstants.JJTARRAYINIT || parent.getId() == JavammTreeConstants.JJTADDITIONSUBTRACTION || parent.getId() == JavammTreeConstants.JJTMULTIPLICATIONDIVISION || parent.getId() == JavammTreeConstants.JJTLESSTHAN)
+            ret = "I";
+        else if(parent.getId() == JavammTreeConstants.JJTAND)
+            ret = "Z";
+
         String className = left.getIdentity();
         String methodName = right.getIdentity();
         ImportMethod importMethod = this.symbolTable.getImportMethod(className, methodName);
@@ -495,6 +506,15 @@ class CodeGenerator {
             writeImportMethod(this.classNode.getExtend(), right);
         else
             writeLocalMethod(right);
+
+        // If resolve problema de stack height 0!=1 não remover muito importante ok? bye
+        if((parent.getId() == JavammTreeConstants.JJTWHILE || parent.getId() == JavammTreeConstants.JJTIFELSE ||
+                parent.getId() == JavammTreeConstants.JJTIF || parent.getId() == JavammTreeConstants.JJTIFBODY ||
+                parent.getId() == JavammTreeConstants.JJTMETHOD || parent.getId() == JavammTreeConstants.JJTMAIN) &&
+                !ret.equals("V")) {
+            this.stackCalculator.addInstruction("pop");
+            this.printWriter.printf("pop\n");
+        }
     }
 
     private ArrayList<String> genArgsArray(SimpleNode node) {
@@ -511,11 +531,6 @@ class CodeGenerator {
     private void writeLocalMethod(SimpleNode node) {
         Method method = this.symbolTable.getMethod(node.getIdentity());
         String args = genArgsMethodInvoke((SimpleNode) node.jjtGetChild(0));
-
-        for (int i = 0; i < node.jjtGetChild(0).jjtGetNumChildren(); i++) {
-            SimpleNode sn = (SimpleNode) node.jjtGetChild(0).jjtGetChild(i);
-            this.printWriter.printf("ID: %s\n", sn.getReturnType());
-        }
 
         this.stackCalculator.addInstruction("invokevirtual", method.getNumParameters());
         this.printWriter.printf("\tinvokevirtual %s/%s(%s)%s\n", this.classNode.getIdentity(), node.getIdentity(), args, convertType(method.getReturnType()));
