@@ -155,7 +155,7 @@ void MethodDeclaration() #Method : { String type; Token id; } {
 	<OCURLY>
 		( LOOKAHEAD(2) VarDeclaration() )*
 		( Statement() )*
-		<RETURN> Expression() <SEMICOL>
+		<RETURN> Expression() <SEMICOL> #Return(1)
 	<CCURLY>
 }
 

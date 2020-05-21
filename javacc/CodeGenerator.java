@@ -12,7 +12,6 @@ class CodeGenerator {
 
     private HashMap<String, String> lutSwappedWords = new HashMap<>();
     private Method currMethod;
-    private String scope;
 
     private StackCalculator stackCalculator = new StackCalculator();
     private List<Integer> stackValues = new ArrayList<>();
@@ -157,7 +156,7 @@ class CodeGenerator {
         String args = genArgs(node);
 
         this.printWriter.printf(".method public %s(%s)%s\n", node.getIdentity().equals("main") ? "static main" : node.getIdentity(), args, convertType(node.getReturnType()));
-        this.scope = node.getIdentity();
+
         writeMethodBody(node);
 
         this.stackValues.add(this.stackCalculator.getMaxStack());
@@ -281,8 +280,8 @@ class CodeGenerator {
 
         String varName = left.getIdentity();
 
-        if(this.symbolTable.getMethod(this.scope).checkVariable(varName)) {
-            Symbol var = this.symbolTable.getMethod(this.scope).getVariable(varName);
+        if(this.currMethod.checkVariable(varName)) {
+            Symbol var = this.currMethod.getVariable(varName);
 
             switch (var.getType()) {
                 case "int":
@@ -366,6 +365,7 @@ class CodeGenerator {
                 break;
 
             case JavammTreeConstants.JJTINDEX:
+            case JavammTreeConstants.JJTRETURN:
                 writeExpression((SimpleNode) node.jjtGetChild(0));
                 break;
 
@@ -624,8 +624,8 @@ private String ret ="";
     private void writeID(SimpleNode node){
         String varName = node.getIdentity();
 
-        if(this.symbolTable.getMethod(this.scope).checkVariable(varName)) {
-            Symbol var = this.symbolTable.getMethod(this.scope).getVariable(varName);
+        if(this.currMethod.checkVariable(varName)) {
+            Symbol var = this.currMethod.getVariable(varName);
 
             switch (var.getType()) {
                 case "int":
