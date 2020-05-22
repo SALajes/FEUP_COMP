@@ -524,7 +524,7 @@ class CodeGenerator {
                 parent.getId() == JavammTreeConstants.JJTMAIN) &&
                 !ret.equals("V")) {
             this.stackCalculator.addInstruction("pop");
-            this.printWriter.printf("pop\n");
+            this.printWriter.printf("\tpop\n");
         }
     }
 
