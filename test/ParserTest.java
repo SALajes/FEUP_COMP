@@ -128,30 +128,30 @@ public class ParserTest {
         test("fixtures/public/fail/semantic/simple_length.jmm", true);
     }
 
-//    @Test
-//    public void testvar_exp_incomp() {
-//        test("fixtures/public/fail/semantic/var_exp_incomp.jmm", true);
-//    }
+    @Test
+    public void testvar_exp_incomp() {
+        test("fixtures/public/fail/semantic/var_exp_incomp.jmm", true);
+    }
 
-//    @Test
-//    public void testvar_lit_incomp() {
-//        test("fixtures/public/fail/semantic/var_lit_incomp.jmm", true);
-//    }
+    @Test
+    public void testvar_lit_incomp() {
+        test("fixtures/public/fail/semantic/var_lit_incomp.jmm", true);
+    }
 
-//    @Test
-//    public void testvar_undef() {
-//        test("fixtures/public/fail/semantic/var_undef.jmm", true);
-//    }
+    @Test
+    public void testvar_undef() {
+        test("fixtures/public/fail/semantic/var_undef.jmm", true);
+    }
 
-//    @Test
-//    public void testvarNotInit() {
-//        test("fixtures/public/fail/semantic/varNotInit.jmm", true);
-//    }
+    @Test
+    public void testvarNotInit() {
+        test("fixtures/public/fail/semantic/varNotInit.jmm", true);
+    }
 
-//    @Test
-//    public void testmiss_type() {
-//        test("fixtures/public/fail/semantic/extra/miss_type.jmm", true);
-//    }
+    @Test
+    public void testmiss_type() {
+        test("fixtures/public/fail/semantic/extra/miss_type.jmm", true);
+    }
 
     @Test
     public void testBlowUp() {
@@ -183,4 +183,21 @@ public class ParserTest {
         test("fixtures/public/fail/syntactical/NestedLoop.jmm", true);
     }
 
+
+    //Own tests
+
+    @Test
+    public void testFactorial() {
+        test("fixtures/public/own/Factorial.jmm", false);
+    }
+
+    @Test
+    public void testMoreSemantic() {
+        test("fixtures/public/own/MoreSemantic.jmm", true);
+    }
+
+//    @Test
+//    public void testTooManyIfs() {
+//        test("fixtures/public/own/TooManyIfs.jmm", false);
+//    }
 }

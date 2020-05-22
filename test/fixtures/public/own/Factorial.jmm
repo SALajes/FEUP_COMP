@@ -1,0 +1,25 @@
+//This test is supposed to succeed
+
+import static ioPlus.printHelloWorld(void) void;
+
+class Factorial{
+    public static void main(String[] args) {
+        int c;
+        int f;
+        c=9;
+        f = this.factorial(c);
+        ioPlus.printHelloWorld();
+    }
+
+    public int factorial(int c){
+        int result;
+        result = 1;
+
+        while(0 < c){
+            result = result * c;
+            c = c - 1;
+        }
+
+        return result;
+    }
+}

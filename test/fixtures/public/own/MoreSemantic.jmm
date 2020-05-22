@@ -1,0 +1,89 @@
+//This test is supposed to fail
+
+import Factorial;
+import Factorial.factorial(int) int;
+
+class MoreSemantic {
+    int c;
+
+    public static void main(String[] args) {
+        int c;
+        boolean b;
+        int a;
+        MoreSemantic ms;
+        int[] amazing_array;
+
+        b = true;
+        amazing_array = new int[2];
+        ms = new SemanticErrors();
+
+        if (c < 1) {
+            a = 1;
+        }
+        else {
+            a = 2;
+        }
+
+        if (b < 1) {
+            a = 1;
+        }
+        else {
+            a = 2;
+        }
+
+        if (amazing_array[1] && true) {
+            a = 1;
+        }
+        else {
+            a = 2;
+        }
+
+        if (ms.getFactorial() && true) {
+            a = 1;
+        }
+        else {
+            a = 2;
+        }
+
+        if (1 < notadeclaredvariable) {
+            a = 1;
+        }
+        else {
+            a = 2;
+        }
+
+        a = 1 + c;
+        a = 1 + true;
+        a = 1 * b;
+        a = 1 / false;
+        a = 1 - amazing_array;
+        a = ms.getFactorial(1);
+        b = c.length;
+        b = c.getFactorial();
+        b = this.getFactorial(1);
+        b = this.getFactorial(1, 1, 1);
+        b = new SemanticErrors().getFactorial(1, 1, 1);
+        b = !ms.getFactorial();
+        b = this.getBoolean(b, a);
+    }
+
+    public int getFactorial(int a, boolean b, int[] c) {
+        boolean d;
+        if (b) {
+            d = a < c[0];
+        }
+        else {
+            d = c[0] < a;
+
+        }
+        return 1;
+    }
+
+    public int getFactorial() {
+        return Factorial.factorial(c);
+    }
+
+    public boolean getBoolean(boolean b1, boolean b2) {
+        return b1 && b2;
+    }
+}
