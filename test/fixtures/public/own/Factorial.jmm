@@ -1,13 +1,14 @@
 //This test is supposed to succeed
 
-import static ioPlus.printHelloWorld(void) void;
+import static ioPlus.printResult(int) void;
 
 class Factorial{
     public static void main(String[] args) {
-        int f;
+        Factorial fac;
 
-        f = this.factorial(9);
-        ioPlus.printHelloWorld();
+        fac = new Factorial();
+
+        ioPlus.printResult(fac.factorial(9));
     }
 
     public int factorial(int c){
