@@ -200,4 +200,6 @@ public class ParserTest {
     public void testTooManyIfs() {
         test("fixtures/public/own/TooManyIfs.jmm", false);
     }
+
+    @Test void testArithmetic() { test("fixtures/public/own/Arithmetic.jmm", false);}
 }
