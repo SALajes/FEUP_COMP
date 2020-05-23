@@ -1,7 +1,7 @@
 //This test is supposed to succeed
 
 import Factorial;
-import Factorial.factorial(int) int;
+import static Factorial.factorial(int) int;
 
 class TooManyIfs{
     int c;
@@ -49,12 +49,6 @@ class TooManyIfs{
     }
 
     public int getFactorial() {
-        //TODO
-        //why does this not work:
-        //Factorial f;
-        //f = new Factorial();
-        //return f.factorial(c);
-
         return Factorial.factorial(c);
     }
 

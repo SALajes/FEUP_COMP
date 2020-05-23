@@ -196,8 +196,8 @@ public class ParserTest {
         test("fixtures/public/own/MoreSemantic.jmm", true);
     }
 
-//    @Test
-//    public void testTooManyIfs() {
-//        test("fixtures/public/own/TooManyIfs.jmm", false);
-//    }
+    @Test
+    public void testTooManyIfs() {
+        test("fixtures/public/own/TooManyIfs.jmm", false);
+    }
 }
