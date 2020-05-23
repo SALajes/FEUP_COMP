@@ -86,6 +86,7 @@ public class StackCalculator {
         instructionCost.put("ireturn", -1);
         instructionCost.put("istore", -1);
         instructionCost.put("isub", -1);
+        instructionCost.put("ixor", -1);
         instructionCost.put("ldc", 1);
         instructionCost.put("new", 1);
         instructionCost.put("newarray", 0);

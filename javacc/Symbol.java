@@ -45,4 +45,8 @@ public class Symbol {
     public void initialize() {
         this.is_initialized = true;
     }
+
+    public void decIndex(){
+        this.index--;
+    }
 }

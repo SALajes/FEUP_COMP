@@ -189,6 +189,11 @@ class CodeGenerator {
         this.printWriter.printf("\t.LIMIT STACK 99\n");
 
         int numLocals = this.currMethod.getNumLocalVars() + this.currMethod.getNumParameters() +1;
+        if(this.currMethod.getName().equals("main")) {
+            numLocals--;
+            this.currMethod.updateVarIndex();
+        }
+
         this.printWriter.printf("\t.limit locals %d\n\n", numLocals);
 
         for (int i = 0; i < node.jjtGetNumChildren(); i++) {
@@ -465,7 +470,11 @@ class CodeGenerator {
     // Desta forma, se o input for 1 o resultado é 0, e se o input for 0 o resultado é 1.
     private void writeNot(SimpleNode node) {
         writeExpression((SimpleNode) node.jjtGetChild(0));
+
+        this.stackCalculator.addInstruction("iconst_1");
         this.printWriter.printf("\ticonst_1\n");
+
+        this.stackCalculator.addInstruction("ixor");
         this.printWriter.printf("\tixor\n");
     }
 
@@ -509,7 +518,7 @@ class CodeGenerator {
 
         if(parent.getId() == JavammTreeConstants.JJTASSIGNEMENT) {
             SimpleNode pp = (SimpleNode) parent.jjtGetChild(0);
-            this.printWriter.printf(";cp ass: %s\n", pp.getIdentity());
+
             ret = convertType(pp.getReturnType());
         } else if(parent.getId() == JavammTreeConstants.JJTARRAYINIT ||
                 parent.getId() == JavammTreeConstants.JJTADDITIONSUBTRACTION ||

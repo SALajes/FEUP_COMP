@@ -145,6 +145,11 @@ public class Method {
         return result;
     }
 
+    public void updateVarIndex() {
+        parameter_variables.values().forEach(Symbol::decIndex);
+        local_variables.values().forEach(Symbol::decIndex);
+    }
+
     public String dump(){
         String print = "## " + name + " returns " + return_type + '\n';
         Iterator it;
