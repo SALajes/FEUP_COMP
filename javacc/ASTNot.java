@@ -18,5 +18,13 @@ class ASTNot extends SimpleNode {
   public String toString(){
     return "!";
   }
+
+  @Override
+  protected void checkNodeSemantics(SymbolTable symbol_table) {
+    SimpleNode child = (SimpleNode) this.jjtGetChild(0);
+
+    if(child.getReturnType(symbol_table) != "boolean")
+      SemanticErrorHandler.getInstance().printError(this.getScope(), "Condition for not statement must return a boolean " + this.toString() + "  uhuehueheuheueh  " + child.toString() + " " + child.getReturnType(symbol_table));
+  }
 }
 /* JavaCC - OriginalChecksum=b66090c93e68e0e5e6bff2561dcc7c8c (do not edit this line) */
