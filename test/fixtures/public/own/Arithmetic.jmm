@@ -1,18 +1,28 @@
 //This test is supposed to succeed
 
+import static ioPlus.printResult(int) void;
+
 class Arithmetic {
 
-  int[] array;
-  int a;
-  Arithmetic arithmetic;
+    int[] array;
+    int a;
+    Arithmetic arithmetic;
 
-	public static void main(String[] args) {
-		int b;
+    public static void main(String[] args) {
+        Arithmetic arithmetic;
+
+        arithmetic = new Arithmetic();
+        arithmetic.expressions();
+
+      //  ioPlus.printResult(array[3]);
+    }
+
+    public int expressions(){
+        int b;
         boolean bool;
 
-		b=0;
+        b=0;
         bool=true;
-
 
         array = new int[5];
 
@@ -26,10 +36,11 @@ class Arithmetic {
         7/8+2*6+1/7;
         bool && bool && bool;
 
-        arithmetic = new Arithmetic();
-        (arithmetic).returnArray();
-
         b = 0;
+
+        ioPlus.printResult(3);
+
+        arithmetic.returnArray();
 
         while(48 + 1 < b ) {
             a = array[9];
@@ -48,14 +59,17 @@ class Arithmetic {
             b  = 1 + 2 * 3 / 4 -5 / 7;
         }
 
-	}
+        return 0;
+    }
 
-	public int[] returnArray() {
+    public int[] returnArray() {
         int[] value;
 
         value = new int[5];
         value[1] = 9;
 
+        //array[3] = 666;
+        ioPlus.printResult(4);
         return value;
     }
 }
