@@ -18,35 +18,28 @@ public class ASTAssignement extends SimpleNode {
 
     if(symbol_table.doesVariableExist(this.getScope(), left_child.identity))
     {
-      if(!left_child.getReturnType(symbol_table).equals(right_child.getReturnType(symbol_table))){
-        SemanticErrorHandler.getInstance().printError(this.getScope(),
-                "Assign operation with different types ",
-                left_child.identity + " = " + right_child.identity);
-      }
-      else if(symbol_table.isVariableInitialized(right_child.identity , this.getScope())) {
-        symbol_table.initializeVariable(left_child.identity, this.getScope());
-        if(parent.equals("Statement while")||parent.equals("IfBody")||parent.equals("IfElse"))
-        {
-          SemanticErrorHandler.getInstance().printWarning(this.getScope(), "Variable " + left_child.identity + " may not be initialized");
+        if(!left_child.getReturnType(symbol_table).equals(right_child.getReturnType(symbol_table))){
+          SemanticErrorHandler.getInstance().printError(this.getScope(),
+                  "Assign operation with different types ",
+                  left_child.identity + " = " + right_child.identity);
         }
-      }
-      else {
-        //QUESTION : lançar erro ou warning?
-        /*SemanticErrorHandler.getInstance().printWarning(this.getScope(),
-                "In assign operation with  ",
-                left_child.identity + " = " + right_child.identity + " ; right child is not initialized.");
+        else if(symbol_table.isVariableInitialized(right_child.identity , this.getScope())) {
+          if(!symbol_table.isVariableInitialized(left_child.identity , this.getScope()))
+              if(parent.equals("Statement while")||parent.equals("IfBody")||parent.equals("IfElse"))
+              {
+                SemanticErrorHandler.getInstance().printWarning(this.getScope(), "Variable " + left_child.identity + " may not be initialized");
+              }
 
-         */
-        SemanticErrorHandler.getInstance().printError(this.getScope(),
-                "In assign operation with  ",
-                left_child.identity + " = " + right_child.identity + " ; right child is not initialized.");
-        //QUESTION : devemos inicializar?
-        symbol_table.initializeVariable(left_child.identity, this.getScope());
-        if(parent.equals("Statement while")||parent.equals("IfBody")||parent.equals("IfElse"))
-        {
-          SemanticErrorHandler.getInstance().printWarning(this.getScope(), "Variable " + left_child.identity + " may not be initialized");
+          symbol_table.initializeVariable(left_child.identity, this.getScope());
+
         }
-      }
+        else {
+          SemanticErrorHandler.getInstance().printError(this.getScope(),
+                  "In assign operation with  ",
+                  left_child.identity + " = " + right_child.identity + " ; right child is not initialized.");
+
+          symbol_table.initializeVariable(left_child.identity, this.getScope());
+        }
     } else SemanticErrorHandler.getInstance().printError(this.getScope(),
             "Tried to initialize undeclared variable ",
             left_child.identity );

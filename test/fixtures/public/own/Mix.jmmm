@@ -122,4 +122,19 @@ class Mix {
 
         return true && bool;//error 25
     }
+
+    public boolean testInitialize(){
+        boolean test;
+        boolean lol;
+
+        test = true;
+
+        if(true){
+            test = false;
+        }else{
+            lol = true;
+        }
+
+        return true;
+    }
 }
