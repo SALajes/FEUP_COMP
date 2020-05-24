@@ -206,4 +206,5 @@ public class ParserTest {
 
     @Test
     public void testMix() { test("fixtures/public/own/Mix.jmm", true);}
+
 }
