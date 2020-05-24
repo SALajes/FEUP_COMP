@@ -1,75 +1,90 @@
 //This test is supposed to succeed
 
 import static ioPlus.printResult(int) void;
+import static io.println(int) void;
 
 class Arithmetic {
 
     int[] array;
     int a;
-    Arithmetic arithmetic;
 
     public static void main(String[] args) {
+        int size;
+        int index;
+        int result;
         Arithmetic arithmetic;
 
         arithmetic = new Arithmetic();
-        arithmetic.expressions();
+        size = 5;
+        index = 3;
 
-      //  ioPlus.printResult(array[3]);
+        if(index < size){
+            result = arithmetic.expressions(size, index);
+        }
+        else{
+            result = 0-1;
+        }
+
+        ioPlus.printResult(result);
     }
 
-    public int expressions(){
+    public int expressions(int size, int index){
         int b;
         boolean bool;
 
         b=0;
         bool=true;
 
-        array = new int[5];
+        array = new int[size];
 
-        true && false;
-        false && true;
-        15+0;
-        7 < 14;
+        while(b < size){
+            array[b] = 0;
+            b = b + 1;
+        }
 
-        b+1;
-        b+b;
-        7/8+2*6+1/7;
-        bool && bool && bool;
+        bool = true && false;
+        bool = false && true;
+        b = 15+0;
+        bool = 7 < 14;
+        b = b+1;
+        b = b+b;
+        b = 7/8+2*6+1/7;
+        bool = bool && bool && bool;
+
+        this.returnArray();
+
+        array[index] = b * 666 * 999;
 
         b = 0;
 
-        ioPlus.printResult(3);
-
-        arithmetic.returnArray();
-
         while(48 + 1 < b ) {
-            a = array[9];
+            a = array[index];
             b = b + 1;
         }
 
         if (bool) {
             b = 1;
         } else {
-                b = 2;
+            b = 2;
         }
 
-        if(bool && true){
+        if(bool){
             b = 0;
         }else{
             b  = 1 + 2 * 3 / 4 -5 / 7;
         }
 
-        return 0;
+        return array[index];
     }
 
     public int[] returnArray() {
         int[] value;
 
-        value = new int[5];
-        value[1] = 9;
+        value = new int[3];
+        value[1] = 666;
 
-        //array[3] = 666;
-        ioPlus.printResult(4);
+        io.println(value[1]);
+
         return value;
     }
 }
