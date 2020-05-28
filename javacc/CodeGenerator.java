@@ -280,6 +280,13 @@ class CodeGenerator {
             return;
         }
 
+        if(right instanceof ASTAdditionSubtraction){
+            if(checkInc(node)) {
+                writeIncrement(node);
+                return;
+            }
+        }
+
         writeExpression(right);
 
         String varName = left.getIdentity();
@@ -308,6 +315,30 @@ class CodeGenerator {
             this.stackCalculator.addInstruction("putfield");
             this.printWriter.printf("\tputfield %s/%s %s\n", this.classNode.getIdentity(), getVarName(varName), convertType(this.symbolTable.getGlobalVarType(varName)));
         }
+    }
+
+    private boolean checkInc(SimpleNode node) {
+        SimpleNode left = (SimpleNode) node.jjtGetChild(0);
+        SimpleNode right = (SimpleNode) node.jjtGetChild(1);
+        SimpleNode child0 = (SimpleNode) right.jjtGetChild(0);
+        SimpleNode child1 = (SimpleNode) right.jjtGetChild(1);
+
+        // Instrucao iinc e so para variavesi locais, nao globais
+        if(!this.currMethod.checkVariable(left.getIdentity()) && this.symbolTable.globalVariableExists(left.getIdentity()))
+            return false;
+
+        if(left.getIdentity().equals(child0.getIdentity()) || left.getIdentity().equals(child1.getIdentity()))
+            return right.getOperator().equals("+");
+
+        return false;
+    }
+
+    private void writeIncrement(SimpleNode node) {
+        SimpleNode left = (SimpleNode) node.jjtGetChild(0);
+        Symbol var = this.currMethod.getVariable(left.getIdentity());
+
+        this.stackCalculator.addInstruction("iinc");
+        this.printWriter.printf("\tiinc %d 1\n", var.getIndex());
     }
 
     private void writeArrayInit(SimpleNode node) {

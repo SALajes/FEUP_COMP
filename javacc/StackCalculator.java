@@ -78,6 +78,7 @@ public class StackCalculator {
         instructionCost.put("ifeq", -1);
         instructionCost.put("ifge", -1);
         instructionCost.put("ifne", -1);
+        instructionCost.put("iinc", 0);
         instructionCost.put("iload", 1);
         instructionCost.put("imul", -1);
         instructionCost.put("invokespecial", 0);    // - num args
