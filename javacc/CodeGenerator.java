@@ -547,22 +547,18 @@ class CodeGenerator {
 
         SimpleNode parent = (SimpleNode) node.jjtGetParent();
 
-        if(parent.getId() == JavammTreeConstants.JJTASSIGNEMENT) {
+        if(parent instanceof ASTAssignement) {
             SimpleNode pp = (SimpleNode) parent.jjtGetChild(0);
 
             ret = convertType(pp.getReturnType());
-        } else if(parent.getId() == JavammTreeConstants.JJTARRAYINIT ||
-                parent.getId() == JavammTreeConstants.JJTADDITIONSUBTRACTION ||
-                parent.getId() == JavammTreeConstants.JJTMULTIPLICATIONDIVISION ||
-                parent.getId() == JavammTreeConstants.JJTLESSTHAN)
+        } else if(parent instanceof ASTArrayInit || parent instanceof ASTAdditionSubtraction ||
+                parent instanceof ASTMultiplicationDivision || parent instanceof ASTLessThan)
             ret = "I";
-        else if(parent.getId() == JavammTreeConstants.JJTAND)
+        else if(parent instanceof ASTAnd)
             ret = "Z";
 
-        if((parent.getId() == JavammTreeConstants.JJTWHILE || parent.getId() == JavammTreeConstants.JJTIFELSE ||
-                parent.getId() == JavammTreeConstants.JJTIFBODY || parent.getId() == JavammTreeConstants.JJTMETHOD ||
-                parent.getId() == JavammTreeConstants.JJTMAIN) &&
-                !ret.equals("V")) {
+        if((parent instanceof ASTWhile || parent instanceof ASTIfElse || parent instanceof ASTIfBody||
+                parent instanceof ASTMethod || parent instanceof ASTMain) && !ret.equals("V")) {
             this.stackCalculator.addInstruction("pop");
             this.printWriter.printf("\tpop\n");
         }
@@ -607,7 +603,7 @@ class CodeGenerator {
     }
 
     private String genArgsMethodInvoke(SimpleNode node) {
-        if (node.getId() !=  JavammTreeConstants.JJTFUNCTIONCALLARGUMENTS)
+        if (!(node instanceof ASTFunctionCallArguments))
             return "";
 
         StringBuilder ret = new StringBuilder();
