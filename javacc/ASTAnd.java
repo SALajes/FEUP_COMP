@@ -26,7 +26,7 @@ class ASTAnd extends SimpleNode {
 
   @Override
   public int getCount() {
-    return super.getCount();
+    return this.count;
   }
 
   @Override
