@@ -3,8 +3,9 @@ import java.util.*;
 
 class CodeGenerator {
     private SymbolTable symbolTable;
-
     private SimpleNode root;
+    private boolean optO;
+
     private SimpleNode classNode;
 
     private PrintWriter printWriter;
@@ -15,9 +16,10 @@ class CodeGenerator {
     private StackCalculator stackCalculator = new StackCalculator();
     private List<Integer> stackValues = new ArrayList<>();
 
-    public CodeGenerator(SimpleNode root, SymbolTable symbolTable) {
+    public CodeGenerator(SimpleNode root, SymbolTable symbolTable, boolean optO) {
         this.root = root;
         this.symbolTable = symbolTable;
+        this.optO = optO;
     }
 
     public void generateCode() {
@@ -256,19 +258,54 @@ class CodeGenerator {
 
     private void writeWhileStatement(SimpleNode node) {
         SimpleNode condition = (SimpleNode) node.jjtGetChild(0);
+        boolean atleastOnce = checkTemplate(condition);
 
-        this.printWriter.printf("\tWHILE%d:\n", node.getCount());
-        writeExpression(condition);
+        if(atleastOnce) {
+            writeExpression(condition);
 
-        this.stackCalculator.addInstruction("ifeq");
-        this.printWriter.printf("\tifeq WCONT%d\n", node.getCount());
+            this.stackCalculator.addInstruction("ifeq");
+            this.printWriter.printf("\tifeq WCONT%d\n", node.getCount());
+
+            this.printWriter.printf("\tWHILE%d:\n", node.getCount());
+        } else {
+            this.printWriter.printf("\tWHILE%d:\n", node.getCount());
+            writeExpression(condition);
+
+            this.stackCalculator.addInstruction("ifeq");
+            this.printWriter.printf("\tifeq WCONT%d\n", node.getCount());
+        }
 
         for (int i = 1; i < node.jjtGetNumChildren(); i++)
             writeStatement((SimpleNode) node.jjtGetChild(i));
 
-        this.stackCalculator.addInstruction("goto");
-        this.printWriter.printf("\tgoto WHILE%d\n", node.getCount());
+        if(atleastOnce) {
+            writeExpression(condition);
+
+            this.stackCalculator.addInstruction("ifne");
+            this.printWriter.printf("\tifne WHILE%d\n", node.getCount());
+        } else {
+            this.stackCalculator.addInstruction("goto");
+            this.printWriter.printf("\tgoto WHILE%d\n", node.getCount());
+        }
+
         this.printWriter.printf("\tWCONT%d:\n", node.getCount());
+    }
+
+    private boolean checkTemplate(SimpleNode node) {
+        if((node instanceof ASTTrue || node instanceof ASTFalse) || (node instanceof ASTID && node.jjtGetNumChildren() == 0))
+            return true;
+
+        if(node instanceof ASTAnd || node instanceof ASTLessThan) {
+            SimpleNode left = (SimpleNode) node.jjtGetChild(0);
+            SimpleNode right = (SimpleNode) node.jjtGetChild(1);
+
+            boolean leftCheck = left instanceof ASTInteger || left instanceof ASTTrue || left instanceof ASTFalse || (left instanceof ASTID && left.jjtGetNumChildren() == 0);
+            boolean rightCheck = right instanceof ASTInteger || right instanceof ASTTrue || right instanceof ASTFalse || (right instanceof ASTID && right.jjtGetNumChildren() == 0);
+
+            return leftCheck && rightCheck;
+        }
+
+        return false;
     }
 
     private void writeAssignStatement(SimpleNode node) {

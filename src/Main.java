@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 public class Main {
     private static boolean printAST = false;
     private static boolean printTable = false;
+    private static boolean optO = false;
 
     public Main() {
     }
@@ -37,7 +38,7 @@ public class Main {
 
             SemanticErrorHandler.getInstance().determineSemanticAnalysis();
 
-            CodeGenerator codeGenerator = new CodeGenerator(root, symbol_table);
+            CodeGenerator codeGenerator = new CodeGenerator(root, symbol_table, optO);
             codeGenerator.generateCode();
 
         } catch(FileNotFoundException e){
@@ -59,6 +60,9 @@ public class Main {
 
             if (arg.equals("-a") || arg.equals("--ast"))
                 printAST = true;
+
+            if(arg.equals("-o"))
+                optO = true;
         }
     }
 }

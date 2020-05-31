@@ -1,4 +1,6 @@
-# COMP - GROUP 3C
+# Javamm Compiler
+
+## GROUP 3C
 
 ### Members
  - Andreia Barreto Gouveia, up201706430@fe.up.pt
@@ -6,7 +8,19 @@
  - Simão Pereira de Oliveira, up201603173@fe.up.pt
  - Sofia de Araújo Lajes, up201704066@fe.up.pt
 
-#### Run ``.jar``
+### Seflf Assessment
+
+| Name | Student Number | Grade | Contribution |
+| --- | --- | --- | --- |
+| Andreia Gouveia | up201706430 |  |  |
+| Carlos Duarte | up201708804 |  |  |
+| Simão Oliveira | up201603173 |  |  |
+| Sofia Lajes | up201704066 |   |   |
+
+## Summary
+>Describe what your tool does and its main features.
+
+## Execute
 
 To run the JAR, do the following command:
 
@@ -16,15 +30,58 @@ java -jar <jar filename> <arguments>
 
 Where ``<jar filename>`` is the name of the JAR file that has been copied to the root folder, and ``<arguments>`` are the arguments to be passed to ``main()``.
 
-<br/>
-
 Possible arguments:
  - `-a` or `--ast` to print the AST
  - `-t` or `--table` to print the SymbolTable   
+- `-o` for optimizations
 
-<br/>
+## Dealing with Syntatic Error
+>Describe how the syntatic error recovery of your tool does work. Does it exit after the first error?
+
+## Semantic Analysis
+>Refer the semantic rules implemented by your tool.
+
+## Intermidiate Representations (IRs)
+> For example, when applicable, briefly describe the HLIR (high-level IR) and the LLIR (low-level IR) used, if your tool includes an LLIR wiht structure different from the HLIR
+
+## Code Generation:
+
+A very modular approach was taken when implementing the code generation, making it easier to debug and add more features, like the templates that were added later. The AST is recursively traversed, each node generating its corresponding Jasmin code.  
+
+Lower cost instructions were used:
+- When dealing with integers we used the appropriate instruction, `iconst`, `bipush`, `sipush` and `ldc`
+- When dealing with comparissons we used comparissons with 0, `ifeq`, `ifne` and `ifge`
+- Code in the form `i = i+1` was replaced with a single `iinc` instruction
+
+### -o 
+
+#### While templates
+
+Before generating the while loop code, the while condition was checked. If it was constituted by a single variable, constant or logic operation in which both the right and left are simple variables or constants, a template was used, as follow:
+
+```
+iconst_1
+ifeq WCONT0
+;...
+ifne WHILE0
+WCONT0:
+```
+
+This allowed us to reduce the number of goto calls in the code, when this simple type of while loops.
 
 ---
+
+## Task Dsitribution
+>Identify the set of tasks done by each memeber of the project. You can divide this by checkpoin if it helps
+
+## Pros:
+> Identify the most positive aspects of your tool
+
+## Cons:
+> Identify the most negative aspects of your tool
+
+---
+# Checklists
 
 ## Semantic Analysis  - CP2 
 
@@ -70,18 +127,18 @@ Possible arguments:
 	- [X] assignments
 	- [X] operações aritméticas (com prioridade de operações correta)
 		- neste checkpoint não é necessário a seleção das operações mais eficientes mas isto será considerado no CP3 e versão final
-	- [ ] invocação de métodos
+	- [X] invocação de métodos
 	
 ---
 
 ## Code generation - CP3
 
 - **Generate JVM code accepted by jasmin for loops:**
-    - [ ] similar to if statemnt, but with extra jumps
+    - [X] similar to if statemnt, but with extra jumps
 
 - **Generate JVM code accepted by jasmin to deal with arrays:**
-    - [ ] array initialization
-    - [ ] array store (astore)
-    - [ ] array access (aload)
-    - [ ] array position store
-    - [ ] array postition access
+    - [X] array initialization
+    - [X] array store (astore)
+    - [X] array access (aload)
+    - [X] array position store
+    - [X] array postition access
