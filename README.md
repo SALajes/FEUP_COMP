@@ -67,7 +67,7 @@ ifne WHILE0
 WCONT0:
 ```
 
-This allowed us to reduce the number of goto calls in the code, when this simple type of while loops.
+This allowed us to reduce the number of goto calls in the code, when thiis simple while loop is present.
 
 ---
 
@@ -86,7 +86,6 @@ This allowed us to reduce the number of goto calls in the code, when this simple
 ## Semantic Analysis  - CP2 
 
 *Todas as verificações feitas na análise semantica devem reportar erro excepto a verificação de inicialização de variáveis que deverá apenas dar um warning*  
-<br/>
 
 - **Symbol Table**  
     - [X] global: inclui info de imports e a classe declarada
@@ -128,8 +127,6 @@ This allowed us to reduce the number of goto calls in the code, when this simple
 	- [X] operações aritméticas (com prioridade de operações correta)
 		- neste checkpoint não é necessário a seleção das operações mais eficientes mas isto será considerado no CP3 e versão final
 	- [X] invocação de métodos
-	
----
 
 ## Code generation - CP3
 
