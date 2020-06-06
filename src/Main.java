@@ -33,10 +33,10 @@ public class Main {
 
             SemanticErrorHandler.getInstance().determineSemanticAnalysis();
 
-           // if(optO) {
+            if(optO) {
                 Optimization opt = new Optimization(symbol_table, root);
                 opt.constantPropagation();
-           // }
+            }
 
             CodeGenerator codeGenerator = new CodeGenerator(root, symbol_table, optO);
             codeGenerator.generateCode();
