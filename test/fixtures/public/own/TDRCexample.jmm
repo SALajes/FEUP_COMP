@@ -1,0 +1,30 @@
+import static io.println(int) void;
+
+class TDRCexample{
+    public static void main(String[] args) {
+        this.foo(2,3);
+    }
+
+    public int foo(int a, int b){
+        int c;
+        int d;
+        int e;
+        int f;
+        c = 10;
+        e = 200;
+        d = c + b;
+        f = c;
+
+        if( f < a){
+            c = 20;
+        }else{
+        }
+
+        while(f < e){
+            io.println(f);
+            f = f+20;
+        }
+
+        return 0;
+    }
+}

@@ -1,15 +1,20 @@
+import java.io.*;
+import java.util.*;
+
 public class Optimization {
     private SymbolTable symbol_table;
     private SimpleNode root;
     private SimpleNode classNode;
     private String scope;
     private Method method;
+    private boolean so_a_bere;
 
     public Optimization(SymbolTable symbol_table, SimpleNode root){
         this.symbol_table = symbol_table;
         this.root = root;
         this.classNode = (SimpleNode) this.root.jjtGetChild(getNumImports());
         this.scope = this.classNode.getIdentity();
+        this.so_a_bere = false;
     }
 
     public void constantPropagation(){
@@ -45,10 +50,10 @@ public class Optimization {
     }
 
     private void getMethod(SimpleNode node) {
-        this.scope = this.node.getIdentity();
+        this.scope = node.getIdentity();
 
         if(node instanceof ASTMain) {
-            this.method = this.symbolTable.getMethod(node.getIdentity());
+            this.method = this.symbol_table.getMethod(node.getIdentity());
         }
 
         ArrayList<String> argTypes = new ArrayList<>();
@@ -62,17 +67,17 @@ public class Optimization {
             i++;
         }
 
-        this.method = this.symbolTable.getMethod(node.getIdentity(), argTypes);
+        this.method = this.symbol_table.getMethod(node.getIdentity(), argTypes);
     }
 
     private void checkStatement(SimpleNode node) {
         switch (node.getId()) {
             case JavammTreeConstants.JJTIF:
-                //checkIfStatement(node);
+                checkIfStatement(node);
                 break;
 
             case JavammTreeConstants.JJTWHILE:
-                //checkWhileStatement(node);
+                checkWhileStatement(node);
                 break;
 
             case JavammTreeConstants.JJTASSIGNEMENT:
@@ -83,6 +88,46 @@ public class Optimization {
                 checkExpression(node);
                 break;
         }
+    }
+
+    private void checkIfStatement(SimpleNode node){
+        String previous_scope = this.scope;
+        this.scope = "IF";
+
+        SimpleNode condition = (SimpleNode) node.jjtGetChild(0);
+        SimpleNode body = (SimpleNode) node.jjtGetChild(1);
+        SimpleNode then = (SimpleNode) node.jjtGetChild(2);
+
+        checkExpression(condition);
+
+        for (int i = 0; i < body.jjtGetNumChildren(); i++)
+            checkStatement((SimpleNode) body.jjtGetChild(i));
+
+        for (int i = 0; i < then.jjtGetNumChildren(); i++)
+            checkStatement((SimpleNode) then.jjtGetChild(i));
+
+        this.scope = previous_scope;
+    }
+
+    private void checkWhileStatement(SimpleNode node) {
+        String previous_scope = this.scope;
+        this.scope = "WHILE";
+        this.so_a_bere = true;
+
+        //Verify if local variables are assigned inside WHILE's body
+        for (int i = 1; i < node.jjtGetNumChildren(); i++)
+            checkStatement((SimpleNode) node.jjtGetChild(i));
+
+        //Now it will iterate, again, in order to define which nodes can have constant propagation
+        this.so_a_bere = false;
+
+        SimpleNode condition = (SimpleNode) node.jjtGetChild(0);
+        checkExpression(condition);
+
+        for (int i = 1; i < node.jjtGetNumChildren(); i++)
+            checkStatement((SimpleNode) node.jjtGetChild(i));
+
+        this.scope = previous_scope;
     }
 
     private void checkAssignStatement(SimpleNode node) {
@@ -101,7 +146,7 @@ public class Optimization {
         String varName = left.getIdentity();
 
         if(this.method.localVariableExists(varName)) {
-            if(return_value != null){
+            if(return_value != null && !this.scope.equals("IF") && !this.scope.equals("WHILE")){
                 Symbol var = this.method.getVariable(varName);
 
                 switch (var.getType()) {
@@ -119,7 +164,7 @@ public class Optimization {
         }
     }
 
-    private void checkExpression(SimpleNode node) {
+    private String checkExpression(SimpleNode node) {
         switch (node.getId()) {
             case JavammTreeConstants.JJTLESSTHAN:
                 return checkLessThanCondition(node);
@@ -134,8 +179,21 @@ public class Optimization {
             case JavammTreeConstants.JJTNOT:
                 return checkNot(node);
 
+            case JavammTreeConstants.JJTDOT:
+                checkDot(node);
+                return null;
+
+            case JavammTreeConstants.JJTARRAYACCESS:
+                checkArrayAccess(node);
+                return null;
+
+            case JavammTreeConstants.JJTEXPRESSIONNEW:
+                checkNew(node);
+                return null;
+
             case JavammTreeConstants.JJTFUNCTIONCALLARGUMENTS:
-                return checkFunctionCallArguments(node);
+                checkFunctionCallArguments(node);
+                return null;
 
             case JavammTreeConstants.JJTINTEGER:
                 return node.getIdentity();
@@ -155,7 +213,6 @@ public class Optimization {
 
             default:
                 return null;
-                break;
         }
     }
 
@@ -197,21 +254,23 @@ public class Optimization {
         int var1 = Integer.parseInt(value1);
         int var2 = Integer.parseInt(value2);
 
+        int result;
+
         switch (node.getOperator()) {
             case "+":
-                int result = var1 + var2;
+                result = var1 + var2;
                 return "" + result;
 
             case "-":
-                int result = var1 - var2;
+                result = var1 - var2;
                 return "" + result;
 
             case "*":
-                int result = var1 * var2;
+                result = var1 * var2;
                 return "" + result;
 
             case "/":
-                int result = var1 / var2;
+                result = var1 / var2;
                 return "" + result;
 
             default:
@@ -219,7 +278,7 @@ public class Optimization {
         }
     }
 
-    private void checkNot(SimpleNode node) {
+    private String checkNot(SimpleNode node) {
         String child = checkExpression((SimpleNode) node.jjtGetChild(0));
 
         if(child == null)
@@ -235,24 +294,45 @@ public class Optimization {
         }
     }
 
+    private void checkDot(SimpleNode node){
+        SimpleNode right = (SimpleNode) node.jjtGetChild(1);
+
+        if(right.getIdentity().equals("length")) {
+            return;
+        }
+
+        checkExpression((SimpleNode) right.jjtGetChild(0));
+    }
+
+    private void checkArrayAccess(SimpleNode node) {
+        checkID((SimpleNode) node.jjtGetChild(0));              // Var name
+        checkExpression((SimpleNode) node.jjtGetChild(1));      // Index
+    }
+
+    private void checkNew(SimpleNode node) {
+        if(node.jjtGetNumChildren() > 0){
+            checkExpression((SimpleNode) node.jjtGetChild(0));
+        }
+    }
+
     private String checkID(SimpleNode node){
         String varName = node.getIdentity();
 
-        if(this.method.localVariableExists(varName) && this.method.isConstant(varName)) {
+        if(this.method.localVariableExists(varName) && this.method.isConstant(varName) && !this.so_a_bere) {
             Symbol var = this.method.getVariable(varName);
             String value = this.method.getConstantValue(varName);
 
             switch (var.getType()) {
                 case "int":
-                    node.setID(23);
+                    node.setId(23);
                     node.setReturnType("int");
                     node.setIdentity(value);
                     return value;
                 case "boolean":
                     node.setReturnType("boolean");
                     if(value.equals("true"))
-                        node.setID(24);
-                    else node.setID(25);
+                        node.setId(24);
+                    else node.setId(25);
                     return value;
                 default:
                     break;

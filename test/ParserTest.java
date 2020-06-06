@@ -207,4 +207,7 @@ public class ParserTest {
     @Test
     public void testMix() { test("fixtures/public/own/Mix.jmm", true);}
 
+    @Test
+    public void testTDRC() { test("fixtures/public/own/TDRCexample.jmm", false);}
+
 }

@@ -158,7 +158,7 @@ public class Method {
     }
 
     public String getConstantValue(String identifier){
-        return local_variables.get(identifier).getValue();
+        return local_variables.get(identifier).getConstantValue();
     }
 
     public void updateVarIndex() {

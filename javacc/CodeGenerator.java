@@ -677,13 +677,16 @@ class CodeGenerator {
     private void writeInteger(SimpleNode node) {
         int val = Integer.parseInt(node.getIdentity());
 
-        if(val < 6) {
+        if(val >= -1 && val < 6) {
             this.stackCalculator.addInstruction("iconst");
-            this.printWriter.printf("\ticonst_%d\n", val);
-        } else if(val < 128) {
+
+            if(val == -1)
+                this.printWriter.printf("\ticonst_m1\n");
+            else this.printWriter.printf("\ticonst_%d\n", val);
+        } else if(val >= -128 && val < 128) {
             this.stackCalculator.addInstruction("bipush");
             this.printWriter.printf("\tbipush %d\n", val);      // bipush -> push byte
-        } else if(val < 32768) {
+        } else if(val >= -32768 &&val < 32768) {
             this.stackCalculator.addInstruction("sipush");
             this.printWriter.printf("\tsipush %d\n", val);      // sipush -> push short
         } else {
