@@ -59,7 +59,7 @@ public class Method {
         }
     }
 
-    private boolean localVariableExists(String identifier) {
+    public boolean localVariableExists(String identifier) {
         return local_variables.containsKey(identifier);
     }
 
@@ -143,6 +143,22 @@ public class Method {
         result.first = null;
         result.second = return_type;
         return result;
+    }
+
+    public void setConstant(String identifier, String value){
+        local_variables.get(identifier).setConstant(value);
+    }
+
+    public void removeConstant(String identifier){
+        local_variables.get(identifier).removeConstant();
+    }
+
+    public boolean isConstant(String identifier){
+        return local_variables.get(identifier).isConstant();
+    }
+
+    public String getConstantValue(String identifier){
+        return local_variables.get(identifier).getValue();
     }
 
     public void updateVarIndex() {

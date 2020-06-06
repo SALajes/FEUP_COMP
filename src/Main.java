@@ -1,8 +1,3 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by Fernflower decompiler)
-//
-
 import java.io.FileNotFoundException;
 
 public class Main {
@@ -37,6 +32,11 @@ public class Main {
             root.checkSemantics(symbol_table);
 
             SemanticErrorHandler.getInstance().determineSemanticAnalysis();
+
+            if(optO) {
+                Optimization opt = new Optimization(symbol_table, root);
+                opt.constantPropagation();
+            }
 
             CodeGenerator codeGenerator = new CodeGenerator(root, symbol_table, optO);
             codeGenerator.generateCode();

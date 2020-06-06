@@ -98,8 +98,16 @@ class SimpleNode implements Node {
     }
 
     //------ IMPLEMENTED CODE -----
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getIdentity(){
         return this.identity;
+    }
+
+    public void setIdentity(String identity){
+        this.identity = identity;
     }
 
     public String getExtend() {

@@ -4,18 +4,22 @@ public class Symbol {
     private String id;
     private int index;
     private boolean is_initialized;
+    private boolean constant;
+    private String value;
 
     public Symbol(String type, String id){
         this.type = type;
         this.id = id;
-        is_initialized = false;
+        this.is_initialized = false;
+        this.constant = false;
     }
 
     public Symbol(String type, String id, int index){
         this.type = type;
         this.id = id;
         this.index = index +1;
-        is_initialized=false;
+        this.is_initialized=false;
+        this.constant = false;
     }
 
     public String getType() {
@@ -48,5 +52,22 @@ public class Symbol {
 
     public void decIndex(){
         this.index--;
+    }
+
+    public void setConstant(String value){
+        this.constant = true;
+        this.value = value;
+    }
+
+    public void removeConstant(){
+        this.constant = false;
+    }
+
+    public boolean isConstant(){
+        return constant;
+    }
+
+    public String getConstantValue(){
+        return value;
     }
 }
