@@ -141,8 +141,7 @@ class TicTacToe {
                 array[0] = row0[2];
                 array[1] = row1[1];
                 array[2] = row2[0];
-                winner = 3;
-                array[3] = winner;
+
                 if (BoardBase.sameArray(array) && 0 < array[0]){
                     winner = array[0];
                 }else{}
