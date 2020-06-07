@@ -48,7 +48,7 @@ java -jar <jar filename> <arguments>
 ---
 
 ## Semantic Analysis
-  The semantic analysis is started by calling checkSemantic method (of SimpleNode class) upon the root node. This will then iterate through every node calling the checkNodeSemantics method, which is overrided in several AST node classes in order to fulfill the specified node type semantic rules.
+  The semantic analysis is started by calling checkSemantic method (of SimpleNode class) on the root node. This will then iterate through every node calling the checkNodeSemantics method, which is overridden in several AST node classes in order to fulfill the specified node type semantic rules.
   
   Some of the rules defined in this stage are:
     
