@@ -75,6 +75,13 @@ public class Method {
         return local_variables.containsKey(identity) || parameter_variables.containsKey(identity);
     }
 
+    /**
+     * checkVariableType Method:
+     * Checks if the variable type is the same of the one that we are expecting. First it checks the local variables, then the global variables.
+     * @param identifier    name of the variable
+     * @param type          type of the variable that we are expecting
+     * @return              0 if same type, 1 if not the same type and 2 if the variable doesn't exist
+     */
     public int checkVariableType(String identifier, String type){
         if(local_variables.containsKey(identifier))
             if(local_variables.get(identifier).checkType(type))
@@ -123,6 +130,12 @@ public class Method {
         return parameter_types;
     }
 
+    /**
+     * getReturnType Method:
+     * Gets the return type of the Method, and checks if the arguments are correct.
+     * @param arguments arguments of the method
+     * @return  pair where first field is the error and the second field is the return type.
+     */
     public Pair<String, String> getReturnType(ArrayList<String> arguments) {
         Pair<String, String> result = new Pair<>();
 

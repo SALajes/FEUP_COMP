@@ -7,14 +7,14 @@ public class Optimization {
     private SimpleNode classNode;
     private String scope;
     private Method method;
-    private boolean so_a_bere;
+    private boolean changeIsNotValid;
 
     public Optimization(SymbolTable symbol_table, SimpleNode root){
         this.symbol_table = symbol_table;
         this.root = root;
         this.classNode = (SimpleNode) this.root.jjtGetChild(getNumImports());
         this.scope = this.classNode.getIdentity();
-        this.so_a_bere = false;
+        this.changeIsNotValid = false;
     }
 
     public void constantPropagation(){
@@ -90,6 +90,11 @@ public class Optimization {
         }
     }
 
+    /**
+     *  checkIfStatement Method:
+     *  Checks the if condition, ths ifs body and the else body.
+     * @param node
+     */
     private void checkIfStatement(SimpleNode node){
         String previous_scope = this.scope;
         this.scope = "IF";
@@ -109,17 +114,22 @@ public class Optimization {
         this.scope = previous_scope;
     }
 
+    /**
+     * checkWhileStatement Method:
+     * Checks the While Statement, changes the variable changeIsNotValid so that no variable can be initialized while inside the "while loop".
+     * @param node  node to be checked
+     */
     private void checkWhileStatement(SimpleNode node) {
         String previous_scope = this.scope;
         this.scope = "WHILE";
-        this.so_a_bere = true;
+        this.changeIsNotValid = true;
 
         //Verify if local variables are assigned inside WHILE's body
         for (int i = 1; i < node.jjtGetNumChildren(); i++)
             checkStatement((SimpleNode) node.jjtGetChild(i));
 
         //Now it will iterate, again, in order to define which nodes can have constant propagation
-        this.so_a_bere = false;
+        this.changeIsNotValid = false;
 
         SimpleNode condition = (SimpleNode) node.jjtGetChild(0);
         checkExpression(condition);
@@ -130,6 +140,11 @@ public class Optimization {
         this.scope = previous_scope;
     }
 
+    /**
+     * checkAssignStatement Method:
+     * Receives the Assignment nodes to analyse and checks if the left child is constant. If so, it updates the constant value of the variable.
+     * @param node
+     */
     private void checkAssignStatement(SimpleNode node) {
         SimpleNode left = (SimpleNode) node.jjtGetChild(0);
         SimpleNode right = (SimpleNode) node.jjtGetChild(1);
@@ -241,6 +256,12 @@ public class Optimization {
         else return "false";
     }
 
+    /**
+     * checkArithmetic Method:
+     * Responsible for the constant folding, takes the value from the left and right children and performs the wanted operation, returning the resulting value
+     * @param node
+     * @return
+     */
     private String checkArithmetic(SimpleNode node){
         SimpleNode left = (SimpleNode) node.jjtGetChild(0);
         SimpleNode right = (SimpleNode) node.jjtGetChild(1);
@@ -315,10 +336,16 @@ public class Optimization {
         }
     }
 
+    /**
+     * checkID Method:
+     * Checks the type of the received id and if it is an integer, it changes the node to an integer node. If it is boolean, changes the node to the respective boolean value.
+     * @param node  node to be analysed
+     * @return  value of the id
+     */
     private String checkID(SimpleNode node){
         String varName = node.getIdentity();
 
-        if(this.method.localVariableExists(varName) && this.method.isConstant(varName) && !this.so_a_bere) {
+        if(this.method.localVariableExists(varName) && this.method.isConstant(varName) && !this.changeIsNotValid) {
             Symbol var = this.method.getVariable(varName);
             String value = this.method.getConstantValue(varName);
 

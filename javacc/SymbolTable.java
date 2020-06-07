@@ -32,6 +32,14 @@ public class SymbolTable {
         imports.put(key, new ImportMethod(class_name, method, return_type, parameters, isStatic));
     }
 
+    /**
+     * addMethod Method:
+     * Adds method to our symbol table and checks for overrides.
+     * @param identifier    name of the method
+     * @param type          return type of the method
+     * @param parameters    parameters of the method
+     * @return name of the method
+     */
     public String addMethod(String identifier, String type, ArrayList<Pair<String, String>> parameters){
         if(!methodExists(identifier)) {
             methods.put(identifier, new Method(identifier, type, parameters));

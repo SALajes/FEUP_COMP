@@ -35,6 +35,11 @@ class ASTIf extends SimpleNode {
     return "Statement if";
   }
 
+  /**
+   * checkNodeSemantics Method:
+   * Checks if the If Statement returns a boolean, checks which variables need to be initialized and initializes them.
+   * @param symbol_table
+   */
   @Override
   protected void checkNodeSemantics(SymbolTable symbol_table) {
     SimpleNode child = (SimpleNode) this.jjtGetChild(0);
@@ -53,6 +58,12 @@ class ASTIf extends SimpleNode {
     }
   }
 
+  /**
+   * checkInitializedVariables Method:
+   * Gets all of the initialized variables in the if body and in the else body, intersecting them ,obtaining the variables that need to be initialized.
+   * @param symbol_table    symbol table
+   * @return final set of variables that were initialized
+   */
   public Set<String> checkInitializedVariables(SymbolTable symbol_table){
     this.initialized_variables = new HashSet<String>();
 
@@ -70,6 +81,13 @@ class ASTIf extends SimpleNode {
     return result;
   }
 
+  /**
+   * checkInitializedVariables Method:
+   * Goes through every statement of the respective node and checks for assignments, adding those variables to the result set.
+   * @param node    node to be analysed
+   * @param symbol_table    symbol table
+   * @return  set of variables that were initialized in the body of the respective node
+   */
   private Set<String> checkInitializedVariables(SimpleNode node, SymbolTable symbol_table){
     Set<String> result = new HashSet<String>();
 

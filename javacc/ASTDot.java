@@ -31,6 +31,11 @@ class ASTDot extends SimpleNode {
     return this.return_type;
   }
 
+  /**
+   * setReturnType Method:
+   * Checks if left and right child are compatible and sets the return type of the dot operation.
+   * @param symbol_table
+   */
   private void setReturnType(SymbolTable symbol_table){
     if(this.jjtGetNumChildren() == 2) {
       SimpleNode left_child = (SimpleNode) this.jjtGetChild(0);
