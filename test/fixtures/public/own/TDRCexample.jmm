@@ -2,7 +2,11 @@ import static io.println(int) void;
 
 class TDRCexample{
     public static void main(String[] args) {
-        this.foo(2,3);
+        TDRCexample example;
+
+        example = new TDRCexample();
+
+        example.foo(2,3);
     }
 
     public int foo(int a, int b){

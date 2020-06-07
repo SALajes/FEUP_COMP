@@ -15,13 +15,13 @@ public final class ArithmeticSemantic {
 
     private static void checkChildConditions(SimpleNode node, String child, SymbolTable symbol_table, String scope, String operator,  String code_fragment){
         if(!node.isBinaryOperator()){
-            if(!((node.getIdentity()=="." && node.getReturnType(symbol_table) == "int") ||//no need
+            if(!((node.getIdentity()=="." && node.getReturnType(symbol_table) == "int") ||
                     node.getIdentity()=="ArrayAccess" ||
                     node.getType() == "int")){
 
-                if(symbol_table.checkVariableType(scope, node.getIdentity(), "int")){
-                   if(!symbol_table.isVariableInitialized(node.getIdentity(), node.getScope())) {
-                       //QUESTION : lançar erro ou warning?
+                if(symbol_table.checkVariableType(scope, node.getIdentity(), "int")){//check if variable is an int
+                   if(!symbol_table.isVariableInitialized(node.getIdentity(), node.getScope())) {//checks if variable is not initialized
+
                        SemanticErrorHandler.getInstance().printError(scope,
                                child + " child of operator " + operator + " is not initialized: " + node.getIdentity());
                    }

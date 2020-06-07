@@ -9,6 +9,11 @@ public class ASTAssignement extends SimpleNode {
     super(p, id);
   }
 
+    /**
+     * checkNodeSemantics Method :
+     * An assignment is valid when both children have already been declared and have the same type.
+     * @param symbol_table
+     */
   @Override
   protected void checkNodeSemantics(SymbolTable symbol_table) {
 
