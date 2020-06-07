@@ -58,8 +58,8 @@ java -jar <jar filename> <arguments>
     - all variables are declared before any statement (globals are declared before methods are defined);
     - '&&' and '!' operators' children must be of type boolean or return boolean;
     - '+', '-', '*', '/' and '<' operators' children must be of type integer or return integer;
-    - a non-static class must be called by initializing a variable of the same class -- 'this' can only be used when within a static method of the class;
-    - when a class A extends class B, A may import and use methods of B using the same linguo or creating a object of type B and calling the function (as long as it is imported)
+    - a non-static class must be called by initializing a variable of the same class -- 'this' can only be used when within a non-static method of the class;
+    - when a class A extends class B, A may import and use methods of B using the same lingo or creating a object of type B and calling the function (as long as it is imported)
     - when a static method of class B is imported ('import B.method(<type>) <type>'), this should be used calling: B.method(<args>);
     - 'length' property is only applicable to arrays;
     - conditions in 'while' and 'if' statements must return boolean;
@@ -90,7 +90,7 @@ java -jar <jar filename> <arguments>
 
   Lower cost instructions were used:
     - When dealing with integers we used the appropriate instruction, `iconst`, `bipush`, `sipush` and `ldc`
-    - When dealing with comparissons we used comparissons with 0, `ifeq`, `ifne` and `ifge`
+    - When dealing with comparisons we used comparissons with 0, `ifeq`, `ifne` and `ifge`
     - Code in the form `i = i+1` was replaced with a single `iinc` instruction
 
 ---
