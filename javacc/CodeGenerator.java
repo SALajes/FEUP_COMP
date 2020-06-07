@@ -41,6 +41,7 @@ class CodeGenerator {
             updateStack();
     }
 
+    // During the code generator we write to the file, to update the stack value we go back and update it
     private void updateStack() {
         String fileName = "Jasmin/" + this.classNode.getIdentity() + ".j";
         int i = 0;
@@ -70,6 +71,7 @@ class CodeGenerator {
         }
     }
 
+    // Because we read the file from top to bottom we have to skip the imports until we find the class declaration
     private int getNumImports() {
         int i = 0;
 
@@ -164,6 +166,13 @@ class CodeGenerator {
         this.printWriter.printf(".end method\n\n");
     }
 
+    /*
+     * Converts the method declaration args into a string
+     * When doing this it also converts the variable types to its correspondant Jasmin type
+     *
+     * @param SimpleNode node
+     * @return String string of variables
+     */
     private String genArgs(SimpleNode node) {
         if(node instanceof ASTMain) {
             this.currMethod = this.symbolTable.getMethod(node.getIdentity());
@@ -258,7 +267,7 @@ class CodeGenerator {
 
     private void writeWhileStatement(SimpleNode node) {
         SimpleNode condition = (SimpleNode) node.jjtGetChild(0);
-        boolean atleastOnce = checkTemplate(condition);
+        boolean atleastOnce = checkTemplate(condition) && optO;
 
         if(atleastOnce) {
             writeExpression(condition);
@@ -291,6 +300,12 @@ class CodeGenerator {
         this.printWriter.printf("\tWCONT%d:\n", node.getCount());
     }
 
+    /*
+     * Checks if its possible to use a template with the while loop
+     *
+     * @param SimpleNode node
+     * @return boolean true if possible either false
+     */
     private boolean checkTemplate(SimpleNode node) {
         if((node instanceof ASTTrue || node instanceof ASTFalse) || (node instanceof ASTID && node.jjtGetNumChildren() == 0))
             return true;
@@ -354,6 +369,12 @@ class CodeGenerator {
         }
     }
 
+    /*
+     * Checks if the assignment is of the type i = i +1 or i = 1 +i
+     *
+     * @param SimpleNode node
+     * @return true if the assignment is i++ or not
+     */
     private boolean checkInc(SimpleNode node) {
         SimpleNode left = (SimpleNode) node.jjtGetChild(0);
         SimpleNode right = (SimpleNode) node.jjtGetChild(1);
@@ -601,6 +622,13 @@ class CodeGenerator {
         }
     }
 
+    /*
+     * Generates an ArrayList with the type of the arguments passed to the function call
+     * Used to check in the SymbolTable if it is an import method or not
+     *
+     * @param SimpleNode node
+     * @retunr ArrayList arraylist with the argument types
+     */
     private ArrayList<String> genArgsArray(SimpleNode node) {
         ArrayList<String> args = new ArrayList<>();
 
@@ -612,6 +640,12 @@ class CodeGenerator {
         return args;
     }
 
+    /*
+     * Writes local method call
+     *
+     * @param SimpleNode node
+     * @return String returns function call return type
+     */
     private String writeLocalMethod(SimpleNode node) {
         Method method = this.symbolTable.getMethod(node.getIdentity());
         String args = genArgsMethodInvoke((SimpleNode) node.jjtGetChild(0));
@@ -622,6 +656,12 @@ class CodeGenerator {
         return convertType(method.getReturnType());
     }
 
+    /*
+     * Writes import method call
+     *
+     * @param SimpleNode node
+     * @return String returns function call return type
+     */
     private String writeImportMethod(String className, SimpleNode node) {
         ImportMethod importMethod = this.symbolTable.getImportMethod(className, node.getIdentity());
 
@@ -639,6 +679,13 @@ class CodeGenerator {
         return convertType(importMethod.getReturnType());
     }
 
+    /*
+     * Generates a String with the types of the arguments used in the local method call
+     * This types are converted to their Jasmin correspondents
+     *
+     * @param SimpleNode node
+     * @return String with the types
+     */
     private String genArgsMethodInvoke(SimpleNode node) {
         if (!(node instanceof ASTFunctionCallArguments))
             return "";
@@ -653,6 +700,13 @@ class CodeGenerator {
         return ret.toString();
     }
 
+    /*
+     * Generates a String with the types of the arguments used in the import method call
+     * This types are converted to their Jasmin correspondents
+     *
+     * @param ImportMethod method object
+     * @return String with types
+     */
     private String genArgs(ImportMethod method) {
         StringBuilder ret = new StringBuilder();
 
@@ -750,6 +804,12 @@ class CodeGenerator {
     }
 
     // -- Convert types and return --
+    /*
+     * Converts java-- types to Jasmin types
+     *
+     * @param String java-- type
+     * @return String Jasmin type
+     */
     private String convertType(String type) {
         switch (type) {
             case "int":
@@ -773,6 +833,12 @@ class CodeGenerator {
         }
     }
 
+    /*
+     * Given a return type it returns the correct return instruction dependant on the variable type
+     *
+     * @param String return type
+     * @return String return instruction
+     */
     private String convertReturnType(String returnType) {
         switch (returnType) {
             case "int":
@@ -792,6 +858,13 @@ class CodeGenerator {
     // -- Dealing with Jasmin forbidden words --
     // Forbidden words:
     //      - field
+    /*
+     * Given a varName it checks if it is a reserved word in Jasmin
+     * If so it is replaced with a random string
+     *
+     * @param String variable name
+     * @return String new variable name name
+     */
     private String getVarName(String varName) {
         if(!varName.equals("field"))
             return varName;
@@ -801,6 +874,7 @@ class CodeGenerator {
         return lutSwappedWords.get("field");
     }
 
+    // Returns a random String of characters
     private String genRandomVarName() {
         int length = 8;
         Random rng = new Random();
