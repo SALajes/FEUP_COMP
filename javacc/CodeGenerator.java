@@ -267,7 +267,7 @@ class CodeGenerator {
 
     private void writeWhileStatement(SimpleNode node) {
         SimpleNode condition = (SimpleNode) node.jjtGetChild(0);
-        boolean atleastOnce = checkTemplate(condition);
+        boolean atleastOnce = checkTemplate(condition) && optO;
 
         if(atleastOnce) {
             writeExpression(condition);

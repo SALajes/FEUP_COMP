@@ -96,7 +96,14 @@ public class SymbolTable {
         return result;
     }
 
-    public boolean isMethodImport(String idendity, ArrayList<String> arguments) {
+    /*
+     * Given the method name and its argument types it checks if it is an import method or not
+     *
+     * @param String method name
+     * @param ArrayList list of argument typpes
+     * @return true if it is an import method false otherwise
+     */
+    boolean isMethodImport(String idendity, ArrayList<String> arguments) {
         Pair<String, String> result = new Pair<>();
 
         if(methodExists(idendity)) {
@@ -157,7 +164,15 @@ public class SymbolTable {
         return result;
     }
 
-    public Method getMethod(String methodName, ArrayList<String> argTypes) {
+    /*
+     * Given the method name and argument types it checks for the existence of overloads and return the method that uses
+     * the same argument types
+     *
+     * @param String mehtod name
+     * @param ArrayList list of the argument types
+     * @return Method mehod object
+     */
+    Method getMethod(String methodName, ArrayList<String> argTypes) {
         Method ret = this.methods.get(methodName);
 
         if(ret.getOverloads() == 0)
@@ -201,6 +216,12 @@ public class SymbolTable {
         global_variables.put(identifier, new Symbol(type, identifier));
     }
 
+    /*
+     * Checks if there is a global variable with the given identifier
+     *
+     * @param String identifier
+     * @return true if there is a global variable with the same identifier false other wise
+     */
     boolean globalVariableExists(String identifier) {
         return global_variables.containsKey(identifier);
     }
