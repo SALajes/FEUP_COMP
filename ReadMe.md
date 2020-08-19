@@ -104,9 +104,10 @@ After the semantic analysis, the tree is visited again, this time, when an integ
 Then, every statement that uses a variable marked as constant gets that node (ASTId) changed to one referring the value of the it (ASTTrue or ASTFalse if boolean, depending on the value; ASTInteger if integer, with assigning the value to the "identity" attribute).</br>
 If the variable is assigned a new value within an If or While statement, it is no longer considered a constant.</br>
 Furthermore, constant folding is implemented in order to satisfy a larger condition:
-  "	c = 3; //c is a constant with value 3
+```
+	c = 3; //c is a constant with value 3
   	b = 4 + c; //b will now be a constant with value 4 + 3 = 7
-  "
+```
 
 #### While templates
 
@@ -153,16 +154,17 @@ Simão implemented "iinc" instruction and "while templates" optimization.
 </br>Andreia and Sofia implemented "constant propagation" optimization, tested and improved the base tool by completing issues that were not fulfilled in previous checkpoints.
 
 ### Pros:
-> Implemented constant folding
-> If statement only initializes a variable in either then or else's body 
+ - Implemented constant folding
+ - If statement only initializes a variable in either then or else's body 
 
 ### Cons:
-> The -r flag optimization was not implemented
-> During constant propagation optimization, if a variable A might change value inside an if statement, then it is not considered a constant inside it. Observe the following example:
-"	c = 0;
+ - The -r flag optimization was not implemented
+ - During constant propagation optimization, if a variable A might change value inside an if statement, then it is not considered a constant inside it. Observe the following example:
+```
+	c = 0;
 	if( c < 3){ //c = 0
 		c = 3; // loses "constant" property
 		f = c + 1; //can not substitute c by value 3
 	}
-"
+```
 
